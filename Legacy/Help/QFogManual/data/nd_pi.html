@@ -1,0 +1,205 @@
+<HTML>
+<HEAD>
+  <TITLE>Node Prior-Info.</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Node Prior-Info.
+</H1>
+<P>
+<IMG ALIGN="Middle" SRC="wind,nd_pi.gif" >
+<P>
+This window allows you to define, view, and modify the transition matrix
+associated with each node of the graph.
+<P>
+At any given time, the window refers to only one node, the one whose name
+appears in red. We'll call it the <I>focus node</I>. You may change the focus
+node by either of 3 methods:
+<UL>
+  <LI>
+    Clicking on the <B>First</B> and <B>Next</B> buttons located to the right
+    of the red name.
+  <LI>
+    Selecting a different node from the popup menu located to the right of the
+    red name.
+  <LI>
+    Double clicking on the node's icon in the <B>Main Window</B>. (When the Palette
+    is closed, this always works. But when the <B>Palette</B> is open, you must
+    first select the <B>Open</B> tool of the <B>Palette</B> before double clicking
+    the node.)
+</UL>
+<P>
+  <HR>
+<P>
+<H3>Focus Node Field </H3>
+<P>
+This field gives the name of the focus node in red. The field can be edited
+directly by the user. If you enter into this field a node name that is longer
+than the box surrounding the field, the name will scroll automatically to
+show the last character typed. This scrolling may hide some of the first
+characters of the node name. Use the left-arrow key to move the insertion-point
+cursor (a blinking vertical line, like the letter "I") to the left, the
+right-arrow key to move it to the right, the up-arrow or HOME key to move
+it to the beginning of the node name, the down-arrow or END key to move it
+to the end of the node name.
+<P>
+Besides appearing in this window, in red, the name of the focus node also
+appears in the <B>Main Window</B>, directly beneath the icon of the focus
+node. One can edit this name either where it appears in the <B>Node
+Prior-Info.</B> window, or where it appears in the <B>Main Window</B>. Changing
+one occurrence will automatically change the other.
+<P>
+  <HR>
+<P>
+<H3>Parent Nodes Table</H3>
+<P>
+The box entitled "Parent Nodes" contains a table that specifies one of the
+possible input states of the focus node. None of the cells of this table
+can be edited directly by the user. However, the input state can be varied
+by using the <B>First</B> and <B>Next</B> buttons to the right of the table
+or by using the popups in each row of the table.
+<P>
+  <HR>
+<P>
+<H3>Amplitudes Table</H3>
+<P>
+The box entitled "Amplitudes" contains a table that displays the transition
+amplitudes of the focus node when the input state is the one given in the
+Parent Nodes box.
+<P>
+The second column of the table lists the names of all the states of the focus
+node. These names can be edited directly by the user.
+<P>
+The first column tells which states are active. Active states are indicated
+by a star (*) and inactive ones by a blank. Clicking on a cell of the first
+column will toggle the cell's contents between blank and star.
+<P>
+The last two columns of the table give the complex amplitudes of the states.
+These amplitudes can be edited directly by the user. Alternatively, one can
+edit them with either the <B>Generate Amplitudes...</B> button or the
+<B>Import/Amplitudes...</B> menu item. (The <B>Generate Amplitudes...</B>
+button is discussed below. The <B>Import/Amplitudes...</B> menu item is discussed
+in the section entitled "Import".)
+<P>
+Let [C1,C2] be the set of all cells contained within a rectangle with cells
+C1 and C2 as opposite (top-left and bottom-right) corners. Let U be the set
+of all cells in the second, third and fourth columns. To select more than
+one cell, you will need to use the SHIFT key. You can select any subset [C1,C2]
+of U in one of 2 ways.
+<P>
+If
+<UL>
+  <LI>
+    while holding the SHIFT key down, you press the mouse button down on the
+    cell which you intend to be the initial anchor of your selection, and
+  <LI>
+    you release the SHIFT key if you wish to do so, and
+  <LI>
+    while holding the mouse button down, you drag the cursor to the cell which
+    you intend to be the final anchor of your selection, and
+  <LI>
+    you release the mouse button,
+</UL>
+<P>
+then all cells in set [initial anchor, final anchor] will be selected.
+<P>
+Alternatively, if
+<UL>
+  <LI>
+    you click on the cell which you intend to be the initial anchor of your
+    selection, and
+  <LI>
+    you release the SHIFT key if you wish to do so, and
+  <LI>
+    while holding the SHIFT key down, you click the mouse button on the cell
+    that you intend to be your final anchor cell,
+</UL>
+<P>
+then all cells in set [initial anchor, final anchor] will be selected.
+<P>
+  <HR>
+<P>
+<H3>Number Of Rows...</H3>
+<P>
+Pressing the <B>Number of Rows...</B> button opens the <B>Number Of Rows</B>
+window. This window allows you to change the number of rows of the Amplitudes
+Table. See the section entitled "Number Of Rows".
+<P>
+  <HR>
+<P>
+<H3>Generate State Names...</H3>
+<P>
+Pressing the <B>Generate State Names... </B>button opens the <B>Generate
+State Names </B>window. This window generates new names for the states of
+the focus node. These names appear on the second column of the Amplitudes
+Table. See the section entitled "Generate State Names".
+<P>
+  <HR>
+<P>
+<H3>Total Probability = </H3>
+<P>
+Let R be the number of rows of the Amplitudes Table, and let Z<SUB>1</SUB>,
+Z<SUB>2</SUB>, ...Z<SUB>R</SUB> be the complex amplitudes given by that table.
+<P>
+Pressing this button calculates Pr = |Z<SUB>1</SUB>|<SUP>2</SUP> +
+|Z<SUB>2</SUB>|<SUP>2</SUP> +... |Z<SUB>R</SUB>|<SUP>2</SUP>,
+<P>
+and displays it to the right of the button.
+<P>
+If Quantum Fog is not certain that the value being displayed for Pr is
+up-to-date, it will erase the value and show a blank. Better to display nothing
+than to display an erroneous value. If no value for Pr is currently showing
+and you wish to see one, just press the <B>Total Probability</B> button.
+Quantum Fog will then re-calculate Pr and post it.
+<P>
+Pr will usually be very close to one. After all, it represents the probability
+that any state of the focus node will occur when the input state is as given.
+However, one can construct nets (see the section entitled "Parameters Of
+Beam-Splitter" for an example) that will always give correct physical predictions
+even though some of their Pr's are not one. (By physical predictions we mean
+the information contained in the <B>Node Probs.</B>, <B>Bi-node Probs.</B>
+and <B>Stories</B> windows).
+<P>
+  <HR>
+<P>
+<H3>Generate Amplitudes...</H3>
+<P>
+The effect of pressing the <B>Generate Amplitudes...</B> button depends on
+the node-type of the focus node.
+<P>
+If the focus node is a Custom node, nothing happens.
+<P>
+If the focus node is of type T, where T=
+<UL>
+  <LI>
+    Beam-Splitter or
+  <LI>
+    Deterministic Node, or
+  <LI>
+    Polarization Rotator or
+  <LI>
+    Polarizer or
+  <LI>
+    Qbit Rotator or
+  <LI>
+    Stern-Gerlach Magnet,
+</UL>
+<P>
+then a window entitled "Parameters Of T" appears.
+<P>
+These windows allow you to specify certain parameters which depend on the
+node-type, parameters which are sufficient to specify a transition matrix
+for the focus node. Upon dismissing these windows with an <B>OK</B>, the
+computer changes the transition matrix stored in memory for the focus node.
+<P>
+  <HR>
+<P>
+<H3>Reorder Icon</H3>
+<IMG ALIGN="Middle" SRC="reorder_icon.gif" >
+<P>
+See the section entitled "Reordering Items In A List". 
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

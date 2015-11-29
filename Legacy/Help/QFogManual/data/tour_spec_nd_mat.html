@@ -1,0 +1,151 @@
+<HTML>
+<HEAD>
+  <TITLE>Specifying Node Matrices</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Specifying Node Matrices
+</H1>
+<P>
+<UL>
+  <LI>
+    In the <B>Node Prior-Info.</B> window, make <I>root</I>&nbsp; the focus node.
+    Note that since <I>root</I>&nbsp; has no incoming arrows, its list of parent
+    nodes is empty. In the Amplitudes box:
+    <UL>
+      <LI>
+	In the row of state (0,1), insert 0.5 for the Real Part and 0.5 for the Imaginary
+	Part.
+      <LI>
+	In the row of state (1,0), insert 0.707107 (i.e. 1/sqrt(2)) for the Real
+	Part.
+      <LI>
+	All other entries of the Real and Imaginary Part columns should remain at
+	their default values of zero.
+    </UL>
+  <LI>
+    Make <I>nz+</I>&nbsp; the focus node.
+    <UL>
+      <LI>
+	For <I>1mag</I>&nbsp; = (0,0) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 0, set the Real Part to
+	1.
+	<P>
+	Explanation of last action: We are using the notation (n-, n+) to represent
+	a state of <I>1mag</I> , where n- is the number of spin - particles and n+
+	is the number of spin + particles. Node <I>nz+</I>&nbsp; has 2 states, 0
+	and 1, where the numbers 0 and 1 tell how many particles of spin + go through
+	node <I>nz+</I>&nbsp; . By setting to 1 the amplitude of <I>nz+</I>&nbsp;
+	=0 when <I>1mag</I>&nbsp; = (0,0), what we are saying is that with unit
+	amplitude, when <I>1mag</I>&nbsp; =(0,0), zero particles of spin + traverse
+	node <I>nz+</I>&nbsp; .
+      <LI>
+	For <I>1mag</I>&nbsp; = (1,0) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 0, set the Real Part to
+	1.
+      <LI>
+	For <I>1mag</I>&nbsp; = (0,1) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 1, set the Real Part to
+	1.
+    </UL>
+  <LI>
+    Make <I>nu+</I>&nbsp; the focus node.
+    <UL>
+      <LI>
+	For <I>2mag</I>&nbsp; = (0,0) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 0, set the Real Part to
+	1.
+      <LI>
+	For <I>2mag</I>&nbsp; =(1,0) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 0, set the Real Part to
+	1.
+      <LI>
+	For <I>2mag</I>&nbsp; =(0,1) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 1, set the Real Part to
+	1.
+    </UL>
+  <LI>
+    Make <I>nz-</I>&nbsp; the focus node.
+    <UL>
+      <LI>
+	For <I>1mag</I>&nbsp; = (0,0) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 0, set the Real Part to
+	1.
+      <LI>
+	For <I>1mag</I>&nbsp; = (1,0) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 1, set the Real Part to
+	1.
+      <LI>
+	For <I>1mag</I>&nbsp; = (0,1) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 0, set the Real Part to
+	1.
+    </UL>
+  <LI>
+    Make <I>nu-</I>&nbsp; the focus node.
+    <UL>
+      <LI>
+	For <I>2mag</I>&nbsp; =(0,0) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 0, set the Real Part to
+	1.
+      <LI>
+	For <I>2mag</I>&nbsp; =(1,0) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 1, set the Real Part to
+	1.
+      <LI>
+	For <I>2mag</I>&nbsp; =(0,1) in the Parent Nodes box, make the following
+	changes in the Amplitudes box. In the row of state 0, set the Real Part to
+	1.
+    </UL>
+  <LI>
+    Make <I>1mag</I>&nbsp; the focus node. Press the <B>Generate Amplitudes...</B>
+    button at the bottom-right corner of the <B>Node Prior-Info.</B> window.
+    A window entitled "Parameters Of Stern-Gerlach Magnet" will open.
+    <UL>
+      <LI>
+	The Theta and Phi boxes at the top allow you to specify the polar coordinates
+	of the magnetic field of the Stern-Gerlach Magnet. Set Theta and Phi to zero
+	(their default value), indicating that the magnetic field points in the +
+	Z direction.
+      <LI>
+	The Theta and Phi entries of the table allow you to specify the direction
+	of the spin axis for the particles coming from <I>root</I>&nbsp; . Set both
+	of these angles to zero (their default value), indicating that the particles
+	emanating from <I>root</I>&nbsp; are polarized along the Z direction.
+	<P>
+	Press the <B>OK</B> button. Now scan over the 3 possible input states of
+	<I>1mag</I>&nbsp; by pressing successively the <B>Next</B> button of the
+	Parent Nodes box. You'll see that the Amplitudes box contains new amplitudes
+	for each of the input states.
+    </UL>
+  <LI>
+    Make <I>2mag</I>&nbsp; the focus node. Press the <B>Generate Amplitudes...</B>
+    button at the bottom-right corner of the <B>Node Prior-Info.</B> window.
+    A window entitled "Parameters Of Stern-Gerlach Magnet" will open.
+    <UL>
+      <LI>
+	The Theta and Phi boxes at the top allow you to specify the polar coordinates
+	of the magnetic field of the Stern-Gerlach Magnet. Set Theta to 36 degrees
+	and Phi to zero degrees.
+      <LI>
+	The first row of the bottom table shows that <I>nz+</I>&nbsp; is a Parent
+	Node. Click on the Spin entry of this row until it reads +. Set both Theta
+	and Phi of this row to zero degrees.
+      <LI>
+	The second row of the bottom table shows that <I>nz-</I>&nbsp; is a Parent
+	Node. Click on the Spin entry of this row until it reads -. Set both Theta
+	and Phi of this row to zero degrees.
+    </UL>
+    <P>
+    Press the <B>OK</B> button. Now scan over the 4 possible input states of
+    <I>2mag</I>&nbsp; by pressing successively the <B>Next</B> button of the
+    Parent Nodes box. You'll see that the Amplitudes box contains new amplitudes
+    for each of the input states.
+  <LI>
+    Save your work by selecting the <B>Save</B> item of the <B>File</B> menu.
+</UL>
+<P>
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

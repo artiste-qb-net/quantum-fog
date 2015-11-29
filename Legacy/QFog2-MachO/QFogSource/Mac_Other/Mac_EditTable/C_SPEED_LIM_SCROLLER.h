@@ -1,0 +1,1 @@
+#pragma once//******************************************class	C_SPEED_LIM_SCROLLER : public LScroller{protected:	public:		C_SPEED_LIM_SCROLLER(LStream  * inStream);	C_SPEED_LIM_SCROLLER();	virtual ~C_SPEED_LIM_SCROLLER();			VOID	VertScroll(const SInt16	inPart);	VOID 	HorizScroll(const SInt16	inPart);	};

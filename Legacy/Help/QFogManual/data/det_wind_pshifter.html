@@ -1,0 +1,45 @@
+<HTML>
+<HEAD>
+  <TITLE>Parameters Of Phase-Shifter</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Parameters Of Phase-Shifter
+</H1>
+<P>
+<IMG ALIGN="Middle" SRC="det_wind_pshifter.gif" >
+<P>
+When you press the <B>OK</B> button in this window, the computer checks that
+the focus node has precisely one parent. If you put a check mark in the
+<B>Multiply Theta by occupation number </B>box, the computer will also check
+that the states of the parent node are non-negative integers.
+<P>
+If these conditions are satisfied, the above window closes. Furthermore,
+the states and amplitudes stored in memory for the focus node are changed.
+If the conditions are not satisfied, the above window remains open, the states
+and amplitudes are not changed, and a warning message appears on the screen.
+<P>
+Quantum Fog defines the set of states of the phase-shifter to be exactly
+the same as the set of states of its parent node.
+<P>
+Suppose Theta represents your entry to the first field of the above window.
+<P>
+Suppose you put a check mark in the <B>Multiply Theta by occupation number
+</B>box. When the state of the parent node is N, Quantum Fog assigns amplitude
+(1, N*Theta) (expressed in polar coordinates) to state N of the phase-shifter,
+and it assigns zero amplitude to all other states of the phase-shifter. Note
+that N must be an integer.
+<P>
+Suppose you don't put a check mark in the <B>Multiply Theta by occupation
+number </B>box. When the state of the parent node is STR, Quantum Fog assigns
+amplitude (1, Theta) (expressed in polar coordinates) to state STR of the
+phase-shifter, and it assigns zero amplitude to all other states of the
+phase-shifter. Note that STR need not be an integer.
+<P>
+More information about Phase-Shifters can be found in the document entitled
+"Quantum Fog Library Of Essays" that accompanies this manual. 
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

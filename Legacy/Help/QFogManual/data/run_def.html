@@ -1,0 +1,89 @@
+<HTML>
+<HEAD>
+  <TITLE>Quantum Fog "Run"</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Quantum Fog "Run"
+</H1>
+<P>
+<BR>
+A Quantum Fog Run is a session of Quantum Fog during which one or more e-cases
+are analyzed sequentially.
+<P>
+In a single-e-case run, you specify the single e-case via the <B>Node
+Prior-Info.</B> window.
+<P>
+In a many-e-cases run, you specify several e-cases via an e-cases file. The
+name of the e-cases file is entered into Quantum Fog via the window that
+opens when one chooses the item: <B>TEXT Files Used During Run...</B> in
+the <B>Prepare</B> menu.
+<P>
+When Quantum Fog is at the beginning of a run, before having analyzed any
+e-cases, we say that Quantum Fog is in its <I>initial run-state</I>. Likewise,
+after finishing with one e-case of an e-cases file, but before beginning
+a new one, we say that Quantum Fog is in an <I>intermediate run-sate</I>.
+Immediately after finishing the last e-case, we say that Quantum Fog is in
+its <I>final run-state</I>.
+<P>
+Note how the last three menus of Quantum Fog depend on the current run-state:
+<P>
+  <HR>
+<H3>Prepare Menu</H3><IMG ALIGN="Middle" SRC="menu,run_preps.gif" >
+<P>
+All of the items in this menu are disabled (dimmed) if the program is not
+in the initial run-state. That's because these menu items deal with choices
+that you must make at the beginning of a run.
+<P>
+  <HR>
+<H3>Go Menu</B></H3>
+<IMG ALIGN="Middle" SRC="menu,change_run_state.gif" >
+<P>
+Pressing <B>Go Back To Initial State</B> transfers the program from an
+intermediate or the final run-state to the initial one.
+<P>
+Pressing <B>Go Forward</B> advances the program to the next run-state&mdash;either
+an intermediate or the final one. 
+  <HR>
+<H3>Windows Menu</B></H3>
+<IMG ALIGN="Middle" SRC="menu,windows.gif" >
+<P>
+The windows in this menu are grouped according to when they can be opened:
+<P>
+Can be opened at any time:
+<UL>
+  <LI>
+    <B>Main Window</B>
+  <LI>
+    <B>Palette</B>
+</UL>
+<P>
+Can be opened only in the initial run-state:
+<UL>
+  <LI>
+    <B>Node Prior-Info.</B>
+  <LI>
+    <B>Bi-nodes Of Interest</B>
+</UL>
+<P>
+Can be opened only in intermediate or final run-states:
+<UL>
+  <LI>
+    <B>Node Probs.</B>
+  <LI>
+    <B>Bi-node Probs.</B>
+  <LI>
+    <B>Stories</B>
+</UL>
+<P>
+All <B>Palette</B> items are enabled in the initial run-state. But some
+<B>Palette</B> items are disabled in the intermediate and final states. In
+those run-states, Quantum Fog disables those <B>Palette</B> items that would
+allow you to add new nodes, or to tamper with the transition amplitudes of
+already existing nodes.
+<P>
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

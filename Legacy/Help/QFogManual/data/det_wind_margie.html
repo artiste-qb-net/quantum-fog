@@ -1,0 +1,63 @@
+<HTML>
+<HEAD>
+  <TITLE>Parameters Of Marginalizer</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Parameters Of Marginalizer
+</H1>
+<P>
+<IMG ALIGN="Middle" SRC="det_wind_margie.gif" >
+<P>
+<P>
+When you press the <B>OK</B> button in this window, the computer checks that
+<UL>
+  <LI>
+    the focus node has precisely one parent,
+  <LI>
+    the names of the states of the parent node are sufficiently long for the
+    steps described below to be doable.
+</UL>
+<P>
+If these conditions are satisfied, the above window closes. Furthermore,
+the states and amplitudes stored in memory for the focus node are changed.
+If the conditions are not satisfied, the above window remains open, the states
+and amplitudes are not changed, and a warning message appears on the screen.
+<P>
+Let m[P<SUB>1</SUB>, L] be an operator which acts on any string STR, and
+yields the substring consisting of the elements of STR at positions from
+P<SUB>1</SUB> to P<SUB>1</SUB>+L-1. (We assume that the length of STR is
+&gt;= P<SUB>1</SUB>+L-1). For example, if P<SUB>1</SUB>=2, L=3, and STR =
+<I>apple</I>, then m[2,3]<I>apple</I>&nbsp; = &nbsp; <I>ppl</I>&nbsp; .
+<P>
+Let P<SUB>1</SUB> be your entry to the first field of the above window, and
+let L be your entry to the second. P<SUB>1</SUB> and L must both be positive
+integers.&nbsp;Quantum Fog defines the set of states of the marginalizer
+to be { m[P<SUB>1</SUB>,L]STR : for all STR such that&nbsp;STR is the name
+of a state of the parent node}. For example, suppose that the set of states
+of the parent node is { <I>apple, banana, mango, fig</I>&nbsp; }. Furthermore,
+suppose that P<SUB>1</SUB>=2, L=2. Since m[2,2]<I>apple = pp</I>&nbsp; ,
+m[2,2]<I>banana = an</I>&nbsp; , m[2,2]<I>mango = an</I>&nbsp; , m[2,2] <I>fig
+= ig</I>&nbsp; , Quantum Fog will define { <I>pp , an , ig</I>&nbsp; } to
+be the set of states of the marginalizer. As another example, suppose that
+the states of the parent node are the 32 binary numbers 00000, 00001, ...,
+11111. Furthermore, suppose that P<SUB>1</SUB>=2, L=1. Then Quantum Fog will
+define the states of the marginalizer to be 0 and 1.
+<P>
+When the state of the parent node is STR, Quantum Fog assigns unit amplitude
+to state m[P<SUB>1</SUB>, L]STR of the marginalizer, and it assigns zero
+amplitude to all other states of the marginalizer. In the fruit example presented
+above, when the state of the parent node is <I>apple</I>&nbsp; , Quantum
+Fog assigns unit amplitude to state <I>pp</I> , and zero amplitude to states
+<I>an</I>&nbsp; and <I>ig</I>&nbsp; . In the binary numbers example presented
+above, when the state of the parent node is 01011, Quantum Fog assigns unit
+amplitude to state 1, and zero amplitude to state 0.
+<P>
+More information about Marginalizers can be found in the document entitled
+"Quantum Fog Library Of Essays" that accompanies this manual.
+<P>
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

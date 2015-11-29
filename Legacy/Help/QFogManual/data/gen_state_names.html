@@ -1,0 +1,76 @@
+<HTML>
+<HEAD>
+  <TITLE>Generate State Names</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Generate State Names
+</H1>
+<P>
+<IMG ALIGN="Middle" SRC="gen_state_names.gif" >
+<P>
+This window opens if you press the <B>Generate State Names...</B> button
+of the <B>Node Prior-Info.</B> window. You can always enter manually (or
+import, or cut and paste) the state names of the focus node of the <B>Node
+Prior-Info.</B> window. This window gives you yet another option. It will
+instruct the computer to generate certain kinds of name sequences automatically.
+This is especially useful when the focus node has a large number of states
+and you wish to label them by an increasing sequence.
+<P>
+Think of each name as a vector with N components. All names generated will
+have the same number of components N. You enter N into the field labeled
+<B>Number Of Components =.</B> Each component can only be a single alpha-numeric
+character&mdash;that is, either a letter from a,b, ...,z or an integer from 0,1
+, ...9. Assume that alpha-numeric characters form an increasing sequence:
+0, 1, 2, ..., 8, 9, a, b, ..., y, z. Suppose C<SUB>min </SUB>and
+C<SUB>max</SUB> are two elements of the sequence such that C<SUB>min</SUB>
+is less than C<SUB>max</SUB>. You can specify C<SUB>min</SUB> in the field
+labeled <B>Smallest=</B>, and C<SUB>max</SUB> in the field labeled
+<B>Largest=</B>. Let S[C<SUB>min</SUB>,C<SUB>max</SUB>] be the set of all
+alpha-numerics greater or equal to C<SUB>min</SUB> and smaller or equal to
+C<SUB>max</SUB>. The computer will list all the N component vectors such
+that every component belongs to S[C<SUB>min</SUB>,C<SUB>max</SUB>]. If you
+put a check mark in the <B>Use commas and parentheses</B> box, then adjacent
+components of the vector will be separated by commas and a parenthesis will
+precede the first component and follow the last one.
+<P>
+For example,
+<UL>
+  <LI>
+    If N = 3, C<SUB>min</SUB> = 0 , C<SUB>max</SUB> = 9, and Commas=No, the computer
+    will list the 1000 decimal&nbsp;numbers 000, 001, 002, ..., 999.
+  <LI>
+    If N = 5, C<SUB>min</SUB> = 0, C<SUB>max</SUB> = 1, and Commas=No, the computer
+    will list the 32 binary numbers 00000, 00001, 00010,..., 11111.
+  <LI>
+    If N = 5, C<SUB>min</SUB> = 0 , C<SUB>max</SUB> = 1, and Commas=Yes, the
+    computer will list the 32 binary numbers (0,0,0,0,0), (0,0,0,0,1),
+    (0,0,0,1,0),..., (1,1,1,1,1).
+  <LI>
+    If N = 3, C<SUB>min</SUB> = x , C<SUB>max</SUB> = z, and Commas=No, the computer
+    will list the labels xxx, xxy, xxz, xyx, xyy, ..., zzz
+  <LI>
+    If N = 3, C<SUB>min</SUB> = 8 , C<SUB>max</SUB> = b, and Commas=No, the computer
+    will list the labels 888, 889, 88a, 88b, 898, 899, 89a, 89b, 8a8,..., bbb.
+</UL>
+<P>
+This window will NOT override the number of states, call it D, that has been
+specified in the <B>Number of Rows</B> window. If the parameters that you
+specify imply a sequence of names that is longer than D, then only the first
+D terms of the sequence will be used. Conversely, if the sequence is shorter
+than D, then all the terms of the sequence will be used. Those states not
+covered by the sequence will retain the names they had immediately before
+you summoned the above window.
+<P>
+When you dismiss the above window by pressing <B>OK</B>, the state names
+of the focus node become those specified by the window.
+<P>
+When you dismiss the above window by pressing <B>Cancel</B>, the state names
+of the focus node remain the same as they were immediately before you summoned
+the window.
+<P>
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

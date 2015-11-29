@@ -1,0 +1,55 @@
+<HTML>
+<HEAD>
+  <TITLE>Dialog Windows For Specific Nodes</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Dialog Windows For Specific Node-Types
+</H1>
+<P>
+Suppose that&nbsp;the focus node of the <B>Node Prior-Info.</B> window is
+of a certain type X, and that this node satisfies certain minimum conditions
+that all type X nodes must satisfy. Then pressing the <B>Generate
+Amplitudes...</B> button of the <B>Node Prior-Info.</B> window will open
+a dialog window which depends on the node type X. This dialog window will
+allow you to specify certain parameters that completely characterize type
+X nodes. Such dialog windows are entitled ``Parameters of X". In the next
+few sections, we will discuss all ``Parameters of X" windows. We will discuss
+them separately for each X. But first, let us discuss some traits common
+among them.
+<P>
+All ``Parameters of X" windows contain an <B>OK</B> and a <B>Cancel </B>button.
+<P>
+When you dismiss such a window by pressing <B>OK</B>, the computer changes
+the transition matrix and states stored in memory for the focus node so that
+they are consistent with the parameters that you've specified.
+<P>
+When you dismiss such a window by pressing <B>Cancel</B>, the computer does
+not change the transition matrix or the states of the focus node. They remain
+the same as they were immediately before you pressed the <B>Generate
+Amplitudes...</B> button.
+<P>
+For some X's, type X nodes have photons as inputs and outputs. For such nodes,
+it is convenient to make the following definitions:
+<DL>
+  <DT>
+    <I>scalar-field node</I>&nbsp;
+  <DD>
+    A node with <I>scalar-field states</I>&nbsp; ; i.e., states named by non-negative
+    integers. These integers refer to the number of particles (photons) in the
+    state.
+  <DT>
+    <I>vector-field node</I>&nbsp;
+  <DD>
+    A node with <I>vector-field states</I>&nbsp; ; i.e., states named by pairs
+    (N<SUB>x</SUB>, N<SUB>y</SUB>) of non-negative integers. The first component
+    refers to the number of photons polarized in the X direction, and the second
+    to the number of photons&nbsp;polarized in the Y direction. For example,
+    (1,2) represents a state with 1 photon in the X and 2 in the Y.
+</DL>
+<P>
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

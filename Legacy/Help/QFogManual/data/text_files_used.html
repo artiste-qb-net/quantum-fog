@@ -1,0 +1,87 @@
+<HTML>
+<HEAD>
+  <TITLE>TEXT Files Used During Run...</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  TEXT Files Used During Run...<IMG ALIGN="Middle" SRC="menu,run_preps.gif"
+      >
+</H1>
+<P>
+<BR>
+This command opens the following window: <BR>
+<BR>
+<IMG SRC="text_files_used.gif" ALIGN="left" > <BR CLEAR="all">
+<BR>
+Pressing the <B>Choose Folder</B> button opens a Mac "folder-chooser" window&mdash;a
+window that allows you to choose&nbsp;an already existing folder. Let's call
+the folder that you choose the <I>designated folder</I>. Your designated
+folder will store TEXT files used by Quantum Fog. Once the folder-chooser
+window is dismissed with an OK, the path to the designated folder will appear
+to the right of the <B>Choose Folder</B> button.
+<P>
+To the right of the word <B>Prefix</B>, is a text box. You should enter into
+it a string. This string will be used as a prefix to the name of all TEXT
+files requested in the bottom part of the <B>Text Files Used During Run
+</B>window.
+<P>
+The bottom part of the <B>Text Files Used During Run </B>window allows you
+request files you want Quantum Fog to read or write. You request a file
+by&nbsp;putting a check mark (by clicking the box) in front of the file's
+name.
+<P>
+If you press the <B>OK</B> button of the <B>Text Files Used During Run
+</B>window, then, when you press <B>Go Forward</B>, the computer will
+<UL>
+  <LI>
+    READ information from <CODE>&lt;prefix&gt;Ecases.txt</CODE>, if that file
+    was requested, and if Quantum Fog finds a file with that name in the designated
+    folder,
+  <LI>
+    create a file named <CODE>&lt;prefix&gt;NodeProbs.txt</CODE> (ditto,
+    <CODE>&lt;prefix&gt;BinodeProbs.txt</CODE>,
+    <CODE>&lt;prefix&gt;Stories.txt</CODE>) located in the designated folder,
+    and then WRITE information in the file, if that file was requested.
+</UL>
+<P>
+Pressing <B>Go Forward</B>, with the
+&nbsp;<CODE>&lt;prefix&gt;NodeProbs.txt</CODE> option on, will OVERWRITE
+any files named <CODE>&lt;prefix&gt;NodeProbs.txt</CODE> that are stored
+in the designated folder. If you do not wish this to happen, before you press
+<B>Go Forward</B>, move such a file to another folder. The same warning about
+over-writing applies for the
+&nbsp;<CODE>&lt;prefix&gt;BinodeProbs.txt</CODE> and
+<CODE>&lt;prefix&gt;Stories.txt </CODE>options.
+<P>
+As its name implies, the <CODE>&lt;prefix&gt;Ecases.txt</CODE> file should
+contain a list of e-cases. See the section entitled "How To Write An E-Cases
+File".
+<P>
+The computer will write into the
+<CODE>&lt;prefix&gt;NodeProbs.txt</CODE> file the probability distribution
+for every node of the graph. (Actually, if no nodes are selected, it will
+write the probability distribution for every node of the graph. However,
+if some nodes are selected, then it will write the probability distribution
+only for those nodes that are selected. This feature is convenient when you
+want the file to show information for just a few, not all, of the nodes.)
+<P>
+The computer will write into the <CODE>&lt;prefix&gt;BinodeProb.txt </CODE>file
+the probability distribution of those bi-nodes which you specified earlier
+in the <B>Bi-nodes Of Interest</B> window.
+<P>
+The computer will write into the <CODE>&lt;prefix&gt;Stories.txt</CODE> file
+a list of all the possible stories. The stories are listed in groups such
+that all members of a group have that same ending. The file gives for each
+story:
+<UL>
+  <LI>
+    its complex amplitude
+  <LI>
+    the state assigned by the story to each node of the graph.
+</UL>
+<P>
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

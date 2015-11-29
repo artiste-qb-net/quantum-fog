@@ -1,0 +1,61 @@
+<HTML>
+<HEAD>
+  <TITLE>Windows Menu</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Windows Menu<IMG ALIGN="Middle" SRC="menu,active_project.gif" >
+</H1>
+<P>
+<P>
+With Quantum Fog, you can have several <B>Main Window</B>s open at the same
+time, each displaying a different net.
+<P>
+For each <B>Main Window</B> that is open, you can open additional
+<I>satellite</I>&nbsp;windows. A satellite window (like, for example, the
+<B>Node Prior-Info.</B> window) shows data that pertains to the <B>Main
+Window</B> that owns it.
+<P>
+A <B>Main Window</B> together with its satellite windows is called a
+<I>project</I>. A project is given the same name as its <B>Main Window</B>.
+<P>
+All projects use the same <B>Palette</B>. One can therefore think of the
+<B>Palette</B> as being JOINTLY owned by all projects. 
+<P>
+Occasionally, you may want two satellite windows of the same type but belonging
+to different projects to be open at the same time. For example, you could
+open two <B>Main Window</B>s called "QFog-1" and "QFog-2", and then you could
+open the <B>Node Prior-Info.</B> window for QFog-1 and the <B>Node
+Prior-Info.</B> window for QFog-2. To prevent confusion in such situations,
+satellite windows exhibit a small caption with the word "Project:", followed
+by the name of their project. For example, the <B>Node Prior-Info.</B> window
+for QFog-1 exhibits the caption: "Project: QFog-1".
+<P>
+The project that owns the currently active window is called the <I>active
+project</I>.
+<P>
+If you select the <B>Active Project</B> item of the <B>Windows</B> menu,
+you get a list of all currently <U>open</U> projects. The name of the currently
+<U>active</U> project is preceded by a check mark. If, in this list, you
+select the name of any project, that project becomes the active project and
+its <B>Main Window</B> is selected.
+<P>
+In the <B>Windows </B>menu, all menu items except the first 3 (<B>Active
+Project:, Open Main Window</B>, and <B>Open Palette)</B>, refer to satellite
+windows owned by the <U>active</U> project. 
+<UL>
+  <LI>
+    If satellite window W of active project X is closed, its name in the
+    <B>Windows</B> menu is prefaced by the word "Open". Choosing menu item <B>Open
+    W</B> opens W of project X.
+  <LI>
+    If satellite window W of active project X is already open, its name in the
+    <B>Windows</B> menu is prefaced by the word "SELECT". Choosing menu item
+    <B>SELECT W</B> selects W of project X.
+</UL>
+<P>
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

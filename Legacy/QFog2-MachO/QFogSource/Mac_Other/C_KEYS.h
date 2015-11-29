@@ -1,0 +1,1 @@
+#pragma onceclass C_KEYS{public:	static 	BOOLEAN		KeyIsDown( SHORT theKeyCode);	static EKeyStatus	my_PrintingCharField(								TEHandle	inMacTEH,								UInt16		inKeyCode,								UInt16		&ioCharCode,								EventModifiers		inModifiers);};

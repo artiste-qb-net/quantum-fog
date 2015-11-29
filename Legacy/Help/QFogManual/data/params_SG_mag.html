@@ -1,0 +1,76 @@
+<HTML>
+<HEAD>
+  <TITLE>Parameters Of Stern-Gerlach Magnet</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Parameters Of Stern-Gerlach Magnet
+</H1>
+<P>
+<IMG ALIGN="Middle" SRC="params_SG_mag.gif" >
+<P>
+<P>
+This window opens if you press the <B>Generate Amplitudes...</B> button of
+the <B>Node Prior-Info.</B> window when its focus node is a valid Stern-Gerlach
+magnet. The window allows you to specify certain parameters that characterize
+a Stern-Gerlach Magnet.
+<P>
+We define type 1 and type 2 nodes as follows:
+<DL>
+  <DT>
+    <I>type 1</I>&nbsp;
+  <DD>
+    A node that can assume two states named "0" and "1". Here 0 and 1 refer to
+    the number of particles (spin 1/2 fermions) in the state.
+  <DT>
+    <I>type 2</I>&nbsp;
+  <DD>
+    A node that can assume three states named "(0,0)", "(0,1)", and "(1,0)".
+    The first component refers to the number of spin - particles in the state,
+    and the second to the number of spin + particles in the state. For example,
+    (1,0) represents a state with one spin - particle.
+</DL>
+<P>
+(Mnemonic: type 1 has 1 component, type 2 has 2 components).
+<P>
+Even if the focus node is a Stern-Gerlach Magnet, when you press the
+<B>Generate Amplitudes...</B> button, the computer will refuse to open the
+above window unless each parent node is of either type 1 or type 2.
+<P>
+Quantum Fog gives names of type 2 to the states of the Stern-Gerlach magnet.
+<P>
+  <HR>
+<H3> Quantization Direction of Output</H3>
+<P>
+The output of a Stern-Gerlach magnet is quantized along the direction of
+its magnetic field. The <B>Quantization Direction of Output </B> box contains
+2 editable fields. You must enter into them the polar coordinates theta and
+phi that specify the magnetic field's direction.
+<P>
+  <HR>
+<H3> Quantization Directions of Inputs</H3>
+<P>
+The <B>Quantization Directions of Inputs</B> box contains a table. The first
+column of the table lists the names of the parent nodes of the focus node.
+The cells of the first column cannot be edited directly by the user.
+<P>
+The second column of the table gives the spin of the parent nodes. The computer
+determines the type (either 1 or 2) of each parent node. It then writes the
+symbol "-" inside spin cells of type 1 nodes and the symbol "- +" inside
+spin cells of type 2 nodes. Clicking on the spin cell of a type 1 parent
+node toggles the spin between + and -. Clicking on the spin cell of a type
+2 parent node does nothing.
+<P>
+The cells of the last two columns can be edited directly by the user. You
+must enter into them the polar coordinates that specify the quantization
+direction of each parent node.
+<P>
+  <HR>
+More information about Stern-Gerlach magnets can be found in the document
+entitled "Quantum Fog Library Of Essays" that accompanies this manual.
+<P>
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

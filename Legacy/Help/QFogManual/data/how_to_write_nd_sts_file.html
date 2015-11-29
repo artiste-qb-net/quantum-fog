@@ -1,0 +1,61 @@
+<HTML>
+<HEAD>
+  <TITLE>How To Write A Names Of Node States File</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY >
+<H1>
+  How To Write A Names Of Node States File
+</H1>
+<P>
+<BR>
+A names of node states file (names file) is a TEXT file listing the names
+of all the states of one or more nodes of a net.
+<P>
+As an example, consider a file called <CODE>my_node_states.txt</CODE>, that
+contains the following:
+<P>
+<IMG ALIGN="Middle" SRC="example,nd_sts_file.gif" >
+<P>
+This names file refers to a net with 3 or more nodes. Three of the nodes
+of the net are: node A with states a1 and a2, node B with states b1 and b2,
+and node C with states c1 and c2.
+<BLOCKQUOTE>
+  <IMG BORDER="0" SRC="drum.gif" ><B>Pressing <B>Export/Names Of Node
+  States...</B> in the <B>File</B> menu will produce a file that follows the
+  format rules for a Quantum Fog names file. If no nodes are selected in the
+  <B>Main Window</B>, the file will contain the state names of all the nodes
+  of the net. If some nodes are selected, the file will contain the state names
+  of only those nodes which are selected.</B>
+</BLOCKQUOTE>
+<P>
+Next we will state the general rules that one must follow in writing a names
+file for Quantum Fog. Some of the terminology used below is defined in the
+section entitled "Terminology-Alphabetic".
+<P>
+General Rules:
+<UL>
+  <LI>
+    Everything from the beginning of the file up to the first hash character
+    will be ignored. Hence, you may include a header in the file, as long as
+    the header does not include any hash characters.
+  <LI>
+    You must include for each node whose state names you wish to specify:
+    <UL>
+      <LI>
+	A first line consisting of: [hash symbol] [white-spaces] [RETURN].
+      <LI>
+	A second line consisting of: [node name] [white-spaces] [RETURN] The node
+	name must be a Quantum Fog allowed name. It must already be the name of a
+	node appearing in the <B>Main Window</B>.
+      <LI>
+	For each state of the node, a line consisting of: [state name] [white-spaces]
+	[RETURN]. The state name must be a Quantum Fog allowed name.
+    </UL>
+</UL>
+<P>
+The order in which node names and state names are enumerated does not matter.
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

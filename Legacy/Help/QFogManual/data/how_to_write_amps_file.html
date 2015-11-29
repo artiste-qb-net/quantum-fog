@@ -1,0 +1,111 @@
+<HTML>
+<HEAD>
+  <TITLE>How To Write An Amplitudes Files</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY >
+<H1>
+  How To Write An Amplitudes File
+</H1>
+<P>
+<BR>
+An amplitudes file (amps file) is a TEXT file listing the transition matrices
+of one or more nodes of a net. Using an amps file is recommended if you wish
+to write a separate computer program, an amplitude generator, to calculate
+the transition matrix of a Custom Node. If so, you should make the amplitude
+generator write its results in the format described below, the format of
+a Quantum Fog amps file. Then you should load the amps file into a Quantum
+Fog project using the <B>Import/Amplitudes...</B> item of the <B>Edit</B>
+menu.
+<P>
+As an example, consider a file called <CODE>my_amps.txt</CODE>, that contains
+the following:
+<P>
+<IMG ALIGN="Middle" SRC="example,amps_file.gif" >
+<P>
+This amps file refers to a net with 3 or more nodes. Three of the nodes of
+the net are: node A with states a1 and a2, node B with states b1 and b2,
+and node C with states c1 and c2.
+<P>
+The specification of each transition matrix starts with a hash character.
+The first line after the hash character is the name of the node whose transition
+matrix follows in the amps file. The example above specifies the transition
+matrix of nodes A and C.
+<UL>
+  <LI>
+    Node A is a root node. The amplitudes of its two states a1 and a2 are,
+    respectively, 0.707107 + i*0 and 0 + i*0.707107.
+  <LI>
+    Node C has four input states: (B, A) = (b1, a1), (b2, a1), (b1, a2) and (b2,
+    a2).
+    <UL>
+      <LI>
+	For the input state (B, A) = (b1, a1), the amplitudes of the two states c1
+	and c2 of C, are, respectively, 1 + 0i and 0 + 0i.
+      <LI>
+	For the input state (B, A) = (b2, a1), the amplitudes of the two states c1
+	and c2 of C are, respectively, 0 + 0i and 1 + 0i.
+      <LI>
+	For the input state (B, A) = (b1, a2), the amplitudes of the two states c1
+	and c2 of C are, respectively, 0 + 1i and 0 + 0i.
+      <LI>
+	For the input state (B, A) = (b2, a2), the amplitudes of the two states c1
+	and c2 of C are, respectively, .707 + 0i and .707 + 0i.
+    </UL>
+</UL>
+<BLOCKQUOTE>
+  Suppose that in the above amps file, you erase the 4 lines concerning the
+  input state (B, A) = (b1, a2) of node C. Quantum Fog will interpret this
+  omission to mean that: For the input state (B, A) = (b1, a2), the amplitudes
+  of the two states c1 and c2 of C are both zero. In general, if you import
+  an amps file which lists the transition matrix of a node C but which omits
+  some input states of C, then Quantum Fog will set to zero the amplitudes
+  of all states of C for the omitted input states.
+  <P>
+  <IMG BORDER="0" SRC="drum.gif" ><B>Pressing <B>Export/Amplitudes...</B> in
+  the <B>File</B> menu will produce a file that follows the format rules for
+  a Quantum Fog amps file. If no nodes are selected in the <B>Main Window</B>,
+  the file will contain the transition matrices of all the nodes of the net.
+  If some nodes are selected, the file will contain the transition matrices
+  of only those nodes that are selected. So if you want more examples of amps
+  files, you can ask Quantum Fog to generate some for you.</B>
+</BLOCKQUOTE>
+<P>
+Next we will state the general rules that one must follow in writing an amps
+file for Quantum Fog. Some of the terminology used below is defined in the
+section entitled "Terminology-Alphabetic".
+<P>
+General Rules:
+<UL>
+  <LI>
+    Everything from the beginning of the file up to the first hash character
+    will be ignored. Hence, you may include a header in the file, as long as
+    the header does not include any hash characters.
+  <LI>
+    You must include for each node whose transition matrix you wish to specify:
+    <UL>
+      <LI>
+	A first line consisting of: [hash symbol] [white-spaces] [RETURN].
+      <LI>
+	A second line consisting of: [node name] [white-spaces] [RETURN].
+      <LI>
+	For each input state of the node (except for those input states that you
+	wish to omit as explained above):
+	<UL>
+	  <LI>
+	    For each parent of the node, a line consisting of: [name of parent node]
+	    [white-spaces] [name of state of parent node] [white-spaces] [RETURN].
+	  <LI>
+	    For each state of the node, a line consisting of: [name of state] [white-spaces]
+	    [real part of amplitude for the state] [white-spaces] [imaginary part of
+	    amplitude for the state] [white-spaces] [RETURN].
+	</UL>
+    </UL>
+</UL>
+<P>
+The order in which node names, input states, parent names and node state
+names are enumerated does not matter. 
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

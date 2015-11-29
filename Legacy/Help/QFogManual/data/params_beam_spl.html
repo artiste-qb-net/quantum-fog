@@ -1,0 +1,84 @@
+<HTML>
+<HEAD>
+<link rel="stylesheet" type="text/css" href="QFog.css" />
+  <TITLE>Parameters Of Beam-Splitter</TITLE>
+</HEAD>
+<BODY>
+<H1>
+  Parameters Of Beam-Splitter
+</H1>
+<P>
+<IMG ALIGN="Middle" SRC="params_beam_spl.gif" >
+<P>
+<BR>
+This window opens if you press the <B>Generate Amplitudes...</B> button of
+the <B>Node Prior-Info.</B> window when its focus node is a valid Beam-Splitter.
+The window allows you to specify certain parameters that characterize a
+beam-splitter.
+<P>
+Even if the focus node is a beam-splitter, when you press the <B>Generate
+Amplitudes...</B> button, the computer will refuse to open the above window
+unless:
+<UL>
+  <LI>
+    the focus node has exactly two parent nodes,
+  <LI>
+    Both parent nodes are scalar-field nodes OR both parent nodes are vector-field
+    nodes.
+</UL>
+<P>
+In the scalar-field case, M<SUB>2</SUB>, M<SUB>1</SUB>, N<SUB>1</SUB> and
+N<SUB>2 </SUB>are the numbers of photons that pass through the two incoming
+and the two outgoing ports. Quantum Fog gives names of the form
+(N<SUB>1</SUB>,N<SUB>2</SUB>) to the states of the beam-splitter.
+<P>
+In the vector-field case, M<SUB>2</SUB>, M<SUB>1</SUB>, N<SUB>1</SUB> and
+N<SUB>2 </SUB>&nbsp;also correspond in a 1-1 fashion to the incoming and
+outgoing ports, but instead of being non-negative integers, they
+are&nbsp;2-component vectors. For example, M<SUB>1</SUB> = (M<SUB>1x</SUB>,
+M<SUB>1y</SUB>), where M<SUB>1x</SUB> and&nbsp;M<SUB>1y</SUB> are non-negative
+integers. Quantum Fog gives names of the form ((N<SUB>1x</SUB>,
+N<SUB>1y</SUB>), (N<SUB>2x</SUB>, N<SUB>2y</SUB>)) to the states of the
+beam-splitter.
+<P>
+<I>t</I>&nbsp; and <I>r</I>&nbsp; , satisfying |<I>t</I>&nbsp; |<SUP>2</SUP>
++ |<I>r</I>&nbsp; |<SUP>2</SUP> = 1, are the complex transmission and reflection
+coefficients of the beam-splitter. You must enter into the first 3 editable
+boxes the magnitude squared of <I>t</I>&nbsp; , phase of <I>t</I>&nbsp; and
+phase of <I>r</I>&nbsp; . These 3 parameters completely specify the complex
+numbers <I>t</I>&nbsp; and <I>r</I>&nbsp; .
+<P>
+Consider the scalar-field case. Frequently, nets which contain a beam-splitter
+node are such that we know what is the maximum number of photons that will
+ever enter the beam-splitter. For example, suppose that&nbsp;a net starts
+with 2 photons in its root nodes, and that for one of the input states
+(M<SUB>1</SUB>, M<SUB>2</SUB>) of the beam-splitter, M<SUB>1</SUB> +
+M<SUB>2</SUB> = 3. Then the list of states of the beam-splitter node would
+be forced to include all states with N<SUB>1</SUB> + N<SUB>2</SUB> = 3. Or
+would it? Clearly, such states would never occur in any of the possible stories
+of the net. So if we were to exclude such states from the list of states
+of the beam-splitter node, the physical predictions of the net (that is,
+the results reported in the <B>Node Probs.</B>, <B>Bi-node Probs.</B> and
+<B>Stories</B> windows) would still be valid. That's where the <B>Max. Output
+Number </B>editable field comes in. Quantum Fog lists those and only those
+states (N<SUB>1</SUB>, N<SUB>2</SUB>) for which N<SUB>1</SUB> + N<SUB>2</SUB>
+is smaller or equal to the value specified in the <B>Max. Output Number</B>
+box. In our example, we could set the <B>Max. Output Number</B> to 2 and
+thus exclude states with N<SUB>1</SUB> + N<SUB>2</SUB> = 3. Of course, excluding
+some states would cause the <B>Total Probability</B> button of the <B>Node
+Prior-Info.</B> window to give a result different from 1. But the physical
+predictions of the net would not change, and we would save memory by excluding
+unused baggage from the transition matrix.
+<P>
+In the vector-field case, Quantum Fog lists those and only those states
+((N<SUB>1x</SUB>, N<SUB>1y</SUB>), (N<SUB>2x</SUB>, N<SUB>2y</SUB>)) for
+which N<SUB>1x</SUB> + N<SUB>1y</SUB>+ N<SUB>2x</SUB>+ N<SUB>2y</SUB> is
+smaller or equal to the value specified in the <B>Max. Output Number </B>box.
+<P>
+More information about Beam-Splitters can be found in the document entitled
+"Quantum Fog Library Of Essays" that accompanies this manual.
+<P>
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

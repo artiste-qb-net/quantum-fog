@@ -1,0 +1,275 @@
+<HTML>
+<HEAD>
+  <TITLE>Terminology-Crescendo</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Terminology-Crescendo
+</H1>
+<P>
+This section defines some terms and notation that will be&nbsp;used freely
+in later sections. The list of definitions given below is ordered so that
+each definition only uses terms that have been defined in previous definitions.
+<P>
+<DL>
+  <DT>
+    <A NAME="ditto"><I>ditto</I>&nbsp; </A>
+  <DD>
+    Throughout this manual, when we say "...X1 (ditto, X2)...", we mean that
+    everything we said about X1 applies also to X2.&nbsp;
+  <DT>
+    <A NAME="node"><I>node</I>&nbsp; </A>
+  <DD>
+    A bounded shape.
+  <DT>
+    <A NAME="arrow"><I>arrow (edge)</I>&nbsp; </A>
+  <DD>
+    A directed line.
+  <DT>
+    <A NAME="bi-node"><I>bi-node</I>&nbsp; </A>
+  <DD>
+    Two separate nodes.
+  <DT>
+    <A NAME="internal_arrow"><I>internal arrow</I>&nbsp; </A>
+  <DD>
+    An arrow that connects two nodes.
+  <DT>
+    <A NAME="external_arrow"> <I>external arrow</I>&nbsp; </A>
+  <DD>
+    An arrow that exits a node, but does not enter another node. These arrows
+    are NOT draw by Quantum Fog, but it is occasionally useful to speak of them.
+    See Ref. <A HREF="refs.html#Tuc95" >[Tuc95]</A> if interested.
+    A net is considered the same, whether its external arrows are drawn or not.
+  <DT>
+    <A NAME="internal_node"> <I>internal node</I>&nbsp; </A>
+  <DD>
+    A node that has one or more outgoing internal arrows.
+  <DT>
+    <A NAME="external_node"> <I>external node</I>&nbsp; </A>
+  <DD>
+    A node that has no outgoing internal arrows.
+  <DT>
+    <A NAME="graph"> <I>graph</I>&nbsp; </A>
+  <DD>
+    A collection of nodes and arrows. In this manual, the arrows of our graphs
+    are all internal ones.
+  <DT>
+    <A NAME="labeled_graph"> <I>labeled graph</I>&nbsp; </A>
+  <DD>
+    A graph in which each node has been assigned a name (label).
+  <DT>
+    <A NAME="cycle"> <I>cycle</I>&nbsp; </A>
+  <DD>
+    A closed path of arrows within a graph, with the arrows in the path all pointing
+    either clockwise or counter-clockwise.
+  <DT>
+    <A NAME="acyclic_graph"> <I>acyclic graph</I>&nbsp; </A>
+  <DD>
+    A graph that contains no cycles.
+  <DT>
+    <A NAME="root_node"> <I>root node</I>&nbsp; </A>
+  <DD>
+    A node with no incoming internal arrows. It corresponds to a "wave-function"
+    in Quantum Mechanics.
+  <DT>
+    <A NAME="parent_node"> <I>parent nodes of node X</I>&nbsp; </A>
+  <DD>
+    Nodes connected to X by arrows that enter X.
+  <DT>
+    <A NAME="state_of_a_node"> <I>state of node X</I>&nbsp; </A>
+  <DD>
+    A state that X may assume.
+  <DT>
+    <A NAME="state_set"> <I>state set of node X</I>&nbsp; </A>
+  <DD>
+    The set of states that X may assume.
+  <DT>
+    <A NAME="degeneracy"> <I>degeneracy of node X</I>&nbsp; </A>
+  <DD>
+    The number of states that X may assume.
+  <DT>
+    <A NAME="input_state"> <I>input state (parent state) of node X</I>&nbsp;
+    </A>
+  <DD>
+    An assignment of a state to each of the parent nodes of node X.
+  <DT>
+    <A NAME="node_matrix"> <I>node matrix (transition matrix)</I>&nbsp; </A>
+  <DD>
+    A matrix assigned to a single node. The rows of the matrix are labeled by
+    the states of the node and the columns by its input states.
+  <DT>
+    <A NAME="net"> <I>net (network)</I>&nbsp; </A>
+  <DD>
+    As in Ref. <A HREF="refs.html#Tuc95" >[Tuc95]</A>, we define
+    a net to be an abstract construct comprising a graph and a node matrix for
+    each node of the graph. The graph is labeled and acyclic. We define a
+    <I>Classical Bayesian net</I>&nbsp; to be a net of the type used in
+    Refs.<A HREF="refs.html" >1-3</A>&nbsp;&mdash;a net such that
+    the entries of its node matrices are non-negative real numbers. We define
+    a <I>Quantum Bayesian net</I>&nbsp; to be a net of the type used in
+    Ref.<A HREF="refs.html#Tuc95" >[Tuc95]</A>&mdash; a net such that
+    the entries of its node matrices are complex numbers. In this manual, unless
+    stated otherwise, when we speak simply of a net, we mean a Quantum Bayesian
+    one.
+  <DT>
+    <A NAME="node_amplitude"> <I>node amplitude (transition amplitude)</I>&nbsp;
+    &nbsp;</A>
+  <DD>
+    An entry of a node matrix of a Quantum Bayesian net.
+  <DT>
+    <A NAME="story"> <I>story (graph instantiation)</I> </A>
+  <DD>
+    An assignment of a state to each node of the graph. Stories correspond to
+    what the Quantum Mechanics literature calls Feynman paths. Unlike the term
+    "story", the term "path" feels awkward to us when speaking about a system
+    of more than one particle. Whenever possible, we will use the term "story
+    " instead of "path".
+  <DT>
+    <A NAME="ending"> <I>ending</I>&nbsp; </A>
+  <DD>
+    An assignment of a state to each of the external nodes of a graph. An ending
+    is part of a story.
+  <DT>
+    <I><A NAME="conditional_probability">conditional probability P(H|E)</A></I>
+  <DD>
+    The probability that H occurs, <I>conditioned on</I> &nbsp;the fact (i.e.,
+    assuming that) E occurs. H is often called the hypothesis and E the evidence
+    or condition or data.
+  <DT>
+    <A NAME="active_state"> <I>active state</I>&nbsp; </A>
+  <DD>
+    A state is active in a physical experiment if the experimenter has determined
+    by prior measurement (or can determine if he tries) that the state can occur
+    during the experiment. Quantum Fog calculates conditional probability
+    distributions for nodes and bi-nodes, the evidence for the conditional
+    probabilities being which states of each node are active.
+  <DT>
+    <A NAME="active_state_list"> <I>active state list (set) of node X</I>&nbsp;
+    &nbsp;</A>
+  <DD>
+    The set of states of node X that are active.
+  <DT>
+    <A NAME="default_active_state_list"> <I>default active state list</I>&nbsp;
+    &nbsp;</A>
+  <DD>
+    An active state list that is as full as possible&mdash;it contains ALL the states
+    of the node.
+  <DT>
+    <A NAME="e-case"> <I>evidence case (e-case)</I>&nbsp; </A>
+  <DD>
+    An assignment of an active state set to each node of the graph.
+  <DT>
+    <A NAME="story_amplitude"> <I>story amplitude (net amplitude)</I>&nbsp; </A>
+  <DD>
+    A story 's amplitude is calculated as follows. A story determines a unique
+    transition amplitude A<SUB>i</SUB> for each node. How? For the i'th&nbsp;node,
+    choose as A<SUB>i</SUB> the element of its transition matrix with (row, column)
+    = (its state, its input state). Only one such row-column pair is consistent
+    with the story. The story amplitude is defined as the product
+    A<SUB>1</SUB>*A<SUB>2</SUB>*...A<SUB>N</SUB>, where N is the number of nodes.
+  <DT>
+    <A NAME="possible_story"> <I>possible story</I>&nbsp; </A>
+  <DD>
+    A story that assigns active states to all nodes of the graph, and that has
+    a non-zero amplitude.
+  <DT>
+    <A NAME="feynman_integral"> <I>Feynman Integral</I>&nbsp; </A>
+  <DD>
+    The Feynman Integral FI(e) for the ending e is the sum of the complex amplitudes
+    of all possible stories with ending e. In general, FI(e) depends on which
+    states of each node are active.
+  <DT>
+    <A NAME="total_prob"> <I>total probability of all stories</I>&nbsp; </A>
+  <DD>
+    The sum over all e of |FI(e)|<SUP>2</SUP>, assuming that all node states
+    are active, where FI(e) is the Feynman Integral corresponding to the ending
+    e. This probability should be 1.
+  <DT>
+    <A NAME="det_node"> <I>deterministic node</I>&nbsp; </A>
+  <DD>
+    A node for which the input state uniquely determines the state of the node.
+    For each input state, only one state of the node has a non-zero amplitude.
+  <DT>
+    <I><A NAME="entropy">entropy</A></I>&nbsp;
+  <DD>
+    Given a classical probability distribution p<SUB>1</SUB>, p<SUB>2</SUB>,
+    ..., p<SUB>D</SUB>, its Entropy S is the following number :
+    <P>
+    <P>
+    S = -[p<SUB>1</SUB> log<SUB>2</SUB>(p<SUB>1</SUB>) &nbsp; + p<SUB>2</SUB>
+    log<SUB>2</SUB>(p<SUB>2</SUB>) + ... + p<SUB>D</SUB>
+    log<SUB>2</SUB>(p<SUB>D</SUB>)].
+    <P>
+    <P>
+    For example, if all p<SUB>i</SUB> are equal to 1/D, this gives
+    S=log<SUB>2</SUB>(D). D is the number of states or degeneracy of the
+    distribution. If D = 2<SUP>B</SUP> (B is referred to as the number of bits),
+    then S = B.
+    <P>
+    <P>
+    As another example, suppose that one p<SUB>i</SUB> equals one and all others
+    equal zero. Then, S=0 (because log1=0, &nbsp;and xlog(x) tends to 0 as x
+    tends to 0 with x&gt;0.)
+    <P>
+    <P>
+    In general, one can show that 0&lt;= S &lt;= log<SUB>2</SUB>(D) so the two
+    examples just given represent the two extremes.
+    <P>
+    <P>
+    You can think of S as measuring the spread (dispersion) of the distribution.
+  <DT>
+    <A NAME="text_file"><I>TEXT file</I>&nbsp; </A>
+  <DD>
+    A data file in a special format. Most word processors and spreadsheets allow
+    you to save a file in this format. We recommend that you use TextWrangler,
+    a free application, to deal with all TEXT files associated with Quantum
+    Fog.&nbsp;
+  <DT>
+  <DD>
+    Quantum Fog uses&nbsp;TEXT files for both reading and writing data; specifically,
+    it reads and writes TEXT files with UNIX line endings (TextWrangler allows
+    you to save TEXT files with either UNIX, Mac Classic, or Windows line endings).
+  <DT>
+  <DD>
+    TEXT files generated by Quantum Fog should be viewed in a fixed-width font
+    like Monaco or Courier. Otherwise, columns will not line up properly.
+    Alternatively, you can open the file with a spreadsheet application. This
+    way, you can use the powerful features of the spreadsheet to manipulate the
+    data. When reading a TEXT file, spreadsheets will jump to the cell in the
+    next column and the same row when they see a tab, and to the first cell in
+    the next row when they see an end-of-line. TEXT files created by Quantum
+    Fog are formatted with this convention in mind.
+  <DT>
+    <A NAME="white_space"><I>white-space</I>&nbsp; </A>
+  <DD>
+    Result of pressing the space-bar, RETURN or TAB keys.
+  <DT>
+    <A NAME="description"> <I>[description of something]</I>&nbsp; </A>
+  <DD>
+    A symbol that should be replaced by whatever is described inside the square
+    brackets. In particular, <I>[white-spaces]</I>&nbsp; means one or more
+    white-spaces.
+  <DT>
+    <A NAME="Quantum_Fog_name"><I>Quantum Fog allowed name</I>&nbsp; </A>
+  <DD>
+    A string of no more than 31 characters and such that none of those characters
+    is the hash character (#) or a white-space.
+</DL>
+<P>
+  <HR>
+<P>
+<H3>What Next...</H3>
+<P>
+Some of the above definitions may not make sense to you the first time you
+read them. Don't worry. You'll understand them better as you learn more about
+Quantum Fog.
+<P>
+Congratulations! You've just endured one of the hardest parts of this manual.
+And now for a fun part.
+<P>
+We suggest that next you read the section entitled "Quick Tour". 
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

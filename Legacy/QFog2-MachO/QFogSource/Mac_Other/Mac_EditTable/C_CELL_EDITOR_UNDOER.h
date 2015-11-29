@@ -1,0 +1,1 @@
+#pragma once#include  "C_CELL_EDITOR.h"//******************************************class	C_CELL_EDITOR_UNDOER : public LUndoer{protected:	C_CELL_EDITOR  * 	its_editor_p;public:	C_CELL_EDITOR_UNDOER(C_CELL_EDITOR  * editor_p);	virtual   ~C_CELL_EDITOR_UNDOER();	VOID	ExecuteSelf(MessageT  inMessage, VOID  * ioParam);		};

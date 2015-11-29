@@ -1,0 +1,1 @@
+#include "C_COLORS.h"//******************************************//{red, green, blue}const	RGBColor	C_COLORS::its_black			=	{0		, 0		, 0		};const	RGBColor	C_COLORS::its_white			=	{0xFFFF	, 0xFFFF, 0xFFFF};const	RGBColor	C_COLORS::its_red			=	{0xFFFF	, 0		, 0		};const	RGBColor	C_COLORS::its_yellow		=	{0xFC00	, 0xF37D, 0x052F};//{64512, 62333, 13270}

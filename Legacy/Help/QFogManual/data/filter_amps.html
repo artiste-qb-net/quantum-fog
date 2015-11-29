@@ -1,0 +1,44 @@
+<HTML>
+<HEAD>
+  <TITLE>Prune Node Amplitudes...</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Prune Node
+  Amplitudes...<IMG ALIGN="Middle" SRC="menu,edit.gif" WIDTH="227" HEIGHT="302">
+</H1>
+<P>
+<BR>
+<IMG BORDER="0" SRC="drum.gif" ><B>Quantum Fog does NOT spend any memory
+in saving transition amplitudes that equal zero. (By a zero amplitude we
+really mean one whose magnitude is smaller than 10<SUP>-12</SUP>). Thus,
+a 1000 &#215; 2000 transition matrix (for a node with 1000 states and 2000
+input states) with a single non-zero entry occupies the same amount of memory
+as a 1 &#215; 1 non-zero transition matrix.</B>
+<P>
+It is possible to encounter situations in which the transition matrix of
+a node has so many columns or rows that there isn't enough memory to store
+it. If only a minority of the entries of such a matrix have a large magnitude,
+and the rest have a small one, one may wish to filter out those entries that
+have a small magnitude; that is, to replace them by zero so as to save memory.
+<P>
+Define GAP to be the smallest |A|, where A ranges over all <I>non-zero</I>
+node amplitudes of every node of the graph. When you choose <B>Prune Node
+Amplitudes...</B> from the <B>Prepare</B> menu, Quantum Fog first calculates
+GAP. It then opens the following window:
+<P>
+<IMG ALIGN="Middle" SRC="amps_filter.gif" >
+<P>
+<P>
+This window displays the current value of GAP (rounded to the nearest power
+of ten). Suppose you enter a number N in the shaded box to the right of the
+words "I wish gap to be". If next you press the <B>OK</B> button, Quantum
+Fog replaces by zero any amplitude whose magnitude is smaller than
+10<SUP>-N</SUP>. Obviously, this has no effect if 10<SUP>-N</SUP> is smaller
+than the initial GAP. This operation CAN'T BE UNDONE, so you better save
+a duplicate copy of your file before trying this.<BR CLEAR="all">
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

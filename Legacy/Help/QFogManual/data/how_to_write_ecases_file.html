@@ -1,0 +1,66 @@
+<HTML>
+<HEAD>
+  <TITLE>How To Write An E-Cases Files</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  How To Write An E-Cases File
+</H1>
+<P>
+An e-cases file is a TEXT file listing several e-cases. Using an e-cases
+file is recommended if you wish to study many e-cases of the same net.
+<P>
+As an example, consider a file called <CODE>my_Ecases.txt</CODE>, that contains
+the following:
+<P>
+<IMG ALIGN="Middle" SRC="example,e_cases_file.gif" > <BR>
+<P>
+In this example, 3 e-cases are given.
+<UL>
+  <LI>
+    For the first e-case, called "case_1", all nodes of the graph have a default
+    active state list.
+  <LI>
+    For the second e-case, called "case_2", all nodes of the graph have a default
+    active state list except for the node called "month". All the states of "month"
+    are inactive except for the states called "april" and "may" .
+  <LI>
+    For the third e-case, called "case_3", all nodes of the graph have a default
+    active state list except for the nodes called "month" and "day". All the
+    states of "month" are inactive except for the states called "april", "may"
+    and "august". All the states of "day" are inactive except for the states
+    called "monday" and "tuesday" .
+</UL>
+<P>
+Next we will state the general rules that one must follow in writing an e-cases
+file for Quantum Fog. Some of the terminology used below is defined in the
+section entitled "Terminology-Alphabetic".
+<P>
+General Rules:
+<UL>
+  <LI>
+    Everything from the beginning of the file up to the first hash character
+    will be ignored. Hence, you may include a header in the file, as long as
+    the header does not include any hash characters.
+  <LI>
+    You must include for each e-case:
+    <UL>
+      <LI>
+	A first line consisting of: [hash symbol] [white-spaces] [RETURN].
+      <LI>
+	A second line consisting of: [e-case name] [white-spaces] [RETURN] The e-case
+	name must be a Quantum Fog allowed name.
+      <LI>
+	For each node that doesn't have a default active state list, a line consisting
+	of: [node name] [white-spaces] [name of active state] [white-spaces] [name
+	of another active state] [white-spaces] [name of another active
+	state]...[white-spaces] [RETURN].
+    </UL>
+</UL>
+<P>
+The order in which node names, and state names are enumerated does not matter.
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

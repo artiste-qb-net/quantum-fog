@@ -1,0 +1,92 @@
+<HTML>
+<HEAD>
+  <TITLE>Parameters Of Controlled-Not</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Parameters Of Controlled-Not
+</H1>
+<P>
+<IMG ALIGN="Middle" SRC="det_wind_cnot.gif" >
+<P>
+When you press the <B>OK</B> button in this window, the computer checks that
+<UL>
+  <LI>
+    the focus node has precisely two parents,
+  <LI>
+    each parent has precisely 2 states, 0 and 1, in that order.
+</UL>
+<P>
+If these conditions are satisfied, the above window closes. Furthermore,
+the states and amplitudes stored in memory for the focus node are changed.
+If the conditions are not satisfied, the above window remains open, the states
+and amplitudes are not changed, and a warning message appears on the screen.
+<P>
+  <HR>
+<P>
+Consider, for example, what will happen if the above window is closed with
+the above settings:
+<P>
+Suppose M<SUB>1</SUB>, M<SUB>2</SUB>, N<SUB>1</SUB>, N<SUB>2</SUB> are elements
+of {0,1}. The Parent Nodes table<B> </B>of the <B>Node Prior-Info</B> window
+will display the two parent nodes in a certain order. Say M<SUB>1</SUB> is
+the state of the first parent P<SUB>1</SUB>, and M<SUB>2</SUB> is the state
+of the second parent P<SUB>2</SUB>. Define (N<SUB>1</SUB>, N<SUB>2</SUB>)
+in terms of M<SUB>1</SUB> and M<SUB>2</SUB> as follows.
+<TABLE BORDER CELLPADDING="2">
+  <TR>
+    <TD>M<SUB>1</SUB></TD>
+    <TD>M<SUB>2</SUB></TD>
+    <TD>(N<SUB>1</SUB>,N<SUB>2</SUB>)</TD>
+  </TR>
+  <TR>
+    <TD>0</TD>
+    <TD>0</TD>
+    <TD>(0,0)</TD>
+  </TR>
+  <TR>
+    <TD>0</TD>
+    <TD>1</TD>
+    <TD>(0,1)</TD>
+  </TR>
+  <TR>
+    <TD>1</TD>
+    <TD>0</TD>
+    <TD>(1,1)</TD>
+  </TR>
+  <TR>
+    <TD>1</TD>
+    <TD>1</TD>
+    <TD>(1,0)</TD>
+  </TR>
+</TABLE>
+<P>
+This table may be described by saying that
+<UL>
+  <LI>
+    N<SUB>1</SUB> = M<SUB>1</SUB> &nbsp;and M<SUB>2</SUB> is transformed into
+    N<SUB>2</SUB> ,
+  <LI>
+    P<SUB>1</SUB> (the "control" bit) causes P<SUB>2</SUB> (the "target" bit)
+    to flip (i.e., to change from 0 to 1 or vice versa) whenever M<SUB>1</SUB>
+    is 1, and
+  <LI>
+    P<SUB>1</SUB> has no effect on P<SUB>2</SUB> whenever M<SUB>1</SUB> is 0.
+</UL>
+<P>
+Quantum Fog gives names N<SUB>1</SUB>N<SUB>2</SUB> (i.e., 00, 01, 10 and
+11) to the states of the Controlled-Not. When the states M<SUB>1</SUB> and
+M<SUB>2</SUB> are given by a particular row of the above table, Quantum Fog
+assigns unit amplitude to the state N<SUB>1</SUB>N<SUB>2</SUB> shown in that
+row, and it assigns zero amplitude to all the other states.
+<P>
+  <HR>
+<P>
+More information about Controlled-Nots can be found in the document entitled
+"Quantum Fog Library Of Essays" that accompanies this manual.
+<P>
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

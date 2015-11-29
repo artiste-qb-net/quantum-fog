@@ -1,0 +1,1 @@
+#pragma once#include "QFog_constants.h"//******************************************class	C_ICON_TABLE : public LTable{protected:public:	C_ICON_TABLE(LStream *	inStream);	VOID  	DrawCell( const TableCellT   & in_cell);	VOID 	SelectCell(const TableCellT  & in_cell);		};

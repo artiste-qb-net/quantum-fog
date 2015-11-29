@@ -1,0 +1,1 @@
+#include "VECTOR.cp"#include "NODE.h"#include "STRINGY.h"template class VECTOR<USHORT>;template class VECTOR<COMPLEX>;template class VECTOR<DOUBLE>;template class VECTOR<NODE  *>;template class VECTOR<STRINGY>;template class VECTOR<SHORT>;

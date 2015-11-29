@@ -1,0 +1,42 @@
+<HTML>
+<HEAD>
+<link rel="stylesheet" type="text/css" href="QFog.css" />
+  <TITLE>Parameters Of Qbit Rotator</TITLE>
+</HEAD>
+<BODY>
+<H1>
+  Parameters Of Qbit Rotator
+</H1>
+<P>
+<IMG ALIGN="Middle" SRC="params_qbit_rot.gif" >
+<P>
+<P>
+This window opens if you press the <B>Generate Amplitudes...</B> button of
+the <B>Node Prior-Info.</B> window when its focus node is a valid Qbit Rotator.
+The window allows you to enter the angles theta[0], theta[1], theta[2] and
+theta[3] (in degrees) such that the amplitudes of the node are given by the
+entries of the following 2 &times; 2 matrix:
+<P>
+exp(i*(pi/180)*{theta[0] + theta[1]*sigmaX + theta[2]*sigmaY + theta[3]*sigmaY}),
+<P>
+where sigmaX, sigmaY and sigmaZ are the Pauli Matrices.
+<P>
+Even if the focus node is a Qbit Rotator, when you press the <B>Generate
+Amplitudes...</B> button, the computer will refuse to open the above window
+unless:
+<UL>
+  <LI>
+    the focus node has exactly one parent node,
+  <LI>
+    the parent node has 2 states, 0 and 1, in that order.
+</UL>
+<P>
+Quantum Fog gives names 0 and 1 to the states of the Qbit Rotator.
+<P>
+More information about Qbit Rotators can be found in the document entitled
+"Quantum Fog Library Of Essays" that accompanies this manual.
+<P>
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

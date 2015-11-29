@@ -1,0 +1,1 @@
+#pragma once#include "QFog_constants.h"#include "C_TOP_PTRS.h"//******************************************class	C_PI_ND_POPUP : public LPopupButton, public C_TOP_PTRS{protected:public:	C_PI_ND_POPUP(LStream  * inStream);	virtual   ~C_PI_ND_POPUP();			VOID 	change_items();	VOID 	ClickSelf(const SMouseDownEvent  & inMouseDown);		};

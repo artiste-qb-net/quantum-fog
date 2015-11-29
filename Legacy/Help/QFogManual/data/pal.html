@@ -1,0 +1,265 @@
+<HTML>
+<HEAD>
+  <TITLE>Palette</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Palette<IMG ALIGN="Middle" SRC="wind,pal.gif" >
+</H1>
+<P>
+This window allows you to select tools for drawing in the <B>Main Window</B>.
+<P>
+Below, we will refer to the colored rectangle to the right of the paint brush
+icon as the <B>Palette</B> swatch. To change the color of this swatch, one
+can
+<UL>
+  <LI>
+    double-click the swatch, or
+  <LI>
+    use the <B>Choose Color...</B> item of the <B>Edit</B> menu, or
+  <LI>
+    use the <B>Copy Color</B> tool of the <B>Palette</B>.
+</UL>
+<P>
+  <HR>
+<P>
+<H3>Select</H3>
+<P>
+When this tool is selected:
+<P>
+You can select or unselect any number of nodes or arrows of the graph displayed
+in the <B>Main Window</B>.
+<P>
+A selected node is indicated by four red dots surrounding it; a selected
+arrow by two red dots.
+<P>
+Clicking on any node or arrow toggles its selection status between selected
+and unselected.
+<P>
+Clicking on any node or arrow while holding down the OPTION key selects all
+the nodes and all the arrows of the graph. Alternatively, you can press
+<B>Select All</B> in the <B>Edit</B> menu to select all nodes and arrows.
+(But note that if one of the text boxes below a node is currently active,
+then&nbsp;pressing <B>Select All</B> in the <B>Edit</B> menu will instead
+select all the text in the text box.)
+<P>
+Call a non-graph point of the <B>Main Window</B> any point that is not part
+of any node or arrow of the graph.
+<P>
+Clicking on any non-graph point of the <B>Main Window</B> while holding down
+the OPTION key unselects all the nodes and all the arrows of the graph.
+<P>
+Let [A,B] be the rectangular region of the <B>Main Window</B> with points
+A and B as opposite (top-left and bottom-right) corners. If
+<UL>
+  <LI>
+    you press the mouse button down when the cursor is at non-graph point A of
+    the <B>Main Window</B>, and
+  <LI>
+    while holding the mouse button down, you move the cursor to point B of the
+    <B>Main Window</B>, and
+  <LI>
+    you release the mouse button,
+</UL>
+<P>
+then all the nodes and arrows within [A,B] will be selected.
+<P>
+  <HR>
+<P>
+<H3>Drag</H3>
+<P>
+When this tool is selected:
+<P>
+If
+<UL>
+  <LI>
+    you press the mouse button down when the cursor is over a selected node or
+    arrow of the <B>Main Window</B>, and
+  <LI>
+    while holding the mouse button down, you move the cursor,
+</UL>
+<P>
+then the selected parts of the graph will move as the cursor moves, and will
+continue to do so until you release the mouse button. The unselected parts
+of the graph will not move.
+<P>
+  <HR>
+<P>
+<H3>Open</H3>
+<P>
+When this tool is selected:
+<P>
+If run-state = initial, then double clicking on any node will open the <B>Node
+Prior-Info.</B> window.
+<P>
+If run-state = intermediate or final, then double clicking on any node will
+open the <B>Node Probs.</B> window.
+<P>
+  <HR>
+<P>
+<H3>When Palette is Closed</H3>
+<P>
+When you close the <B>Palette</B>, the cursor becomes a "pointer"&mdash;a bold-face
+arrow pointing towards the top-left corner of the screen. This cursor performs
+the first 3 <B>Palette</B> operations: selecting, dragging and opening. When
+the <B>Palette</B> is open, to go from selecting to dragging, you must first
+de-select the selection tool and select the dragging tool. When the
+<B>Palette</B> is closed, you can go from selecting to dragging continuously,
+without doing any intermediate steps. Thus,&nbsp;when the Palette is closed,
+you get a pointer cursor that behaves like it does in drawing applications
+such as&nbsp;MacDraw. More specifically, it behaves as follows:
+<UL>
+  <LI>
+    If you click on a node or arrow, then
+    <UL>
+      <LI>
+	if the node or arrow clicked on is initially in the selected state, then
+	nothing happens&mdash;all nodes and arrows retain their previous selection status.
+      <LI>
+	if the node or arrow clicked on is initially in the unselected state, then
+	everything is unselected except for the node or arrow clicked on, which is
+	selected.
+    </UL>
+  <LI>
+    If you click on a non-graph point of the <B>Main Window</B>, then everything
+    is unselected.
+  <LI>
+    If, while holding the SHIFT key down, you click on a node or arrow, then
+    <UL>
+      <LI>
+	the node or arrow clicked on has its selection status toggled between selected
+	and unselected.
+      <LI>
+	the other nodes or arrows that were not clicked on retain their previous
+	selection status.
+    </UL>
+  <LI>
+    If, while holding the SHIFT key down, you click on a non-graph point of the
+    <B>Main Window</B>, then nothing happens&mdash;all nodes and arrows retain their
+    previous selection status.
+  <LI>
+    Let [A,B] be the rectangular region of the <B>Main Window</B> with points
+    A and B as opposite (top-left and bottom-right) corners. If
+    <UL>
+      <LI>
+	you press the mouse button down when the cursor is at non-graph point A of
+	the <B>Main Window</B>, and
+      <LI>
+	while holding the mouse button down, you move the cursor to point B of the
+	<B>Main Window</B>, and
+      <LI>
+	you release the mouse button,
+    </UL>
+    <P>
+    then all the nodes and arrows within [A,B] will be selected.
+  <LI>
+    Same behavior as when <B>Drag</B> tool is selected.
+  <LI>
+    Same behavior as when <B>Open</B> tool is selected.
+</UL>
+<P>
+  <HR>
+<P>
+<H3>Rotate</H3>
+<P>
+When this tool is selected:
+<P>
+Clicking once on any beam-splitter node will rotate its icon clockwise by
+15 degrees.
+<P>
+  <HR>
+<P>
+<H3>Paint</H3>
+<P>
+Custom Nodes are initially created white and Deterministic ones black. However,
+you may change this:
+<P>
+When the Paint tool is selected:
+<P>
+Clicking on any Custom Node or Deterministic Node will paint the node in
+the color of the <B>Palette</B> swatch.
+<P>
+  <HR>
+<P>
+<H3>Copy Color </H3>
+<P>
+When this tool is selected:
+<P>
+Clicking on any Custom Node or Deterministic Node will paint the
+<B>Palette</B> swatch in the color of the node.
+<P>
+  <HR>
+<P>
+<H3>Draw Arrow</H3>
+<P>
+When this tool is selected:
+<P>
+If
+<UL>
+  <LI>
+    you press the mouse button down when the cursor is over a node, and
+  <LI>
+    while holding the mouse button down, you move the cursor so that it lies
+    over another node, and
+  <LI>
+    you release the mouse button,
+</UL>
+<P>
+then an arrow will be draw from the first to the second node.
+<P>
+  <HR>
+<P>
+<H3>Change Source Node of Arrow</H3>
+<P>
+We will say that two nodes X1 and and X2 are <I>compatible</I>&nbsp; if they:
+<OL>
+  <LI>
+    Have the same number of states,
+  <LI>
+    These states have the same names,
+  <LI>
+    These names are listed in the same order in the <B>Node Prior-Info.</B> windows
+    of nodes X1 and X2.
+</OL>
+<P>
+Consider 3 nodes X1, X2 and Y such that X1 and X2 are compatible and there
+is an arrow going from X1 to Y&nbsp;(X1-&gt;Y &nbsp;X2 ). Suppose you wish
+to change the arrow's source node from X1 to X2 (X1 &nbsp;Y&lt;-X2 ). You
+could accomplishing this task in 2 steps, by first deleting the arrow from
+X1 to Y, and then drawing a new arrow from X2 to Y. But the first of these
+steps would destroy the transition matrix of Y. That's&nbsp;because the number
+of columns of this matrix depends on the number of arrows entering Y. The
+<B>Change Source Node of Arrow</B> tool allows you to accomplish this task
+in a single step that preserves the transition matrix of Y.
+<P>
+When this tool is selected:
+<P>
+If
+<UL>
+  <LI>
+    you press the mouse button down when the cursor is over an arrow from node
+    X1 to node Y, and
+  <LI>
+    while holding the mouse button down, you move the cursor so that it lies
+    over another node X2 which is compatible with X1,&nbsp;and
+  <LI>
+    you release the mouse button,
+</UL>
+<P>
+then the arrow from X1 to Y will be replaced by an arrow from the X2 to Y.
+The transition matrix of Y will remain unchanged throughout this process.
+<P>
+  <HR>
+<P>
+<H3>Popup for Selecting a Node Tool</H3>
+<P>
+This popup allows you to choose a tool that will draw a particular type of
+node.
+<P>
+Clicking at any point of the <B>Main Window</B> will draw a node of that
+type, centered at the click point. 
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>

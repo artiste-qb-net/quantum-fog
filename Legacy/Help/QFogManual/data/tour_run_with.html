@@ -1,0 +1,100 @@
+<HTML>
+<HEAD>
+  <TITLE>Running With An E-cases File</TITLE>
+  <LINK rel="stylesheet" type="text/css" href="QFog.css" />
+</HEAD>
+<BODY>
+<H1>
+  Running With An E-cases File
+</H1>
+<P>
+<UL>
+  <LI>
+    Open a new folder on the desktop. Call it <CODE>MyQFogWork</CODE>.
+  <LI>
+    Use TextWrangler to create&nbsp;a&nbsp;new TEXT file entitled
+    <CODE>KinderEcases.txt</CODE> that reads as follows:
+    <P>
+    <IMG ALIGN="Middle" SRC="tour_ecases.gif" >
+    <P>
+    Store the file <CODE>KinderEcases.txt</CODE> inside the folder
+    <CODE>MyQFogWork</CODE>. The meaning of this file is that we want to run
+    3 different e-cases called "case_1", "case_2", and "case_3".
+    <UL>
+      <LI>
+	For case_1, all node states will be active.
+      <LI>
+	For case_2, all states of all nodes except node <I>nz+</I>&nbsp; will be
+	active. Only state 0 of node <I>nz+</I>&nbsp; will be active.
+      <LI>
+	For case_3, all states of all nodes except nodes <I>nu+</I>&nbsp; and
+	<I>nz+</I>&nbsp; will be active. Only state 0 of node <I>nu+</I>&nbsp; will
+	be active. Only state 0 of node <I>nz+</I>&nbsp; will be active.
+    </UL>
+  <LI>
+    Now go back to Quantum Fog. Choose <B>Go Back To Initial State</B> in the
+    <B>Go</B> menu.
+  <LI>
+    Choose <B>TEXT Files Used During Run...</B> in the <B>Prepare</B> menu.
+  <LI>
+    Click on the <B>Choose Folder</B> button. A "folder-chooser" window will
+    open. Use this window to choose the folder <CODE>MyQFogWork</CODE>.
+  <LI>
+    Type "Kinder" in the blank box after the word "Prefix".
+  <LI>
+    Put a&nbsp;check mark in the box entitled
+    <CODE>&lt;prefix&gt;Ecases.txt</CODE>.
+  <LI>
+    Put a&nbsp;check mark in the box entitled
+    <CODE>&lt;prefix&gt;NodeProbs.txt</CODE>
+  <LI>
+    Put a&nbsp;check mark in the box entitled
+    <CODE>&lt;prefix&gt;BinodeProbs.txt</CODE>
+  <LI>
+    Put a&nbsp;check mark in the box entitled
+    <CODE>&lt;prefix&gt;Stories.txt</CODE>
+  <LI>
+    Press the <B>OK</B> button of the window entitled "TEXT Files Used During
+    Run..."
+  <LI>
+    If a check mark does not already appear in front of the <B>Illustrate
+    Stories</B> (ditto, <B>Do One E-Case At A Time</B>)&nbsp;item in the
+    <B>Prepare</B> menu, choose that item.
+  <LI>
+    In the <B>Main Window</B>, make sure that all nodes are unselected.
+  <LI>
+    Repeat the following actions 3 times, once for each of the 3 e-cases in the
+    <CODE>KinderEcases.txt</CODE> file:
+    <UL>
+      <LI>
+	Choose <B>Go Forward</B> in the <B>Go</B> menu.
+      <LI>
+	Open the <B>Node Prob.</B> window and explore its contents.
+      <LI>
+	Open the <B>Bi-node Prob.</B> window and explore its contents.
+      <LI>
+	Open the <B>Stories</B> window and explore its contents.
+    </UL>
+  <LI>
+    Choose <B>Go Back To Initial State</B> in the <B>Go</B> menu.
+  <LI>
+    Look inside the folder <CODE>MyQFogWork.</CODE> Open the TEXT files entitled:
+    <CODE>KinderNodeProbs.txt</CODE>, <CODE>KinderBinodeProbs.txt</CODE>, and
+    <CODE>KinderStories.txt</CODE>.
+</UL>
+<P ALIGN=Left>
+  <HR>
+<P>
+<H3>What Next...</H3>
+<P>
+The Quantum Fog Distribution contains a folder entitled
+<CODE>QFogLibOfNets</CODE> (contains many examples of quantum nets) and a
+pdf file entitled <CODE>QFogLibOfEssays.pdf</CODE> (contains an essay explaining
+each net found in the <CODE>QFogLibOfNets</CODE> folder). At this point,
+you might want to look at the examples, and consult this manual whenever
+you have any questions about Quantum Fog. Or you might want to finish the
+manual now, and look at the examples later. 
+  <HR>
+<P ALIGN=Center>
+<A HREF="table_of_contents.html">[Table Of Contents]</A>
+</BODY></HTML>
