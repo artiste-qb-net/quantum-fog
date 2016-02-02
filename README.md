@@ -17,7 +17,7 @@ We hope QFog also proves very useful to
 
 * QFog is licensed under the BSD license (3 clause version) with an added clause at the end, taken almost verbatim from the Apache 2.0 license, granting additional Patent rights. See `LICENSE.md`.
 
-* QFog at GitHub is based on older proprietary software with the same name for the Mac. Read `QFog-legacy-history.md` for details about legacy history.
+* QFog at GitHub is based on older, formerly proprietary software with the same name for the Mac. Read `QFog-legacy-history.md` for details about legacy history.
 
 ##Contributors##
 

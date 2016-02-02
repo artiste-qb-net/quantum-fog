@@ -14,7 +14,7 @@ QFogL vers.2.0 (last legacy version) was compiled on Sept. 11, 2006, with CodeWa
 
 QFogL vers. 2.0 has been tested on an eMac with PowerPC chip (G4-1.25GHz) running MacOS 10.4.11.
 
-QFogL vers.1.6 was the last version compiled for the Classic Mac OS. QFogL vers 2.0 can run under Mac OS X for PowerPC, as it is a Mach-O application, but it cannot run on Intel chips (unless you use some kind of PowerPC emulator on an Intel Mac).
+QFogL vers.1.6 was the last version compiled for the Classic Mac OS. QFogL vers 2.0 can run under Mac OS X for PowerPC chips, as it is a Mach-O application, but it cannot run on Intel chips (unless you use some kind of PowerPC emulator on an Intel Mac).
 
-The source code for QFogL vers.2.0 is included in the `Legacy` folder of this GitHub quantum-fog repository. Additional information and dowloadable files related to QFogL can be found at www.ar-tiste.com/qfog.html
+The source code for QFogL vers.2.0 is included in the `Legacy` folder of this GitHub quantum-fog repository. Additional information and downloadable files related to QFogL can be found at www.ar-tiste.com/qfog.html
 
