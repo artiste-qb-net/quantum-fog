@@ -1,0 +1,140 @@
+import numpy as np
+
+from BayesNode import *
+from BayesNet import *
+from DiscreteUniPot import *
+from DiscreteCondPot import *
+from EnumerationEngine import *
+from MCMC_Engine import *
+from JoinTreeEngine import *
+
+
+class HuaDar:
+
+    @staticmethod
+    def build_bnet():
+        """
+        Builds CBnet in accompanying gif : bnet_HuangDarwiche.gif
+
+        From "Inference Belief Networks: A Procedural Guide", by C.Huang and
+        A. Darwiche
+
+        """
+
+        a_node = BayesNode(0, name="A")
+        b_node = BayesNode(1, name="B")
+        c_node = BayesNode(2, name="C")
+        d_node = BayesNode(3, name="D")
+        e_node = BayesNode(4, name="E")
+        f_node = BayesNode(5, name="F")
+        g_node = BayesNode(6, name="G")
+        h_node = BayesNode(7, name="H")
+
+        b_node.add_parent(a_node)
+        c_node.add_parent(a_node)
+        d_node.add_parent(b_node)
+        e_node.add_parent(c_node)
+        f_node.add_parent(d_node)
+        f_node.add_parent(e_node)
+        g_node.add_parent(c_node)
+        h_node.add_parent(e_node)
+        h_node.add_parent(g_node)
+
+        nodes = {a_node, b_node, c_node, d_node, e_node,
+                f_node, g_node, h_node}
+
+        a_node.potential = DiscreteUniPot(False, a_node)  # P(a)
+        b_node.potential = DiscreteCondPot(False, [a_node, b_node])  # P(b| a)
+        c_node.potential = DiscreteCondPot(False, [a_node, c_node])
+        d_node.potential = DiscreteCondPot(False, [b_node, d_node])
+        e_node.potential = DiscreteCondPot(False, [c_node, e_node])
+
+        # P(f|d, e)
+        f_node.potential = DiscreteCondPot(False, [d_node, e_node, f_node])
+
+        g_node.potential = DiscreteCondPot(False, [c_node, g_node])
+        h_node.potential = DiscreteCondPot(False, [e_node, g_node, h_node])
+
+        # in general
+        # DiscreteCondPot(False, [y1, y2, y3, x]) refers to P(x| y1, y2, y3)
+        # off = 0
+        # on = 1
+
+        a_node.potential.pot_arr[:] = [.5, .5]
+
+        b_node.potential.pot_arr[1, :] = [.5, .5]
+        b_node.potential.pot_arr[0, :] = [.4, .6]
+
+        c_node.potential.pot_arr[1, :] = [.7, .3]
+        c_node.potential.pot_arr[0, :] = [.2, .8]
+
+        d_node.potential.pot_arr[1, :] = [.9, .1]
+        d_node.potential.pot_arr[0, :] = [.5, .5]
+
+        e_node.potential.pot_arr[1, :] = [.3, .7]
+        e_node.potential.pot_arr[0, :] = [.6, .4]
+
+        f_node.potential.pot_arr[1, 1, :] = [.01, .99]
+        f_node.potential.pot_arr[1, 0, :] = [.01, .99]
+        f_node.potential.pot_arr[0, 1, :] = [.01, .99]
+        f_node.potential.pot_arr[0, 0, :] = [.99, .01]
+
+        g_node.potential.pot_arr[1, :] = [.8, .2]
+        g_node.potential.pot_arr[0, :] = [.1, .9]
+
+        h_node.potential.pot_arr[1, 1, :] = [.05, .95]
+        h_node.potential.pot_arr[1, 0, :] = [.95, .05]
+        h_node.potential.pot_arr[0, 1, :] = [.95, .05]
+        h_node.potential.pot_arr[0, 0, :] = [.95, .05]
+
+        return BayesNet(nodes)
+
+if __name__ == "__main__":
+    bnet = HuaDar.build_bnet()
+
+    # introduce some evidence
+    bnet.get_node_named("D").active_states = [0]
+    bnet.get_node_named("G").active_states = [1]
+
+    id_nums = sorted([node.id_num for node in bnet.nodes])
+    node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
+
+    # this is simpler but erratic
+    # node_list = list(bnet.nodes)
+
+    brute_eng = EnumerationEngine(bnet)
+    brute_pot_list = brute_eng.get_unipot_list(node_list)
+
+    # print("bnet pots after brute")
+    # # check that bnet pots are not modified by engine
+    # for node in node_list:
+    #     print(node.name)
+    #     print(node.potential, "\n")
+
+    monte_eng = MCMC_Engine(bnet)
+    num_cycles = 1000
+    warmup = 200
+    monte_pot_list = monte_eng.get_unipot_list(
+            node_list, num_cycles, warmup)
+
+    # print("bnet pots after monte")
+    # # check that bnet pots are not modified by engine
+    # for node in node_list:
+    #     print(node.name)
+    #     print(node.potential, "\n")
+
+    jtree_eng = JoinTreeEngine(bnet)
+    jtree_pot_list = jtree_eng.get_unipot_list(node_list)
+
+    # print("bnet pots after jtree")
+    # # check that bnet pots are not modified by engine
+    # for node in node_list:
+    #     print(node.name)
+    #     print(node.potential, "\n")
+
+    for k in range(len(node_list)):
+        print(node_list[k].name)
+        print("brute engine:", brute_pot_list[k])
+        print("monte engine:", monte_pot_list[k])
+        print("jtree engine:", jtree_pot_list[k])
+        print("\n")
