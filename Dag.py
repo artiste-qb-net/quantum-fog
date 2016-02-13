@@ -2,6 +2,8 @@
 # separate file in this project with PBNT license.
 
 import copy as cp
+import networkx as nx
+
 
 from Graph import *
 from MyExceptions import BadGraphStructure
@@ -114,6 +116,50 @@ class Dag(Graph):
         Graph.add_nodes(self, nodes)
         self.topological_sort()
 
+    @staticmethod
+    def new_from_nx_graph(nx_graph):
+        """
+        Returns a Dag constructed from nx_graph.
+
+        Parameters
+        ----------
+        nx_graph : networkx DiGraph
+
+        Returns
+        -------
+        Dag
+
+        """
+        new_g = Dag(set())
+        k = -1
+        for name in nx_graph.nodes():
+            k += 1
+            new_g.add_nodes({DirectedNode(k, name=name)})
+
+        node_list = list(new_g.nodes)
+        for nd in node_list:
+            for ch_name in nx_graph.successors(nd.name):
+                nd.add_child(new_g.get_node_named(ch_name))
+        return new_g
+
+    def get_nx_graph(self):
+        """
+        Returns an nx_graph built from self info.
+
+        Returns
+        -------
+        networkx Graph
+
+        """
+
+        node_list = list(self.nodes)
+        nx_graph = nx.DiGraph()
+        for nd in node_list:
+            for ch in nd.children:
+                nx_graph.add_edge(nd.name, ch.name)
+        return nx_graph
+
+
 from DirectedNode import *
 if __name__ == "__main__":
     p1 = DirectedNode(0, "p1")
@@ -130,14 +176,26 @@ if __name__ == "__main__":
     g.add_nodes({p2, center, c1, c2})
     c2.add_parent(p2)
 
-    test = 2
-    if test == 1:
-        print("introduce 2 node cycle")
-        c2.add_child(p2)
-        g.topological_sort()
-    elif test == 2:
-        c2.remove_parent(p2)
-        print("introduce 3 node cycle")
-        c2.add_child(p2)
-        g.topological_sort()
+    path = 'C:\\tempo1.dot'
+    g.write_dot(path)
+    g.draw(algo_num=1)
+    new_g = Dag.read_dot(path).nodes
+    print([node.name for node in new_g])
+
+    try:
+        test = 1
+        if test == 1:
+            print("introduce 2 node cycle")
+            c2.add_child(p2)
+            g.topological_sort()
+        elif test == 2:
+            c2.remove_parent(p2)
+            print("introduce 3 node cycle")
+            c2.add_child(p2)
+            g.topological_sort()
+    except BadGraphStructure as txt:
+        print(txt)
+
+
+
 

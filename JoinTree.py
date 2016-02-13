@@ -152,7 +152,7 @@ class JoinTree(Graph):
         This sets clique and sepset pots to 1 over all states of their
         subnodes, not just over the active ones. If 1 over the active states
         and 0 over the inactive ones is desired, next apply mask_self() to
-        the potential. is_quantum is needed because arr_pot will be type
+        the potential. is_quantum is needed because pot_arr will be type
         float64 in the CBnet case and type complex128 in the QBnet case.
 
         Parameters
