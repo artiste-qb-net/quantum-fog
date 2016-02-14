@@ -2,6 +2,7 @@
 # separate file in this project with PBNT license.
 
 # import copy as cp
+import networkx as nx
 
 from Dag import *
 # from BayesNode import *
@@ -33,6 +34,24 @@ class BayesNet(Dag):
         """
         Dag.__init__(self, nodes)
 
+    @staticmethod
+    def new_from_nx_graph(nx_graph):
+        """
+        Returns a BayesNet constructed from nx_graph.
+
+        Parameters
+        ----------
+        nx_graph : networkx Graph
+
+        Returns
+        -------
+        BayesNet
+
+        """
+        dagger = Dag.new_from_nx_graph(nx_graph)
+        return BayesNet(dagger.nodes)
+
+
 from ExamplesC.HuaDar import *
 if __name__ == "__main__":
     bnet = HuaDar.build_bnet()
@@ -42,5 +61,11 @@ if __name__ == "__main__":
         print("children: ", [x.name for x in node.children])
         print("pot_arr: \n", node.potential.pot_arr)
         print("\n")
+
+    path = 'C:\\tempo1.dot'
+    bnet.write_dot(path)
+    bnet.draw(algo_num=2)
+    new_bnet = BayesNet.read_dot(path).nodes
+    print([node.name for node in new_bnet])
 
 
