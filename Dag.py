@@ -176,11 +176,13 @@ if __name__ == "__main__":
     g.add_nodes({p2, center, c1, c2})
     c2.add_parent(p2)
 
-    path = 'C:\\tempo1.dot'
-    g.write_dot(path)
     g.draw(algo_num=1)
-    new_g = Dag.read_dot(path).nodes
-    print([node.name for node in new_g])
+
+    path1 = 'ExamplesC\\tempo1.dot'
+    path2 = 'ExamplesC\\tempo2.dot'
+    g.write_dot(path1)
+    new_g = Dag.read_dot(path1)
+    new_g.write_dot(path2)
 
     try:
         test = 1

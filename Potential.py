@@ -704,7 +704,8 @@ class Potential:
 
     def __str__(self):
         """
-        What string to print when we use print(self)
+        What string is outputted by print(pot) where pot is an object of
+        Potential
 
         Returns
         -------

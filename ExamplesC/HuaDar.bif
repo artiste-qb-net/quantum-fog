@@ -1,0 +1,62 @@
+network unknown {
+
+variable F {
+type discrete [ 2 ] {state0, state1};
+}
+variable A {
+type discrete [ 2 ] {state0, state1};
+}
+variable E {
+type discrete [ 2 ] {state0, state1};
+}
+variable B {
+type discrete [ 2 ] {state0, state1};
+}
+variable C {
+type discrete [ 2 ] {state0, state1};
+}
+variable D {
+type discrete [ 2 ] {state0, state1};
+}
+variable G {
+type discrete [ 2 ] {state0, state1};
+}
+variable H {
+type discrete [ 2 ] {state0, state1};
+}
+probability ( F | D, E ) {
+	(state0, state0)  0.99, 0.01;
+	(state1, state0)  0.01, 0.99;
+	(state0, state1)  0.01, 0.99;
+	(state1, state1)  0.01, 0.99;
+}
+probability ( A  ) {
+	table  0.5, 0.5;
+}
+probability ( E | C ) {
+	(state0)  0.6, 0.4;
+	(state1)  0.3, 0.7;
+}
+probability ( B | A ) {
+	(state0)  0.4, 0.6;
+	(state1)  0.5, 0.5;
+}
+probability ( C | A ) {
+	(state0)  0.2, 0.8;
+	(state1)  0.7, 0.3;
+}
+probability ( D | B ) {
+	(state0)  0.5, 0.5;
+	(state1)  0.9, 0.1;
+}
+probability ( G | C ) {
+	(state0)  0.1, 0.9;
+	(state1)  0.8, 0.2;
+}
+probability ( H | E, G ) {
+	(state0, state0)  0.95, 0.05;
+	(state0, state1)  0.95, 0.05;
+	(state1, state0)  0.95, 0.05;
+	(state1, state1)  0.05, 0.95;
+}
+}

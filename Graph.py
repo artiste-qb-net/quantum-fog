@@ -271,8 +271,9 @@ class Graph:
         Parameters
         ----------
         path : str
-            eg. for Windows
-            'C:\\Documents and Settings\\ROBERT\\Desktop\\tempo.dot'
+            eg. for Windows, you can use an absolute path like
+            'C:\\Documents and Settings\\ROBERT\\Desktop\\tempo.dot' or a
+            relative one like 'ExamplesC\\tempo.dot'
 
         Returns
         -------
@@ -290,8 +291,9 @@ class Graph:
         Parameters
         ----------
         path : str
-            eg. for Windows
-            'C:\\Documents and Settings\\ROBERT\\Desktop\\tempo.dot'
+            eg. for Windows, you can use an absolute path like
+            'C:\\Documents and Settings\\ROBERT\\Desktop\\tempo.dot' or a
+            relative one like 'ExamplesC\\tempo.dot'
 
         Returns
         -------
@@ -320,9 +322,10 @@ if __name__ == "__main__":
     center.add_neighbor(c1)
     center.add_neighbor(c2)
 
-    path = 'C:\\tempo.dot'
-    g.write_dot(path)
     g.draw(algo_num=1)
-    new_g = Graph.read_dot(path).nodes
-    print([node.name for node in new_g])
 
+    path1 = 'ExamplesC\\tempo1.dot'
+    path2 = 'ExamplesC\\tempo2.dot'
+    g.write_dot(path1)
+    new_g = Graph.read_dot(path1)
+    new_g.write_dot(path2)

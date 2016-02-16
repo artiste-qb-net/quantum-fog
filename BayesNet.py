@@ -6,6 +6,8 @@ import networkx as nx
 
 from Dag import *
 # from BayesNode import *
+from Qubifer import *
+from DiscreteUniPot import *
 
 
 class BayesNet(Dag):
@@ -51,8 +53,80 @@ class BayesNet(Dag):
         dagger = Dag.new_from_nx_graph(nx_graph)
         return BayesNet(dagger.nodes)
 
+    @staticmethod
+    def read_bif(path, is_quantum):
+        """
+        Writes a bif file using our stand-alone class Qubifer. bif and dot
+        files complement each other. bif: graphical info No, pot info Yes.
+        dot: graphical info Yes, pot info No. By pots I mean potentials,
+        the transition matrices of the nodes. (aka CPTs, etc.)
+
+        Parameters
+        ----------
+        path : str
+        is_quantum : bool
+
+        Returns
+        -------
+
+        """
+
+        qb = Qubifer(is_quantum)
+        qb.read_bif(path)
+        k = -1
+        nodes = set()
+        node_dict = {}
+        for nd_name in qb.nd_sizes:
+            k += 1
+            node = BayesNode(k, nd_name)
+            node.state_names = qb.states[nd_name]
+            nodes |= {node}
+            node_dict[nd_name] = node
+        for nd_name, pa_name_list in qb.parents.items():
+            node = node_dict[nd_name]
+            for pa_name in pa_name_list:
+                pa = node_dict[pa_name]
+                node.add_parent(pa)
+
+        for nd_name, parent_names in qb.parents.items():
+            node = node_dict[nd_name]
+            num_pa = len(parent_names)
+            parents = [node_dict[pa_name] for pa_name in parent_names]
+            if num_pa == 0:
+                node.potential = DiscreteUniPot(is_quantum, node)
+            else:
+                node.potential = DiscreteCondPot(
+                    is_quantum, parents + [node])
+            node.potential.pot_arr = qb.pot_arrays[nd_name]
+
+        return BayesNet(nodes)
+
+    def write_bif(self, path, is_quantum):
+        """
+        Writes a bif file using Qubifer class. Complements read_bif().
+
+        Parameters
+        ----------
+        path : str
+        is_quantum : bool
+
+        Returns
+        -------
+
+        """
+        qb = Qubifer(is_quantum)
+        for node in self.nodes:
+            qb.nd_sizes[node.name] = node.size
+            qb.states[node.name] = node.state_names
+            parent_names = \
+                [nd.name for nd in node.potential.ord_nodes[:-1]]
+            qb.parents[node.name] = parent_names
+            qb.pot_arrays[node.name] = node.potential.pot_arr
+        qb.write_bif(path)
+
 
 from ExamplesC.HuaDar import *
+from ExamplesQ.QuWetGrass import *
 if __name__ == "__main__":
     bnet = HuaDar.build_bnet()
     for node in bnet.nodes:
@@ -62,10 +136,21 @@ if __name__ == "__main__":
         print("pot_arr: \n", node.potential.pot_arr)
         print("\n")
 
-    path = 'C:\\tempo1.dot'
-    bnet.write_dot(path)
     bnet.draw(algo_num=2)
-    new_bnet = BayesNet.read_dot(path).nodes
-    print([node.name for node in new_bnet])
 
+    path1 = 'ExamplesC\\tempo1.dot'
+    path2 = 'ExamplesC\\tempo2.dot'
+    bnet.write_dot(path1)
+    new_bnet = BayesNet.read_dot(path1)
+    new_bnet.write_dot(path2)
+
+    path = 'ExamplesC\\HuaDar.bif'
+    path1 = 'ExamplesC\\HuaDar1.bif'
+    new_bnet = BayesNet.read_bif(path, False)
+    new_bnet.write_bif(path1, False)
+
+    path = 'ExamplesQ\\QuWetGrass.bif'
+    path1 = 'ExamplesQ\\QuWetGrass1.bif'
+    new_bnet = BayesNet.read_bif(path, True)
+    new_bnet.write_bif(path1, True)
 
