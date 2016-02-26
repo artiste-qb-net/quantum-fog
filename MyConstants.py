@@ -1,5 +1,4 @@
 TOL = 10**(-7)  # tolerance, anything smaller we treat as zero
-DEBUG_ON = True  # for toggling debug_asserts
 
 """
 Abbreviations used frequently in docstrings
@@ -14,6 +13,5 @@ pot = potential
 DAG = directed acyclic graph
 DFS = Depth First Search
 MCMC = Markov Chain Monte Carlo
-
 
 """

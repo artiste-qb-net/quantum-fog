@@ -5,7 +5,7 @@
 # from BayesNode import *
 # from Potential import *
 from Sepset import *
-# from Utilities import *
+
 
 
 class Clique(Node):

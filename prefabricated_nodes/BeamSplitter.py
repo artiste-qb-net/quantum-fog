@@ -6,10 +6,122 @@ import Utilities as ut
 
 
 class BeamSplitter(BayesNode):
+    """
+    The constructor of this class builds a BayesNode that has a transition
+    matrix appropriate for a beam splitter.
+
+    The following is expected:
+
+    * the focus node has exactly two parent nodes,
+
+    * Both parent nodes are scalar-field nodes OR both parent nodes are
+    vector-field nodes.
+
+    M1   M2
+      \|/
+       |
+      /|\
+    N2   N1
+    all arrows pointing downward
+    (mnemonic: N for New beams=modes)
+
+    In the scalar-field case, M2, M1, N1 and N2 are the numbers of photons
+    that pass through the two incoming and the two outgoing ports. In this
+    case, Quantum Fog gives names of the form (N1,N2) to the states of the
+    beam-splitter.
+
+    In the vector-field case, M2, M1, N1 and N2  also correspond in a 1-1
+    fashion to the incoming and outgoing ports, but instead of being
+    non-negative integers, they are 2-component vectors. For example,
+    M1 = (M1x, M1y), where M1x and M1y are non-negative integers. In this
+    case, Quantum Fog gives names of the form ((N1x, N1y), (N2x, N2y)) to
+    the states of the beam-splitter.
+
+    tau and rho, satisfying |tau|^2 + |rho|^2 = 1, are the complex
+    transmission and reflection coefficients of the beam-splitter. You must
+    enter tau_mag = the magnitude tau, tau_degs = phase of tau in degrees,
+    and rho_degs = phase of rho in degrees. These 3 parameters completely
+    specify the complex numbers tau and rho.
+
+    Consider the scalar-field case, for example. Frequently, nets which
+    contain a beam-splitter node are such that we know what is the maximum
+    number of photons that will ever enter the beam-splitter. For example,
+    suppose that a net starts with 2 photons in its root nodes, and that for
+    one of the input states (M1, M2) of the beam-splitter, M1 + M2 = 3. Then
+    the list of states of the beam-splitter node would be forced to include
+    all states with N1 + N2 = 3. Or would it? Clearly, such states would
+    never occur in any of the possible stories of the net. So if we were to
+    exclude such states from the list of states of the beam-splitter node,
+    the physical predictions of the net (that is, the stories with non-zero
+    amplitude and their amplitudes) would still be the same. That's where
+    the input parameter 'max_n_sum' comes in. In the scalar case, Quantum
+    Fog lists those and only those states (N1, N2) for which N1 + N2 <=
+    max_n_sum. In our example, we could set 'max_n_sum' to 2 and thus
+    exclude states with N1 + N2 = 3. Of course, excluding some states would
+    cause the Total Probability sum_x P(x|input states) for some input
+    states to be different from 1. But the physical predictions of the net
+    would not change, and we would save memory by excluding unused baggage
+    from the transition matrix.
+
+    In the vector-field case, Quantum Fog lists those and only those states
+    ((N1x, N1y), (N2x, N2y)) for which N1x + N1y+ N2x+ N2y <= max_n_sum
+
+    More information about beam splitter nodes can be found in the documents
+    entitled "Quantum Fog Manual", and "Quantum Fog Library Of Essays" that
+    are included with the legacy QFog.
+
+    Attributes
+    ----------
+    num_of_comps : int
+        number of components, equals 1 for scalar case and 2 for vector case.
+    tau_mag : float
+    tau_degs : float
+    rho_degs : float
+    max_n_sum : int
+    true_max_n_sum : int
+
+    potential : Potential
+    active_states : list[int]
+    clique : Clique
+    size : int
+    state_names : list[str]
+    children : set[BayesNode]
+    neighbors : set[BayesNode]
+    parents : set[BayesNode]
+    id_num : int
+    index : int
+    name : str
+    visited : bool
+
+
+    """
 
     def __init__(self, id_num, name, in_nd1, in_nd2,
             tau_mag, tau_degs, rho_degs, num_of_comps, max_n_sum=10000):
+        """
+        Constructor
 
+        Parameters
+        ----------
+        id_num : int
+            id number of self (focus node)
+        name : str
+            name of self (focus node)
+        in_nd1 : BayesNode
+            input node (parent) 1
+        in_nd2 : BayesNode
+            input node (parent) 2
+        tau_mag : float
+        tau_degs : float
+        rho_degs : float
+        num_of_comps : int
+            number of components, 1 for scalar fields and 2 for vector ones
+        max_n_sum : int
+
+        Returns
+        -------
+
+        """
         self.tau_mag = tau_mag
         self.tau_degs = tau_degs
         self.rho_degs = rho_degs
@@ -60,8 +172,26 @@ class BeamSplitter(BayesNode):
 
     @staticmethod
     def get_bs_amp(n1, n2, m1, m2, tau_mag, tau_degs, rho_degs):
+        """
+        Get beam splitter amplitude for arbitrary tau and rho, not self.tau,
+        self.rho.
+
+        Parameters
+        ----------
+        n1 : int
+        n2 : int
+        m1 : int
+        m2 : int
+        tau_mag : float
+        tau_degs : float
+        rho_degs : float
+
+        Returns
+        -------
+        complex
+
+        """
         # from TWO_MODE_FUN::get_bs_amp()
-        # calculates beam splitter amp
         
         tau_rads = tau_degs*math.pi/180
         rho_rads = rho_degs*math.pi/180
@@ -119,38 +249,50 @@ class BeamSplitter(BayesNode):
                 n2)*math.factorial(m1)*math.factorial(m2))*sum
 
     def get_bs_amp_self(self, n1, n2, m1, m2):
+        """
+        Get beam splitter amplitude using the focus node values of tau and
+        rho.
+
+        Parameters
+        ----------
+        n1 : int
+        n2 : int
+        m1 : int
+        m2 : int
+
+        Returns
+        -------
+        complex
+
+        """
         return BeamSplitter.get_bs_amp(n1, n2, m1, m2,
                         self.tau_mag, self.tau_degs, self.rho_degs)
 
     def fill_trans_mat_and_st_names_of_nd(
             self, m1x, m2x, m1y, m2y, dry_run=False):
+        """
+        When dry_run=False, this method fills the transition matrix and
+        state names of the focus node. For dry_run=True, this method doesn't
+        change any of the attributes of the self object; it just calculates
+        the expected size=degeneracy of the focus node.
+
+        notation: transition matrix = <n1, n2 |operator| m1, m2>
+        where n1 scalar or n1 = (n1x, n1y), etc.
+
+        Parameters
+        ----------
+        m1x : list[int]
+        m2x : list[int]
+        m1y : list[int]
+        m2y : list[int]
+        dry_run : bool
+
+        Returns
+        -------
+        None | int
 
         """
-            notation: transition element < n1, n2 || m1, m2>
-            where n1 scalar or n1 = (n1x, n1y), etc.
-
-            m1->/--\->n2
-                |  |
-            m2->\--/->n1
-
-            counter-clockwise: n1, n2, m1, m2
-
-            mnemonic: 	n1 and n2 are the new beams, hence the n.
-                 0     1
-                 nw    ne
-                  m2  m1
-                  |   |
-                  V   V
-                 /-----\
-                |   X   |
-                 \-----/
-                  |   |
-                  V   V
-                 n1   n2
-                 sw   se
-                 3     2
-        """
-        # this combines the following functions from legacy:
+        # This combines the following functions from legacy:
         # C_BEAM_SPL_AMP_GEN::get_expected_degen()
         # C_BEAM_SPL_AMP_GEN::fill_trans_mat_and_st_names_of_nd()
         # BEAM_SPL::obey_amp_gen()
@@ -211,6 +353,21 @@ class BeamSplitter(BayesNode):
         return degen
 
     def get_expected_degen(self, m1x, m2x, m1y, m2y):
+        """
+        Get expected degeneracy=size of focus node.
+
+        Parameters
+        ----------
+        m1x : list[int]
+        m2x : list[int]
+        m1y : list[int]
+        m2y : list[int]
+
+        Returns
+        -------
+        int
+
+        """
         return self.fill_trans_mat_and_st_names_of_nd(
             m1x, m2x, m1y, m2y, dry_run=True)
 

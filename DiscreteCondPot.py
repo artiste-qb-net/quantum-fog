@@ -6,6 +6,8 @@
 
 from Potential import *
 # from DiscreteUniPot import *
+import Utilities as ut
+from MyConstants import *
 
 
 class DiscreteCondPot(Potential):
@@ -68,20 +70,23 @@ class DiscreteCondPot(Potential):
         return DiscreteCondPot(
             False, self.ord_nodes, pot_arr=arr2)
 
-    def normalize_self(self):
+    def normalize_self(self, postpone=False):
         """
         This normalizes pot_arr so that it becomes a conditional potential (
         a conditional PD for is_quantum=False or a conditional PAD for
         is_quantum=True) of last node given the others. Last node
         corresponds to last axis which corresponds to innermost bracket of
+        pot_arr. postpone=True saves the normalization constants in a
+        dictionary with the input states as keys, but does not apply them to
         pot_arr.
 
         Parameters
         ----------
+        postpone : bool
 
         Returns
         -------
-        None
+        None | float | dict[str, float]
 
         """
 
@@ -95,12 +100,16 @@ class DiscreteCondPot(Potential):
                 d = self.pot_arr.sum()
             else:
                 d = np.linalg.norm(self.pot_arr)
-            if abs(d) > TOL:
-                self.pot_arr /= d
+            if postpone:
+                return d
             else:
-                raise ZeroDivisionError
+                if abs(d) > TOL:
+                    self.pot_arr /= d
+                else:
+                    raise ZeroDivisionError
         else:
-            ind_gen = cartesian_product(self.nd_sizes[:-1])
+            totals = {}
+            ind_gen = ut.cartesian_product(self.nd_sizes[:-1])
             axes = list(range(self.num_nodes - 1))
             for indices in ind_gen:
                 slicex = self.get_slicex_ax(indices, axes)
@@ -108,13 +117,42 @@ class DiscreteCondPot(Potential):
                 if not self.is_quantum:
                     d = arr.sum()
                 else:
-                    d = np.sqrt((arr*np.conjugate(arr)).sum())
-                if abs(d) > TOL:
-                    self.pot_arr[slicex] /= d
+                    d = np.sqrt(np.real((arr*np.conj(arr))).sum())
+                if postpone:
+                    name_tuple = str(tuple(self.ord_nodes[k].state_names[r]
+                                  for k, r in enumerate(indices)))
+                    name_tuple = ut.fix(name_tuple, "'", '')
+                    totals[name_tuple] = d
                 else:
-                    raise ZeroDivisionError
+                    if abs(d) > TOL:
+                        self.pot_arr[slicex] /= d
+                    else:
+                        raise ZeroDivisionError
+            if postpone:
+                return totals
 
         # print("pot after", self, "\n")
+
+    def get_total_probs(self, brief=False):
+        """
+        This function is just a flavor of normalize_self(). When
+        brief=False, it returns a dictionary giving total prob for each
+        input state. When brief=True, it returns a dictionary with only the
+        total probs that are less than 1.
+
+        Parameters
+        ----------
+        brief : bool
+
+        Returns
+        -------
+        float | dict[str, float]
+
+        """
+        d = self.normalize_self(postpone=True)
+        if brief:
+            d = dict((name, prob) for name, prob in d.items() if prob < 1-TOL)
+        return d
 
     def __deepcopy__(self, memo):
         """

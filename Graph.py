@@ -2,7 +2,7 @@
 # separate file in this project with PBNT license.
 
 
-# from Utilities import *
+
 import pydotplus as pdp
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -200,39 +200,6 @@ class Graph:
                     nx_graph.add_edge(nd1.name, nd2.name)
         return nx_graph
 
-    @staticmethod
-    def node_pos(algo_num, nx_graph):
-        """
-        Returns the node positions for drawing nx_graph using one of six
-        algorithms.
-
-        Parameters
-        ----------
-        algo_num : int
-        nx_graph : networkx graph
-
-        Returns
-        -------
-        networkx node positions structure
-
-        """
-        if algo_num == 1:
-            pos = nx.circular_layout(nx_graph)
-        elif algo_num == 2:
-            pos = nx.fruchterman_reingold_layout(nx_graph)
-        elif algo_num == 3:
-            pos = nx.random_layout(nx_graph)
-        elif algo_num == 4:
-            pos = nx.shell_layout(nx_graph)
-        elif algo_num == 5:
-            pos = nx.spring_layout(nx_graph)
-        elif algo_num == 6:
-            pos = nx.spectral_layout(nx_graph)
-        else:
-            assert False, "unimplemented networkx layout"
-
-        return pos
-
     def draw(self, algo_num, **kwargs):
         """
         This method works both for undirected and directed graphs. It
@@ -246,7 +213,7 @@ class Graph:
         Parameters
         ----------
         algo_num : int
-            See Graph:layout() method for possible choices, from 1 to 6.
+            From 1 to 6, algorithm used to determine node positions
 
         **kwargs : unpacked dictionary
             Look at the numerous keyword arguments of the function
@@ -257,8 +224,17 @@ class Graph:
         -------
 
         """
+        # each of these is a networkx function for calculating node positions
+        node_pos = {
+            1: nx.circular_layout,
+            2: nx.fruchterman_reingold_layout,
+            3: nx.random_layout,
+            4: nx.shell_layout,
+            5: nx.spring_layout,
+            6: nx.spectral_layout
+        }
         nx_graph = self.get_nx_graph()
-        pos = Graph.node_pos(algo_num, nx_graph)
+        pos = node_pos[algo_num](nx_graph)
         nx.draw_networkx(nx_graph, pos=pos, node_color='white', **kwargs)
         plt.axis('off')
         plt.show()

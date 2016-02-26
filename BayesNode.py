@@ -1,7 +1,10 @@
 # Most of the code in this file comes from PBNT by Elliot Cohen. See
 # separate file in this project with PBNT license.
 
+import itertools as it
+
 from DirectedNode import *
+import Utilities as ut
 
 
 class BayesNode(DirectedNode):
@@ -35,7 +38,7 @@ class BayesNode(DirectedNode):
     visited : bool
     """
 
-    def __init__(self, id_num, name="blank"):
+    def __init__(self, id_num, name="blank", size=2):
         """
         Constructor.
 
@@ -52,8 +55,8 @@ class BayesNode(DirectedNode):
         """
 
         DirectedNode.__init__(self, id_num, name)
-        self.size = 2
-        self.state_names = ["state0", "state1"]
+        self.size = size
+        self.state_names = ["state" + str(k) for k in range(size)]
         self.clique = None
         self.potential = None
         self.__active_states = [0, 1]  # underscore to use @property
@@ -89,11 +92,13 @@ class BayesNode(DirectedNode):
         """
         if size < self.size:
             self.state_names = self.state_names[:size]
+            self.potential = None
         elif size == self.size:
             pass
         else:
             self.state_names += [
                 "state" + str(k) for k in range(self.size, size)]
+            self.potential = None
         self.size = size
 
     def set_state_name(self, position, name):
@@ -155,22 +160,86 @@ class BayesNode(DirectedNode):
 
     active_states = property(get_active_states, set_active_states)
 
+    def set_state_names_to_product(self, list_of_iters, repeat=1, trim=False):
+        """
+        Sets state names to a sequence of tuples generate by it.product().
+        trim option to remove punctuation marks.
+
+        Parameters
+        ----------
+        list_of_iters : list[str] | list[list[int]]
+            list of iterables like a list of one or more strings, or a list of
+            one or more lists of ints
+        repeat : int
+            In case list_of_iters is list of single string or list of single
+            list of ints, repeat them
+        trim : bool
+            Whether to keep punctuation or not. True removes white spaces,
+            commas and parentheses
+        Returns
+        -------
+        None
+
+        """
+        if not trim:
+            bad = ''
+        else:
+            bad = '(,) '
+        self.state_names = [ut.fix(str(t).replace("'", ''), bad, '')
+            for t in it.product(*list_of_iters, repeat=repeat)]
+        assert self.size == len(self.state_names)
+
 # These imports are here after the class definition
 # to avoid import loops.
 # The idea is to define the class before these imports occur.
 from Potential import *
 from DiscreteCondPot import *
 if __name__ == "__main__":
+
     a = BayesNode(0, "alice")
-    print("a id_num=", a.id_num)
-    print(a.state_names)
+
+    def speak(k):
+        print('test' + str(k) + ":", a.state_names, "\n")
+
+    speak(1)
 
     a.resize(4)
-    print(a.state_names)
+    speak(2)
 
     a.resize(3)
-    print(a.state_names)
+    speak(3)
 
     a.set_state_name(2, "horse")
-    print(a.state_names)
+    speak(4)
+
+    a.set_state_names_to_product([range(3)])
+    speak(5)
+
+    a.set_state_names_to_product([range(3)], trim=True)
+    speak(5.1)
+
+    a.set_state_names_to_product([range(3)], repeat=3)
+    speak(6)
+
+    a.set_state_names_to_product([range(3), range(2)]),
+    speak(7)
+
+    a.set_state_names_to_product(['abc'])
+    speak(8)
+
+    a.set_state_names_to_product(['abc'], trim=True)
+    speak(8.1)
+
+    a.set_state_names_to_product(['abc'], repeat=3)
+    speak(9)
+
+    a.set_state_names_to_product(['abc', 'xyz'])
+    speak(10)
+
+    a.set_state_names_to_product(['abc', 'xyz'], trim=True)
+    speak(10.1)
+
+    a.set_state_names_to_product(['01'], repeat=3, trim=True)
+    speak(11)
+
 

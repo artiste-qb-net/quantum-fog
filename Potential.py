@@ -4,7 +4,7 @@
 import numpy as np
 import copy as cp
 
-from Utilities import *
+import Utilities as ut
 # from BayesNode import *
 
 
@@ -140,7 +140,7 @@ class Potential:
         fin_pot = Potential(self.is_quantum, fin_node_list, bias=0)
 
         fin_axes = list(range(fin_pot.num_nodes))
-        ind_gen = cartesian_product(fin_pot.nd_sizes)
+        ind_gen = ut.cartesian_product(fin_pot.nd_sizes)
         for fin_indices in ind_gen:
             slicex = self.get_slicex_nd(fin_indices, fin_node_list)
             fin_slicex = fin_pot.get_slicex_ax(fin_indices, fin_axes)

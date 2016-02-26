@@ -1,19 +1,11 @@
-strict digraph G {
-H;
-B;
-G;
-E;
-A;
-C;
-F;
-D;
-B -> D;
-G -> H;
-E -> F;
-E -> H;
-A -> C;
-A -> B;
-C -> G;
-C -> E;
-D -> F;
+strict graph G {
+center;
+p2;
+c2;
+p1;
+c1;
+center -- p2;
+center -- c2;
+center -- p1;
+center -- c1;
 }

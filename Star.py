@@ -4,7 +4,7 @@
 import numpy as np
 
 from BayesNode import *
-from Utilities import *
+
 
 
 class Star:

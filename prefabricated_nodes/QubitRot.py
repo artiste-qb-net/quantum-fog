@@ -5,14 +5,74 @@ from MyConstants import *
 
 
 class QubitRot(BayesNode):
+    """
+    The constructor of this class builds a BayesNode that has a transition
+    matrix appropriate for a qubit rotation.
+
+    The following is expected:
+
+    * the focus node has exactly one parent node,
+
+    * the parent node has 2 states named 0 and 1, in that order.
+
+    Quantum Fog gives names 0 and 1 to the states of the Qbit Rotator.
+
+    The constructor allows you to enter the angles theta_degs[0:3] (in
+    degrees) such that the amplitudes of the node are given by the entries
+    of the following 2 × 2 matrix: (t =theta_degs)
+
+    exp(i*(pi/180)*{t[0] + t[1]*sigmaX + t[2]*sigmaY + t[3]*sigmaY}),
+
+    where sigmaX, sigmaY and sigmaZ are the Pauli Matrices.
+
+    More information about Qbit Rotation nodes can be found in the documents
+    entitled "Quantum Fog Manual", and "Quantum Fog Library Of Essays" that
+    are included with the legacy QFog.
+
+    Attributes
+    ----------
+    thetas_degs : list[float]
+
+    potential : Potential
+    active_states : list[int]
+    clique : Clique
+    size : int
+    state_names : list[str]
+    children : set[BayesNode]
+    neighbors : set[BayesNode]
+    parents : set[BayesNode]
+    id_num : int
+    index : int
+    name : str
+    visited : bool
+
+
+    """
 
     def __init__(self, id_num, name, pa_nd, thetas_degs):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        id_num : int
+            id number of self (focus node)
+        name : str
+            name of self (focus node)
+        pa_nd : BayesNode
+            parent node
+        thetas_degs : list[float]
+
+        Returns
+        -------
+
+        """
 
         self.thetas_degs = thetas_degs
 
         assert pa_nd.size == 2, "pa_nd of qubit rot does not have size 2"
         assert pa_nd.state_names == ['0', '1'], \
-            "parent node state names not 0,1"
+            "parent node state names are not 0,1"
 
         BayesNode.__init__(self, id_num, name, size=2)
         self.add_parent(pa_nd)
@@ -27,8 +87,19 @@ class QubitRot(BayesNode):
                 self.potential[m, n] = self.qbit_rot_amp(n, m)
 
     def qbit_rot_amp(self, n, m):
+        """
+        Returns <n |rot| m> where m and n are in {0, 1}
 
-        # notation <n || m>
+        Parameters
+        ----------
+        n : int
+        m : int
+
+        Returns
+        -------
+        complex
+
+        """
 
         rads = [self.thetas_degs[k]*math.pi/180 for k in range(4)]
 
@@ -72,7 +143,6 @@ if __name__ == "__main__":
 
     thetas_degs = [20, 30, 40, 60]
     qr = QubitRot(1, "rot", pa_nd, thetas_degs)
-
 
     print("pa_nd state names: ", pa_nd.state_names)
     print("qubit rot state names: ", qr.state_names)

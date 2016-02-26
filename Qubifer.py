@@ -199,8 +199,7 @@ class Qubifer:
                     for index in generator:
                         new_line = fix(f.readline(), ')', ',')
                         new_line = fix(new_line, '(;', '')
-                        # remove whitespace from beginning and end of of
-                        # new_line
+                        # remove whitespace from beginning and end of new_line
                         new_line = new_line.strip()
                         if num_parents == 0:
                             # root nodes don't have parentheses enclosing

@@ -4,6 +4,7 @@
 import numpy as np
 from MyConstants import *
 import itertools as it
+import cmath
 
 
 def cartesian_product(shape_list):
@@ -23,27 +24,30 @@ def cartesian_product(shape_list):
     x = (range(shape_list[k]) for k in range(len(shape_list)))
     return it.product(*x)
 
-
-def debug_assert(*args):
+def fix(in_str, bad_chs, sub):
     """
-    Wrapper for assert() so that assert() can be removed after debugging.
+    This replaces in 'in_str' each character of 'bad_chs' by a 'sub'
 
     Parameters
     ----------
-    args :
+    in_str : str
+    bad_chs : str
+    sub : str
 
     Returns
     -------
+    str
 
     """
-    if DEBUG_ON:
-        assert args
+    for c in bad_chs:
+        in_str = in_str.replace(c, sub)
+    return in_str
 
 
 if __name__ == "__main__":
     # both work
-    # ray = np.array([2, 3, 3])
-    ray = [2, 3, 3]
+    # ray = np.array([2, 3, 4])
+    ray = [2, 3, 4]
     seq = cartesian_product(ray)
     for s in seq:
         print(s)

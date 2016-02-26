@@ -6,9 +6,79 @@ import Utilities as ut
 
 
 class Marginalizer(BayesNode):
+    """
+    The constructor of this class builds a BayesNode that has a transition
+    matrix appropriate for a marginalizer node. Given a quantum state |a0,
+    a1, a2,....> and asked to project along axis or component 2,
+    a marginalizer node will give back |a2>. That is the gist of it.
+
+    The following is expected:
+
+    * the focus node has exactly one parent node,
+
+    * the states of the parent node are of one of two forms: has_commas=True
+    or False
+
+    When 'has_commas' is True, the states of the parent node must be of the
+    form (a_0, a_1, a_2,... a_{n-1}) where a_0 \in S_0, a_1 \in S_1,
+    etc. The sets S_0, S_1, ... S_{n-1} need not be the same. If
+    'projected_axis' equals k, then QFog will use S_k as the states of the
+    focus node. The transition matrix will be assigned the value \delta(b_k,
+    a_k), where \delta() is the Kronecker delta function, b_k is the state
+    of the focus node and a_k is the kth component of the state of the
+    parent node.
+
+    The case 'has_commas' is False is virtually identical to the True case,
+    except that now the states of the parent node are not tuples, and don't
+    have commas. Instead they are all strings of the same length. In this
+    case, projected axis k refers to the position k (0 based) on the string.
+
+    More information about marginalizer nodes can be found in the documents
+    entitled "Quantum Fog Manual", and "Quantum Fog Library Of Essays" that
+    are included with the legacy QFog.
+
+    Attributes
+    ----------
+    has_commas : bool
+    projected_axis : int
+
+    potential : Potential
+    active_states : list[int]
+    clique : Clique
+    size : int
+    state_names : list[str]
+    children : set[BayesNode]
+    neighbors : set[BayesNode]
+    parents : set[BayesNode]
+    id_num : int
+    index : int
+    name : str
+    visited : bool
+
+
+    """
 
     def __init__(self, id_num, name,
             is_quantum, pa_nd, projected_axis, has_commas=True):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        id_num : int
+            id number of self (focus node)
+        name : str
+            name of self (focus node)
+        is_quantum : bool
+        pa_nd : BayesNode
+            parent node
+        projected_axis : int
+        has_commas : bool
+
+        Returns
+        -------
+
+        """
 
         self.projected_axis = projected_axis
         self.has_commas = has_commas
