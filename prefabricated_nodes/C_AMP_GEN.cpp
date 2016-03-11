@@ -1,0 +1,1 @@
+#include "C_AMP_GEN.h"//******************************************C_AMP_GEN::C_AMP_GEN(NODE * 		nd_p,		//inQB_NET * 		net_p,		//inC_PI_WIND * 	pi_wind_p)	//in	:its_nd_p(nd_p),	its_net_p(net_p),	its_pi_wind_p(pi_wind_p){}//******************************************C_AMP_GEN::~C_AMP_GEN(){}
