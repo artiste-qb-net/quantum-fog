@@ -15,6 +15,16 @@ class OneBitGates:
     ----------
 
     """
+    @staticmethod
+    def meas():
+        """
+        Returns 1. Dummy function used for measurement lines in English file.
+
+        Returns
+        -------
+
+        """
+        return 1
 
     @staticmethod
     def sigx(is_quantum=True):
@@ -148,7 +158,75 @@ class OneBitGates:
         return mat
 
     @staticmethod
-    def one_bit_rot(rad_ang_x, rad_ang_y, rad_ang_z):
+    def P_0_phase_fac(ang_rads):
+        """
+        Returns
+
+        exp(1j*rad_ang*P_0) = [[x, 0],[0, 1]] with x = exp(1j*ang_rads)
+
+        Parameters
+        ----------
+        ang_rads : float
+
+        Returns
+        -------
+        np.ndarray
+
+        """
+        ty = np.complex128
+        mat = np.zeros([2, 2], dtype=ty)
+        mat[0, 0] = np.exp(1j*ang_rads)
+        mat[1, 1] = 1
+        return mat
+
+    @staticmethod
+    def P_1_phase_fac(ang_rads):
+        """
+        Returns
+
+        exp(1j*rad_ang*P_1) = [[1, 0],[0, x]] with x = exp(1j*ang_rads)
+
+        Parameters
+        ----------
+        ang_rads : float
+
+        Returns
+        -------
+        np.ndarray
+
+        """
+        ty = np.complex128
+        mat = np.zeros([2, 2], dtype=ty)
+        mat[1, 1] = np.exp(1j*ang_rads)
+        mat[0, 0] = 1
+        return mat
+
+    @staticmethod
+    def phase_fac(ang_rads):
+        """
+        Returns
+
+        exp(1j*rad_ang*I_2) = [[x, 0],[0, x]] with x = exp(1j*ang_rads)
+
+
+        Parameters
+        ----------
+        ang_rads : float
+
+        Returns
+        -------
+        np.ndarray
+
+        """
+        ty = np.complex128
+        mat = np.zeros([2, 2], dtype=ty)
+        x = np.exp(1j*ang_rads)
+        mat[1, 1] = x
+        mat[0, 0] = x
+        return mat
+
+    @staticmethod
+    def rot(rad_ang_x, rad_ang_y, rad_ang_z):
         """
         Returns
 
@@ -188,7 +266,7 @@ class OneBitGates:
         return mat
 
     @staticmethod
-    def one_bit_rot_ax(rad_ang, axis):
+    def rot_ax(rad_ang, axis):
         """
         Returns
 
@@ -230,73 +308,28 @@ class OneBitGates:
 
         return mat
 
-    @staticmethod
-    def one_bit_P_0_phase_fac(ang_rads):
-        """
-        Returns
-
-        exp(1j*rad_ang*P_0) = [[x, 0],[0, 1]] with x = exp(1j*ang_rads)
-
-        Parameters
-        ----------
-        ang_rads : float
-
-        Returns
-        -------
-        np.ndarray
-
-        """
-        ty = np.complex128
-        mat = np.zeros([2, 2], dtype=ty)
-        mat[0, 0] = np.exp(1j*ang_rads)
-        mat[1, 1] = 1
-        return mat
-
-    @staticmethod
-    def one_bit_P_1_phase_fac(ang_rads):
-        """
-        Returns
-
-        exp(1j*rad_ang*P_1) = [[1, 0],[0, x]] with x = exp(1j*ang_rads)
-
-        Parameters
-        ----------
-        ang_rads : float
-
-        Returns
-        -------
-        np.ndarray
-
-        """
-        ty = np.complex128
-        mat = np.zeros([2, 2], dtype=ty)
-        mat[1, 1] = np.exp(1j*ang_rads)
-        mat[0, 0] = 1
-        return mat
-
-    @staticmethod
-    def one_bit_phase_fac(ang_rads):
-        """
-        Returns
-
-        exp(1j*rad_ang*I_2) = [[x, 0],[0, x]] with x = exp(1j*ang_rads)
-
-
-        Parameters
-        ----------
-        ang_rads : float
-
-        Returns
-        -------
-        np.ndarray
-
-        """
-        ty = np.complex128
-        mat = np.zeros([2, 2], dtype=ty)
-        x = np.exp(1j*ang_rads)
-        mat[1, 1] = x
-        mat[0, 0] = x
-        return mat
-
 if __name__ == "__main__":
     print('sigx= ', OneBitGates.sigx())
+    print('sigy= ', OneBitGates.sigy())
+    print('sigz= ', OneBitGates.sigz())
+
+    print('had2= ', OneBitGates.had2())
+
+    print('P_0= ', OneBitGates.P_0())
+    print('P_1= ', OneBitGates.P_1())
+
+    print('P_0_phase_fac= ', OneBitGates.P_0_phase_fac(10))
+    print('P_1_phase_fac= ', OneBitGates.P_1_phase_fac(10))
+    print('phase_fac= ', OneBitGates.phase_fac(10))
+
+    mat = OneBitGates.rot(10, 20, 30)
+    print('rot*rot^H= ', np.dot(mat, mat.conj().T))
+
+    mat = OneBitGates.rot_ax(10, 1)
+    print('rotx*rotx^H= ', np.dot(mat, mat.conj().T))
+
+    mat = OneBitGates.rot_ax(10, 2)
+    print('roty*roty^H= ', np.dot(mat, mat.conj().T))
+
+    mat = OneBitGates.rot_ax(10, 3)
+    print('rotz*rotz^H= ', np.dot(mat, mat.conj().T))

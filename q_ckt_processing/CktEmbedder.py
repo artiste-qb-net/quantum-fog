@@ -55,7 +55,7 @@ class CktEmbedder:
         bool
 
         """
-        return bool(self.bit_map)
+        return self.bit_map is None
 
     def aft(self, bef):
         """

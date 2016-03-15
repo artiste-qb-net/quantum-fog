@@ -2,12 +2,12 @@
 
 class SEO_pre_reader:
     """
-    This class' constructor reads an English file (a type of txt file). It
+    This class' constructor scans an English file (a type of txt file). It
     skips all lines except the ones starting with LOOP or NEXT. By doing so,
     it collects information about LOOPs (the offset of their begin and end,
     their id number and their number of reps). This class is inherited by
-    class SEO_reader. That class reads an English file twice, first in this
-    preview mode to collect info about the loops, and then it reads it more
+    class SEO_scaner. That class scans an English file twice, first in this
+    preview mode to collect info about the loops, and then it scans it more
     thoroughly, parsing each line and "using" it in some way.
 
     See doctring for class SEO_writer for more info about English files.
@@ -50,7 +50,7 @@ class SEO_pre_reader:
         self.file_prefix = file_prefix
         self.num_bits = num_bits
         self.english_in = open(
-            file_prefix + '_' + str(num_bits) + 'eng.txt', 'rt')
+            file_prefix + '_' + str(num_bits) + '_eng.txt', 'rt')
         self.split_line = None
 
         self.num_lines = 0
@@ -58,11 +58,11 @@ class SEO_pre_reader:
         self.loop2tot_reps = {}
         self.loop_queue = []
 
-        self.continue_read_use()
+        self.continue_scan()
 
-    def continue_read_use(self):
+    def continue_scan(self):
         """
-        if the file is still open and there is a next line, read it; else,
+        if the file is still open and there is a next line, scan it; else,
         close the file.
 
         Returns
@@ -70,17 +70,16 @@ class SEO_pre_reader:
         None
 
         """
+        if self.english_in.closed:
+            pass
 
-        while not self.english_in.closed:
-            line = self.english_in.readline()
-            if not line:
-                self.english_in.close()
-                break
-            else:
-                self.num_lines += 1
-                self.read_use_line(line)
+        for line in self.english_in:
+            print(line)
+            self.num_lines += 1
+            self.scan_line(line)
+        self.english_in.close()
 
-    def read_use_line(self, line):
+    def scan_line(self, line):
         """
         Skips over any line that doesn't start with LOOP or NEXT. Parses
         those that do.
@@ -97,13 +96,13 @@ class SEO_pre_reader:
         self.split_line = line.split()
         line_name = self.split_line[0]
         if line_name == "LOOP":
-            self.read_use_LOOP()
+            self.scan_LOOP()
         elif line_name == "NEXT":
-            self.read_use_NEXT()
+            self.scan_NEXT()
         else:
             pass
 
-    def read_use_LOOP(self):
+    def scan_LOOP(self):
         """
         Parses line starting with "LOOP". Sends parsed info to a "use"
         method.
@@ -117,31 +116,13 @@ class SEO_pre_reader:
         # LOOP 5 REPS: 2
         loop_num = int(self.split_line[1])
         reps = int(self.split_line[3])
-        self.use_LOOP(loop_num, reps)
-
-    def use_LOOP(self, loop_num, reps):
-        """
-        Check that LOOP info is not illegal and store it so can do embedded
-        LOOPs on next reading of file.
-
-
-        Parameters
-        ----------
-        loop_num : int
-        reps : int
-
-        Returns
-        -------
-        None
-
-        """
         assert loop_num not in self.loop2tot_reps.keys(),\
             "this loop number has occurred before"
         self.loop2start_offset[loop_num] = self.english_in.tell()
         self.loop2tot_reps[loop_num] = reps
         self.loop_queue += [loop_num]
 
-    def read_use_NEXT(self):
+    def scan_NEXT(self):
         """
         Parses line starting with "NEXT". Sends parsed info to a "use" method.
 
@@ -153,22 +134,6 @@ class SEO_pre_reader:
         # example:
         # NEXT 5
         loop_num = self.split_line[1]
-        self.use_NEXT(loop_num)
-
-    def use_NEXT(self, loop_num):
-        """
-        Check NEXT info is legal and if so, store it so can do embedded
-        LOOPs on next reading of file.
-
-        Parameters
-        ----------
-        loop_num : int
-
-        Returns
-        -------
-        None
-
-        """
         if not self.loop_queue:
             assert False, "unmatched NEXT"
         if loop_num == self.loop_queue[-1]:

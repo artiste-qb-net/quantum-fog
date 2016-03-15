@@ -1,6 +1,7 @@
 import numpy as np
-from QLib.src.SEO_reader import *
-from QLib.src.OneBitGates import *
+import copy as cp
+from q_ckt_processing.SEO_reader import *
+from q_ckt_processing.OneBitGates import *
 
 
 class SEO_simulator(SEO_reader):
@@ -49,25 +50,28 @@ class SEO_simulator(SEO_reader):
         -------
 
         """
-
-        SEO_reader.__init__(self, file_prefix, num_bits)
+        if init_st_vec is None:
+            init_st_vec = SEO_simulator.get_ground_st(num_bits)
         self.cur_st_vec = init_st_vec
 
-    def set_cur_st_vec_to_ground_st(self):
+        SEO_reader.__init__(self, file_prefix, num_bits)
+
+    @staticmethod
+    def get_ground_st(num_bits):
         """
-        Sets current state vector to ground state |0>|0>|0>...|0>, where |0>
+        Returns ground state |0>|0>|0>...|0>, where |0>
         = [1,0]^t and |1> = [0,1]^t, t = transpose
 
         Returns
         -------
-        None
+        np.ndarray
 
         """
         ty = np.complex128
-        mat = np.zeros([1 << self.num_bits], dtype=ty)
-        mat[tuple([0]*self.num_bits)] = 1
-        mat.reshape([2]*self.num_bits)
-        self.cur_st_vec = mat
+        mat = np.zeros([1 << num_bits], dtype=ty)
+        mat[0] = 1
+        mat = mat.reshape([2]*num_bits)
+        return mat
 
     def evolve_by_controlled_bit_swap(self, bit1, bit2, controls):
         """
@@ -98,7 +102,9 @@ class SEO_simulator(SEO_reader):
                 slicex[controls.bit_pos[k]] = 0
         slicex = tuple(slicex)
         vec = self.cur_st_vec[slicex]
-        self.cur_st_vec[slicex] = np.transpose(vec, (bit1, bit2))
+        axes = list(range(self.num_bits))
+        axes[bit1], axes[bit2] = axes[bit2], axes[bit1]
+        self.cur_st_vec[slicex] = vec.transpose(axes)
 
     def evolve_by_controlled_one_bit_gate(self,
                 tar_bit_pos, controls, one_bit_gate):
@@ -152,9 +158,43 @@ class SEO_simulator(SEO_reader):
 
     # def use_NEXT(self, loop_num):
 
+    def use_MEAS(self, kind, tar_bit_pos):
+        """
+        Overrides the parent class use_ function. Calls
+        evolve_by_controlled_one_bit_gate() for MEAS.
+
+        If creates a list of the sum of x plus a deep copy of x, where x is
+        the cur_st_vec. Applies P_0 to the first half of the list and P_1 to
+        the second half.
+
+
+        Parameters
+        ----------
+        kind : int
+        tar_bit_pos: int
+
+        Returns
+        -------
+        None
+
+        """
+        if not isinstance(self.cur_st_vec, list):
+            self.cur_st_vec = [self.cur_st_vec]
+        self.cur_st_vec = self.cur_st_vec + cp.deepcopy(self.cur_st_vec)
+
+        list_len = len(self.cur_st_vec)
+        slicex = [slice(None)]*self.num_bits
+        for k in range(list_len/2):
+            slicex[tar_bit_pos] = 1
+            self.cur_st_vec[k][tuple(slicex)] = 0
+        for k in range(list_len/2, list_len):
+            slicex[tar_bit_pos] = 0
+            self.cur_st_vec[k][tuple(slicex)] = 0
+
     def use_SWAP(self, bit1, bit2, controls):
         """
-        Overrides the parent class use_ function. Calls evolve_by_controlled_bit_swap().
+        Overrides the parent class use_ function. Calls
+        evolve_by_controlled_bit_swap().
 
         Parameters
         ----------
@@ -171,8 +211,8 @@ class SEO_simulator(SEO_reader):
 
     def use_PHAS(self, angle_degs, tar_bit_pos, controls):
         """
-        Overrides the parent class use_ function. Calls evolve_by_controlled_one_bit_gate()
-        for PHAS.
+        Overrides the parent class use_ function. Calls
+        evolve_by_controlled_one_bit_gate() for PHAS.
 
         Parameters
         ----------
@@ -185,14 +225,14 @@ class SEO_simulator(SEO_reader):
         None
 
         """
-        gate = OneBitGates.one_bit_phase_fac(angle_degs*np.pi/180)
+        gate = OneBitGates.phase_fac(angle_degs * np.pi/180)
         self.evolve_by_controlled_one_bit_gate(tar_bit_pos, controls, gate)
 
     def use_P_PH(self, projection_bit,
                 angle_degs, tar_bit_pos, controls):
         """
-        Overrides the parent class use_ function. Calls evolve_by_controlled_one_bit_gate()
-        for P_0 and P_1 phase factors.
+        Overrides the parent class use_ function. Calls
+        evolve_by_controlled_one_bit_gate() for P_0 and P_1 phase factors.
 
 
         Parameters
@@ -207,17 +247,17 @@ class SEO_simulator(SEO_reader):
         None
 
         """
-        g = {
-                0: OneBitGates.one_bit_P_0_phase_fac,
-                1: OneBitGates.one_bit_P_1_phase_fac
-            }
-        gate = g[projection_bit](angle_degs*np.pi/180)
+        fun =   {
+                    0: OneBitGates.P_0_phase_fac,
+                    1: OneBitGates.P_1_phase_fac
+                }
+        gate = fun[projection_bit](angle_degs*np.pi/180)
         self.evolve_by_controlled_one_bit_gate(tar_bit_pos, controls, gate)
 
     def use_SIG(self, direction, tar_bit_pos, controls):
         """
-        Overrides the parent class use_ function. Calls evolve_by_controlled_one_bit_gate()
-        for sigx, sigy, sigz.
+        Overrides the parent class use_ function. Calls
+        evolve_by_controlled_one_bit_gate() for sigx, sigy, sigz.
 
         Parameters
         ----------
@@ -230,18 +270,18 @@ class SEO_simulator(SEO_reader):
         None
 
         """
-        s = {
-                1: OneBitGates.sigx,
-                2: OneBitGates.sigy,
-                3: OneBitGates.sigz
-            }
-        gate = s[direction]()
+        fun =   {
+                    1: OneBitGates.sigx,
+                    2: OneBitGates.sigy,
+                    3: OneBitGates.sigz
+                }
+        gate = fun[direction]()
         self.evolve_by_controlled_one_bit_gate(tar_bit_pos, controls, gate)
 
     def use_HAD2(self, tar_bit_pos, controls):
         """
-        Overrides the parent class use_ function. Calls evolve_by_controlled_one_bit_gate()
-        for had2.
+        Overrides the parent class use_ function. Calls
+        evolve_by_controlled_one_bit_gate() for had2.
 
 
         Parameters
@@ -260,8 +300,8 @@ class SEO_simulator(SEO_reader):
     def use_ROT(self, direction,
                 angle_degs, tar_bit_pos, controls):
         """
-        Overrides the parent class use_ function. Calls evolve_by_controlled_one_bit_gate()
-        for rot along axes x, y, or z.
+        Overrides the parent class use_ function. Calls
+        evolve_by_controlled_one_bit_gate() for rot along axes x, y, or z.
 
 
         Parameters
@@ -276,14 +316,14 @@ class SEO_simulator(SEO_reader):
         None
 
         """
-        gate = OneBitGates.one_bit_rot_ax(angle_degs*np.pi/180, direction)
+        gate = OneBitGates.rot_ax(angle_degs * np.pi/180, direction)
         self.evolve_by_controlled_one_bit_gate(tar_bit_pos, controls, gate)
 
     def use_ROTN(self, angle_x_degs, angle_y_degs, angle_z_degs,
                 tar_bit_pos, controls):
         """
-        Overrides the parent class use_ function. Calls evolve_by_controlled_one_bit_gate()
-        for rot along arbitrary direction.
+        Overrides the parent class use_ function. Calls
+        evolve_by_controlled_one_bit_gate() for rot along arbitrary direction.
 
 
         Parameters
@@ -299,11 +339,19 @@ class SEO_simulator(SEO_reader):
         None
 
         """
-        gate = OneBitGates.one_bit_rot(
+        gate = OneBitGates.rot(
                     angle_x_degs*np.pi/180,
                     angle_y_degs*np.pi/180,
                     angle_z_degs*np.pi/180)
         self.evolve_by_controlled_one_bit_gate(tar_bit_pos, controls, gate)
 
+    @staticmethod
+    def use_MP_Y():
+        assert False, \
+            "This calss cannot simmulate a circuit containing " \
+            "raw multiplexors. Must first use" \
+            "multiplexorExpander application to expand " \
+            "multiplexors into simpler gates "
+
 if __name__ == "__main__":
-    print(5)
+    sim = SEO_simulator('sim_test', 6)

@@ -152,7 +152,7 @@ class Controls:
         num = 0
         num_controls = len(self.kinds)
         for k in range(num_controls):
-            if isinstance(self.kinds[k], int):
+            if not isinstance(self.kinds[k], bool):
                 num += 1
         return num
 
@@ -172,6 +172,9 @@ class Controls:
         """
         if emb.is_identity():
             return self
+        if not self.bit2kind:
+            return self
+
         assert self.num_bits == emb.num_bits_bef,\
             "controls cannot be reset with CktEmbedder"
         new = Controls(emb.num_bits_aft)

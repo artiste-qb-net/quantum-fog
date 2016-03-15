@@ -1,5 +1,5 @@
-from QLib.src.Controls import *
-from QLib.src.SEO_pre_reader import *
+from q_ckt_processing.Controls import *
+from q_ckt_processing.SEO_pre_reader import *
 
 
 class SEO_reader(SEO_pre_reader):
@@ -50,7 +50,7 @@ class SEO_reader(SEO_pre_reader):
         SEO_pre_reader.__init__(self, file_prefix, num_bits)
 
         self.english_in = open(
-            file_prefix + '_' + str(num_bits) + 'eng.txt', 'rt')
+            file_prefix + '_' + str(num_bits) + '_eng.txt', 'rt')
 
         self.loop2cur_rep = {loop_num: -1 for
                               loop_num in self.loop2tot_reps.keys()}
@@ -114,6 +114,8 @@ class SEO_reader(SEO_pre_reader):
             self.read_use_NEXT()
         elif line_name == "SWAP":
             self.read_use_SWAP()
+        elif line_name == "MEAS":
+            self.read_use_MEAS()
         elif line_name == "PHAS":
             self.read_use_PHAS()
         elif line_name == "P0PH":
@@ -136,6 +138,8 @@ class SEO_reader(SEO_pre_reader):
             self.read_use_ROT(3)
         elif line_name == "ROTN":
             self.read_use_ROTN()
+        elif line_name == "MP_Y":
+            self.read_use_MP_Y()
         else:
             assert False, \
                 "reading an unsupported line kind: " + line_name
@@ -258,7 +262,43 @@ class SEO_reader(SEO_pre_reader):
 
         """
         assert False
-        
+
+    def read_use_MEAS(self):
+        """
+        Collect useful info from MEAS split_line and forward it to abstract
+        use_ method.
+
+        Returns
+        -------
+        None
+
+        """
+        # example:
+        # MEAS  0  AT  5
+        # MEAS  1  AT  5
+        # MEAS  2  AT  5
+
+        kind = int(self.split_line[1])
+        tar_bit_pos = int(self.split_line[3])
+        self.use_MEAS(kind, tar_bit_pos)
+
+    def use_MEAS(self, kind, tar_bit_pos):
+        """
+        Abstract use_ method that must be overridden by child class.
+
+        Parameters
+        ----------
+        kind : int
+        tar_bit_pos : int
+
+        Returns
+        -------
+        None
+
+        """
+        assert False
+
+
     def read_use_PHAS(self):
         """
         Collect useful info from PHAS split_line and forward it to abstract
