@@ -9,6 +9,8 @@ QFog is loosely based on an older app written in C++ for the Mac. Our near term 
 
 Ultimately, we would like to use a QFog based app to program quantum computers in a graphical, QB net based way. 
 
+Qubiter at GitHub (see https://github.com/artiste-qb-net/qubiter) is a twin project started by the same people. We hope that eventually Quantum Fog will call Qubiter to perform some tasks, like quantum compiling.
+
 We hope QFog also proves very useful to 
 * teachers of quantum mechanics, at all levels starting from high school.
 * researchers in fields other than quantum computing (for example, quantum artificial intelligence, quantum chemistry and quantum cognition).
