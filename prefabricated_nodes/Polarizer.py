@@ -1,5 +1,5 @@
-from DiscreteCondPot import *
-# from BayesNode import *
+from potentials.DiscreteCondPot import *
+# from nodes.BayesNode import *
 from prefabricated_nodes.BeamSplitter import *
 import math
 import cmath

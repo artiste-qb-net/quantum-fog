@@ -1,7 +1,7 @@
 # import numpy as np
 
-from DiscreteCondPot import *
-from BayesNode import *
+from potentials.DiscreteCondPot import *
+from nodes.BayesNode import *
 import Utilities as ut
 
 

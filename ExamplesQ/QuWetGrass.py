@@ -1,12 +1,12 @@
 import numpy as np
 
-from BayesNode import *
-from BayesNet import *
-from DiscreteUniPot import *
-from DiscreteCondPot import *
-from EnumerationEngine import *
-from MCMC_Engine import *
-from JoinTreeEngine import *
+from nodes.BayesNode import *
+from graphs.BayesNet import *
+from potentials.DiscreteUniPot import *
+from potentials.DiscreteCondPot import *
+from inference.EnumerationEngine import *
+from inference.MCMC_Engine import *
+from inference.JoinTreeEngine import *
 
 
 class QuWetGrass:
