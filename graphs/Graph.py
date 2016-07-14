@@ -133,13 +133,13 @@ class Graph:
                 return node
         assert False, "There is no node with id_num " + str(id_num)
 
-    def get_node_with_index(self, index):
+    def get_node_with_topo_index(self, topo_index):
         """
-        Tries to find the node with this index.
+        Tries to find the node with this topo_index.
 
         Parameters
         ----------
-        index : int
+        topo_index : int
 
         Returns
         -------
@@ -147,9 +147,9 @@ class Graph:
 
         """
         for node in self.nodes:
-            if node.index == index:
+            if node.topo_index == topo_index:
                 return node
-        assert False, "There is no node with index " + str(index)
+        assert False, "There is no node with topo_index " + str(topo_index)
 
     @staticmethod
     def new_from_nx_graph(nx_graph):
@@ -249,7 +249,7 @@ class Graph:
         path : str
             eg. for Windows, you can use an absolute path like
             'C:\\Documents and Settings\\ROBERT\\Desktop\\tempo.dot' or a
-            relative one like '..\\ExamplesC\\tempo.dot'
+            relative one like '..\\examples_cbnets\\tempo.dot'
 
         Returns
         -------
@@ -269,7 +269,7 @@ class Graph:
         path : str
             eg. for Windows, you can use an absolute path like
             'C:\\Documents and Settings\\ROBERT\\Desktop\\tempo.dot' or a
-            relative one like '..\\ExamplesC\\tempo.dot'
+            relative one like '..\\examples_cbnets\\tempo.dot'
 
         Returns
         -------
@@ -301,8 +301,8 @@ if __name__ == "__main__":
     g.draw(algo_num=1)
 
     # double dot to get parent directory
-    path1 = '..\\ExamplesC\\tempo1.dot'
-    path2 = '..\\ExamplesC\\tempo2.dot'
+    path1 = '..\\examples_cbnets\\dot_test1.dot'
+    path2 = '..\\examples_cbnets\\dot_test2.dot'
     g.write_dot(path1)
     new_g = Graph.read_dot(path1)
     new_g.write_dot(path2)

@@ -59,7 +59,7 @@ class Dag(Graph):
     def topological_sort(self):
         """
         Orders nodes (permutes their indices) such that no node is before
-        any of its parents. Node with lowest index number is a root node.
+        any of its parents. Node with lowest topo_index number is a root node.
         Exception is raised if graph has cycles and cannot be ordered
         topologically.
 
@@ -82,7 +82,7 @@ class Dag(Graph):
                 if sorted_set >= node.parents:
                     sorted_set.add(node)
                     self.nodes.remove(node)
-                    node.index = i
+                    node.topo_index = i
                     i += 1
                     break
         self.nodes = sorted_set
@@ -179,8 +179,8 @@ if __name__ == "__main__":
     g.draw(algo_num=1)
 
     # double dot to get parent directory
-    path1 = '..\\ExamplesC\\tempo1.dot'
-    path2 = '..\\ExamplesC\\tempo2.dot'
+    path1 = '..\\examples_cbnets\\dot_test1.dot'
+    path2 = '..\\examples_cbnets\\dot_test2.dot'
     g.write_dot(path1)
     new_g = Dag.read_dot(path1)
     new_g.write_dot(path2)

@@ -126,7 +126,7 @@ class EnumerationEngine(InferenceEngine):
             pot_val *= pot[states]
         return pot_val
 
-from ExamplesC.HuaDar import *
+from examples_cbnets.HuaDar import *
 if __name__ == "__main__":
 
     bnet = HuaDar.build_bnet()

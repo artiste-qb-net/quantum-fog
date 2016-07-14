@@ -45,7 +45,7 @@ class MoralGraph(Graph):
                     if not pa1.has_neighbor(pa2):
                         pa1.add_neighbor(pa2)
 
-from ExamplesC.HuaDar import *
+from examples_cbnets.HuaDar import *
 if __name__ == "__main__":
     bnet = HuaDar.build_bnet()
     mo = MoralGraph(bnet)

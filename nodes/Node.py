@@ -12,10 +12,10 @@ class Node:
     ----------
     id_num : int
         Should be an int that is immutable and different for each node.
-    index : int
+    topo_index : int
         Initially defined to be equal to id_num. After a topological sort,
         indices are permuted amongst the nodes so as to be in topological
-        order, root nodes having lowest index.
+        order, root nodes having lowest topo_index.
     name : str
         Optional, preferably different for each node.
     neighbors : set[Nodes]
@@ -38,7 +38,7 @@ class Node:
         """
 
         self.id_num = id_num
-        self.index = id_num
+        self.topo_index = id_num
         self.name = name
         self.neighbors = set()
         self.visited = False
@@ -57,7 +57,7 @@ class Node:
 
         """
 
-        return self.index < other.index
+        return self.topo_index < other.topo_index
 
     def add_neighbor(self, node):
         """

@@ -7,7 +7,7 @@ import Utilities as ut
 
 class BeamSplitter(BayesNode):
     """
-    The constructor of this class builds a BayesNode that has a transition
+    The Constructor of this class builds a BayesNode that has a transition
     matrix appropriate for a beam splitter.
 
     The following is expected:
@@ -89,7 +89,7 @@ class BeamSplitter(BayesNode):
     neighbors : set[BayesNode]
     parents : set[BayesNode]
     id_num : int
-    index : int
+    topo_index : int
     name : str
     visited : bool
 

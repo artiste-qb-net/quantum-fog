@@ -130,7 +130,7 @@ class MCMC_Engine(InferenceEngine):
 
         Returns
         -------
-        int
+        (int, DiscreteUniPot)
 
         """
         if len(focus_node.active_states) == 1:
@@ -152,7 +152,7 @@ class MCMC_Engine(InferenceEngine):
         annotated_story[focus_node] = sam_state
         return (sam_state, sam_pot)
 
-from ExamplesC.HuaDar import *
+from examples_cbnets.HuaDar import *
 if __name__ == "__main__":
 
     bnet = HuaDar.build_bnet()

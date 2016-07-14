@@ -8,7 +8,7 @@ import Utilities as ut
 
 class Polarizer(BayesNode):
     """
-    The constructor of this class builds a BayesNode that has a transition
+    The Constructor of this class builds a BayesNode that has a transition
     matrix appropriate for a polarizer that projects an electric field E to
     to an electric field E'. 'theta_degs' is the angle in degrees between
     the X axis and the direction of the polarization axis, which is the same
@@ -48,7 +48,7 @@ class Polarizer(BayesNode):
     neighbors : set[BayesNode]
     parents : set[BayesNode]
     id_num : int
-    index : int
+    topo_index : int
     name : str
     visited : bool
 

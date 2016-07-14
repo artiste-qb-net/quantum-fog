@@ -138,8 +138,8 @@ class JoinTreeEngine(InferenceEngine):
         # pick start_clique to be one owned by a node
         # with the lowest topological index number
 
-        min_nd_index = min([node.index for node in self.bnet.nodes])
-        start_clique = self.bnet.get_node_with_index(min_nd_index).clique
+        min_nd_topo_index = min([node.topo_index for node in self.bnet.nodes])
+        start_clique = self.bnet.get_node_with_topo_index(min_nd_topo_index).clique
         if self.do_print:
             print("start clique", start_clique.name)
 
@@ -289,7 +289,7 @@ class JoinTreeEngine(InferenceEngine):
                     self.pass_message(cur_clique, neighbor_cliq, sep)
                     self.distribute_evidence(neighbor_cliq, clique_counter + 1)
 
-from ExamplesC.HuaDar import *
+from examples_cbnets.HuaDar import *
 if __name__ == "__main__":
 
     bnet = HuaDar.build_bnet()

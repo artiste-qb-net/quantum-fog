@@ -23,7 +23,7 @@ class Clique(Node):
     subnodes : set[BayesNode]
 
     id_num : int
-    index : int
+    topo_index : int
     name : str
     neighbors : set[Node]
     visited : bool

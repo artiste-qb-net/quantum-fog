@@ -33,7 +33,7 @@ class BayesNode(DirectedNode):
     neighbors : set[Node]
     parents : set[Node]
     id_num : int
-    index : int
+    topo_index : int
     name : str
     visited : bool
     """
@@ -117,6 +117,21 @@ class BayesNode(DirectedNode):
         """
         assert(0 <= position < self.size)
         self.state_names[position] = name
+
+    def st_name_index(self, st_name):
+        """
+        returns index in state_names list given name
+
+        Parameters
+        ----------
+        st_name : str
+
+        Returns
+        -------
+        int
+
+        """
+        return self.state_names.index(st_name)
 
     def forget_all_evidence(self):
         """

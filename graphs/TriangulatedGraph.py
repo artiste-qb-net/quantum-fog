@@ -156,7 +156,7 @@ class TriangulatedGraph(Graph):
             print("\n")
 
 from graphs.MoralGraph import *
-from ExamplesC.HuaDar import *
+from examples_cbnets.HuaDar import *
 if __name__ == "__main__":
     bnet = HuaDar.build_bnet()
     mo = MoralGraph(bnet)

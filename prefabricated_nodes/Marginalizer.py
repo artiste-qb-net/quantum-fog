@@ -7,7 +7,7 @@ import Utilities as ut
 
 class Marginalizer(BayesNode):
     """
-    The constructor of this class builds a BayesNode that has a transition
+    The Constructor of this class builds a BayesNode that has a transition
     matrix appropriate for a marginalizer node. Given a quantum state |a0,
     a1, a2,....> and asked to project along axis or component 2,
     a marginalizer node will give back |a2>. That is the gist of it.
@@ -51,7 +51,7 @@ class Marginalizer(BayesNode):
     neighbors : set[BayesNode]
     parents : set[BayesNode]
     id_num : int
-    index : int
+    topo_index : int
     name : str
     visited : bool
 
@@ -105,7 +105,7 @@ class Marginalizer(BayesNode):
         for k, name in enumerate(self.state_names):
             for r, pa_name in enumerate(rep_name_list):
                 if name == pa_name:
-                    # remember, focus node is last index
+                    # remember, focus node is last topo_index
                     self.potential[r, k] = 1
 
 if __name__ == "__main__":

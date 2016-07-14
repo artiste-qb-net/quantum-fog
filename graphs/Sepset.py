@@ -28,7 +28,7 @@ class Sepset(Node):
     subnodes : set[Node]
 
     id_nym : int
-    index : int
+    topo_index : int
     name : str
     neighbors : set[Node]
     visited : bool

@@ -56,10 +56,11 @@ class BayesNet(Dag):
     @staticmethod
     def read_bif(path, is_quantum):
         """
-        Writes a bif file using our stand-alone class Qubifer. bif and dot
-        files complement each other. bif: graphical info No, pot info Yes.
-        dot: graphical info Yes, pot info No. By pots I mean potentials,
-        the transition matrices of the nodes. (aka CPTs, etc.)
+        Reads a bif file using our stand-alone class Qubifer and returns a
+        BayesNet. bif and dot files complement each other. bif: graphical
+        info No, pot info Yes. dot: graphical info Yes, pot info No. By pots
+        I mean potentials, the transition matrices of the nodes. (aka CPTs,
+        etc.)
 
         Parameters
         ----------
@@ -68,6 +69,7 @@ class BayesNet(Dag):
 
         Returns
         -------
+        BayesNet
 
         """
 
@@ -125,8 +127,8 @@ class BayesNet(Dag):
         qb.write_bif(path)
 
 
-from ExamplesC.HuaDar import *
-from ExamplesQ.QuWetGrass import *
+from examples_cbnets.HuaDar import *
+from examples_qbnets.QuWetGrass import *
 if __name__ == "__main__":
     bnet = HuaDar.build_bnet()
     for node in bnet.nodes:
@@ -138,19 +140,19 @@ if __name__ == "__main__":
 
     bnet.draw(algo_num=2)
 
-    path1 = '..\\ExamplesC\\tempo1.dot'
-    path2 = '..\\ExamplesC\\tempo2.dot'
+    path1 = '..\\examples_cbnets\\dot_test1.dot'
+    path2 = '..\\examples_cbnets\\dot_test2.dot'
     bnet.write_dot(path1)
     new_bnet = BayesNet.read_dot(path1)
     new_bnet.write_dot(path2)
 
-    path = '..\\ExamplesC\\HuaDar.bif'
-    path1 = '..\\ExamplesC\\HuaDar1.bif'
+    path = '..\\examples_cbnets\\HuaDar.bif'
+    path1 = '..\\examples_cbnets\\HuaDar1.bif'
     new_bnet = BayesNet.read_bif(path, False)
     new_bnet.write_bif(path1, False)
 
-    path = '..\\ExamplesQ\\QuWetGrass.bif'
-    path1 = '..\\ExamplesQ\\QuWetGrass1.bif'
+    path = '..\\examples_qbnets\\QuWetGrass.bif'
+    path1 = '..\\examples_qbnets\\QuWetGrass1.bif'
     new_bnet = BayesNet.read_bif(path, True)
     new_bnet.write_bif(path1, True)
 

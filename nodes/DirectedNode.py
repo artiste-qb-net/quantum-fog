@@ -18,7 +18,7 @@ class DirectedNode(Node):
     parents : set[DirectedNode]
 
     id_num : int
-    index : int
+    topo_index : int
     name : str
     visited : bool
     """
@@ -56,6 +56,23 @@ class DirectedNode(Node):
         if self != node:
             self.parents.add(node)
             node.children.add(self)
+
+    def add_parents(self, node_list):
+        """
+        Add parent nodes from a list of them.
+
+        Parameters
+        ----------
+        node_list : list(DirectedNode)
+
+        Returns
+        -------
+        None
+
+        """
+        for nd in node_list:
+            self.add_parent(nd)
+
 
     def remove_parent(self, node):
         """
@@ -107,6 +124,22 @@ class DirectedNode(Node):
         if self != node:
             self.children.add(node)
             node.parents.add(self)
+
+    def add_children(self, node_list):
+        """
+        Add children nodes from a list of them
+
+        Parameters
+        ----------
+        node_list : list(DirectedNode)
+
+        Returns
+        -------
+        None
+
+        """
+        for nd in node_list:
+            self.add_child(nd)
 
     def remove_child(self, node):
         """

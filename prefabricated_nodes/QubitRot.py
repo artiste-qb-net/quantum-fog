@@ -6,7 +6,7 @@ from MyConstants import *
 
 class QubitRot(BayesNode):
     """
-    The constructor of this class builds a BayesNode that has a transition
+    The Constructor of this class builds a BayesNode that has a transition
     matrix appropriate for a qubit rotation.
 
     The following is expected:
@@ -17,7 +17,7 @@ class QubitRot(BayesNode):
 
     Quantum Fog gives names 0 and 1 to the states of the Qbit Rotator.
 
-    The constructor allows you to enter the angles theta_degs[0:3] (in
+    The Constructor allows you to enter the angles theta_degs[0:3] (in
     degrees) such that the amplitudes of the node are given by the entries
     of the following 2 × 2 matrix: (t =theta_degs)
 
@@ -42,7 +42,7 @@ class QubitRot(BayesNode):
     neighbors : set[BayesNode]
     parents : set[BayesNode]
     id_num : int
-    index : int
+    topo_index : int
     name : str
     visited : bool
 

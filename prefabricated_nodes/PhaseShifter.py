@@ -6,7 +6,7 @@ import cmath
 
 class PhaseShifter(BayesNode):
     """
-    The constructor of this class builds a BayesNode that has a transition
+    The Constructor of this class builds a BayesNode that has a transition
     matrix appropriate for a phase shifter.
 
     The following is expected:
@@ -47,7 +47,7 @@ class PhaseShifter(BayesNode):
     neighbors : set[BayesNode]
     parents : set[BayesNode]
     id_num : int
-    index : int
+    topo_index : int
     name : str
     visited : bool
 
