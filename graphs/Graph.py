@@ -6,9 +6,10 @@
 import pydotplus as pdp
 import networkx as nx
 import matplotlib.pyplot as plt
-# import graphviz as gv
-# from graphviz import dot
-
+import graphviz as gv
+from graphviz import dot
+import pydotplus
+import os
 
 class Graph:
 
@@ -235,7 +236,8 @@ class Graph:
         }
         nx_graph = self.get_nx_graph()
         pos = node_pos[algo_num](nx_graph)
-        nx.draw_networkx(nx_graph, pos=pos, node_color='white', **kwargs)
+        #nx.draw_networkx(nx_graph, pos=pos, node_color='white', **kwargs)
+        nx.draw_graphviz(nx_graph, prog='twopi', **kwargs)
         plt.axis('off')
         plt.show()
 
@@ -256,7 +258,11 @@ class Graph:
         None
 
         """
-        nx.write_dot(self.get_nx_graph(), path)
+        # HDE = import fix as per https://github.com/networkx/networkx/issues/1984
+        cwd = os.getcwd()
+        from networkx.drawing.nx_pydot import write_dot
+        print("Writing dot file ", cwd,"/", path, "\n")
+        write_dot(self.get_nx_graph(), path)
 
     @classmethod
     def read_dot(cls, path):
@@ -276,7 +282,9 @@ class Graph:
         Graph
 
         """
-        nx_graph = nx.read_dot(path)
+        from networkx.drawing.nx_pydot import read_dot
+        print("Reading dot file ", path, "\n")
+        nx_graph = read_dot(path)
         return cls.new_from_nx_graph(nx_graph)
 
 
