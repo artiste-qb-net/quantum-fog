@@ -8,10 +8,9 @@ from potentials.DiscreteCondPot import *
 
 class NetParamsLner(NetLner):
     """
-    NetParamsLner (Net parameters Learner) is a subclass of NetLner. All net
-    parameter learner classes have this class as parent. This class learns
-    the parameters (i.e., the pots) of a bnet (either a cbnet or qbnet)
-    given a dag (directed acyclic graph) structure.
+    NetParamsLner (Net parameters Learner) is a subclass of NetLner. This
+    class learns the parameters (i.e., the pots) of a bnet (either a cbnet
+    or qbnet) given a dag (directed acyclic graph) structure.
 
     The input data from which the parameters are learned consists of one
     dataframe states_df in the classical case, and two dataframes states_df
@@ -39,7 +38,7 @@ class NetParamsLner(NetLner):
     is_quantum : bool
         True for quantum bnets amd False for classical bnets
     dag : Dag
-        a Dag (Directed Acyclic Graph) into which we load what is learned
+        a Dag (Directed Acyclic Graph) in which we store what is learned
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
@@ -61,7 +60,7 @@ class NetParamsLner(NetLner):
     """
 
     def __init__(self, is_quantum, bnet, states_df, degs_df=None,
-            nd_to_num_deg_bins=None, do_qtls=True):
+            nd_to_num_deg_bins=None, do_qtls=True, vtx_to_states=None):
         """
         Constructor
 
@@ -73,12 +72,17 @@ class NetParamsLner(NetLner):
         degs_df : pandas.DataFrame
         nd_to_num_deg_bins : dict[DirectedNode, int]
         do_qtls : bool
+        vtx_to_states : dict[str, list[str]]
+            A dictionary mapping each node name to a list of its state names.
+            This information will be stored in self.dag. If
+            vtx_to_states=None, constructor will learn vtx_to_states
+            from states_df
 
         Returns
         -------
 
         """
-        NetLner.__init__(self, is_quantum, states_df, bnet)
+        NetLner.__init__(self, is_quantum, states_df, bnet, vtx_to_states)
         nd_names = states_df.columns
         self.ord_nodes = [bnet.get_node_named(name) for name in nd_names]
 
@@ -90,8 +94,8 @@ class NetParamsLner(NetLner):
         self.do_qtls = do_qtls
 
     @staticmethod
-    def learn_slice(is_quantum, states_cols, degs_col=None,
-                    num_deg_bins=2, do_qtls=True):
+    def learn_pot_df(is_quantum, states_cols, degs_col=None,
+                     num_deg_bins=2, do_qtls=True):
         """
         Returns a dataframe called pot_df in which the rows are labelled by
         a multi-index giving the state of each node of the net. pot_df has a
@@ -159,9 +163,48 @@ class NetParamsLner(NetLner):
             pot_df = groups.size()
             col_sum = pot_df.sum()
             pot_df = pot_df.apply(lambda x: x/col_sum)
+        # this sets multi-index to column headers
+        pot_df = pot_df.reset_index(name='pot_values')
         return pot_df
 
-    def learn_one_pot(self, ord_nodes, num_deg_bins):
+    @staticmethod
+    def convert_pot_df_to_pot(is_quantum, pot_df, ord_nodes, normalize=True):
+        """
+        Returns a Potential pot with ordered nodes ord_nodes.
+
+        Parameters
+        ----------
+        is_quantum : bool
+        pot_df : pandas.DataFrame
+            a dataframe returned by learn_pot_df()
+        ord_nodes : list[BayesNode]
+            ordered nodes of Potential pot that is returned
+        normalize : bool
+            True if want pot to be normalized as a cond probability
+            or cond amplitude, P(x|y) or A(x|y),  where x is ord_nodes[-1]
+
+        Returns
+        -------
+        pandas.DataFrame
+
+        """
+        pot = DiscreteCondPot(is_quantum, ord_nodes, bias=0)
+        for row in range(len(pot_df.index)):
+            # print([pot_df.iloc[row, col]
+            #                              for col in range(len(ord_nodes))
+            #                              ])
+            index = [
+                    ord_nodes[col].st_name_index(str(pot_df.iloc[row, col]))
+                    for col in range(len(ord_nodes))
+                ]
+            pot.pot_arr[tuple(index)] = pot_df.loc[row, 'pot_values']
+
+        if normalize:
+            pot.normalize_self()
+        # print(pot)
+        return pot
+
+    def learn_pot(self, ord_nodes):
         """
         Learns from the data in states_df and degs_df a single Potential
         called pot. The nodes in pot are ordered according to the list of
@@ -174,9 +217,6 @@ class NetParamsLner(NetLner):
         ----------
         ord_nodes : list[BayesNode]
             list of ordered nodes used in the potential that is returned
-        num_deg_bins : int
-            number of bins used in binning the degs_col, which is the column
-            in self.degs_df corresponding to the focus node = ord_nodes[-1].
 
         Returns
         -------
@@ -184,34 +224,23 @@ class NetParamsLner(NetLner):
 
         """
 
-        col_names = [x.name for x in ord_nodes]
+        ord_nd_names = [x.name for x in ord_nodes]
         if self.is_quantum:
-            degs_df = self.degs_df[col_names[-1]]
+            degs_col = self.degs_df[ord_nd_names[-1]]
+            num_deg_bins = self.nd_to_num_deg_bins[ord_nodes[-1]]
         else:
-            degs_df = None
+            degs_col = None
+            num_deg_bins = 2
         # print(self.states_df[col_names])
-        pot_df = self.learn_slice(self.is_quantum,
-                                self.states_df[col_names],
-                                degs_df,
-                                num_deg_bins,
-                                self.do_qtls)
-        # this sets multi-index to column headers
-        pot_df = pot_df.reset_index(name='pot_values')
+        pot_df = NetParamsLner.learn_pot_df(self.is_quantum,
+                                   self.states_df[ord_nd_names],
+                                   degs_col,
+                                   num_deg_bins,
+                                   self.do_qtls)
         # print(pot_df)
 
-        pot = DiscreteCondPot(self.is_quantum, ord_nodes, bias=0)
-        for row in range(len(pot_df.index)):
-            index = [
-                ord_nodes[col].st_name_index(str(pot_df.iloc[row, col]))
-                for col in range(len(ord_nodes))
-                ]
-            # print(index, [pot_df.iloc[row, col]
-            #                              for col in range(len(ord_nodes))
-            #                              ])
-            pot.pot_arr[tuple(index)] = pot_df.loc[row, 'pot_values']
-        pot.normalize_self()
-        # print(pot)
-
+        pot = self.convert_pot_df_to_pot(self.is_quantum, pot_df,
+                    ord_nodes, normalize=True)
         return pot
 
     def learn_all_bnet_pots(self):
@@ -226,15 +255,46 @@ class NetParamsLner(NetLner):
         """
         for nd in self.dag.nodes:
             ord_nodes = list(nd.parents) + [nd]
-            pot = self.learn_one_pot(ord_nodes, self.nd_to_num_deg_bins[nd])
+            pot = self.learn_pot(ord_nodes)
             # print(nd.name, type(nd))
             # print('pot', pot, type(pot))
             nd.set_potential(pot)
 
         return self.dag
 
+    @staticmethod
+    def compare_true_and_emp_pots(bnet, bnet_emp):
+        """
+        Prints a comparison of the potentials of true and empirical bnets
+
+        Parameters
+        ----------
+        bnet : BayesNet
+            true BayesNet
+        bnet_emp : BayesNet
+            empirical BayesNet
+
+        Returns
+        -------
+
+        """
+        for nd in bnet.nodes:
+            print('\nnode=', nd.name)
+            true_pot = nd.potential
+            # must permute ord_nodes of emp_pot so that they are
+            # in same order as those of true_pot or else they
+            # may not be
+            emp_pot = bnet_emp.get_node_named(nd.name).potential
+            new_ord_nds = [bnet_emp.get_node_named(nd.name) for nd
+                                   in true_pot.ord_nodes]
+            emp_pot.set_to_transpose(new_ord_nds)
+            print('true:')
+            print(true_pot)
+            print('empirical:')
+            print(emp_pot)
+
 if __name__ == "__main__":
-    print('first test learn slice ---------------')
+    print('first test learn pot_df ---------------')
     df = pd.DataFrame({
         'A': [3, 1, 3, 1, 1, 4, 5, 6],
         'B': [1, 4, 1, 4, 4, 7, 8, 3],
@@ -249,21 +309,21 @@ if __name__ == "__main__":
 
     for is_quantum in [False, True]:
         print('\nis_quantum=', is_quantum)
-        pot_df = NetParamsLner.learn_slice(
+        pot_df = NetParamsLner.learn_pot_df(
                 is_quantum, df, degs_df, num_deg_bins=3)
         print('pot_df=\n', pot_df)
         if is_quantum:
             print('should be one=',
-                  pot_df.to_frame().apply(lambda x:
-                                          x*np.conjugate(x)).sum()[0])
+                  pot_df['pot_values'].apply(lambda x:
+                                          x*np.conjugate(x)).sum())
 
         else:
-            print('should be one=', pot_df.sum())
+            print('should be one=', pot_df['pot_values'].sum())
 
     from examples_cbnets.WetGrass import *
     from examples_qbnets.QuWetGrass import *
 
-    print('next test learn bnet ---------------')
+    print('\nnext test learn bnet, wetgrass---------------')
     for is_quantum in [False, True]:
         print('------is_quantum=', is_quantum)
         if is_quantum:
@@ -290,9 +350,42 @@ if __name__ == "__main__":
 
         lnr = NetParamsLner(is_quantum, bnet_emp, states_df, degs_df)
         lnr.learn_all_bnet_pots()
-        for nd in bnet.nodes:
-            print('\nnode=', nd.name)
-            print('true:')
-            print(nd.potential)
-            print('empirical:')
-            print(bnet_emp.get_node_named(nd.name).potential)
+        lnr.compare_true_and_emp_pots(bnet, bnet_emp)
+
+    print('\nnext test learn bnet, earthquake ---------------')
+    is_quantum = False
+    bnet = BayesNet.read_bif(
+        '..\\examples_cbnets\\earthquake.bif', is_quantum)
+
+    bnet_emp = BayesNet.read_bif(
+        '..\\examples_cbnets\\earthquake.bif', is_quantum)
+
+    states_df = pd.read_csv(
+        'training_data_c\\earthquake.csv', dtype=str)
+
+    lnr = NetParamsLner(is_quantum, bnet_emp, states_df)
+    lnr.learn_all_bnet_pots()
+    lnr.compare_true_and_emp_pots(bnet, bnet_emp)
+
+    print('\nnext test learn bnet, earthquake2 ---------------')
+
+    # The above example didn't match correctly the entries of
+    # the true and empirical pots because the state names are
+    # alphabetically ordered in bnet_emp but they aren't in
+    # bnet. This time we input the state names into bnet_emp
+    # instead of learning them from states_df
+
+    vtx_to_states = bnet.get_vtx_to_state_names()
+    lnr = NetParamsLner(is_quantum, bnet_emp, states_df,
+                        vtx_to_states=vtx_to_states)
+    lnr.learn_all_bnet_pots()
+    lnr.compare_true_and_emp_pots(bnet, bnet_emp)
+
+    # sometimes the earthquake training data does not contain
+    # samples for Burglary=False, Earthquake=False, Alarm=True or False.
+    # because P(A=True|E=False, B=False)=.001.
+    # In such cases, one gets a division by zero exception.
+    # Until I put in a mechanism to avoid this,
+    # run the sample generator again. 5000 or more samples
+    # usually yields enough samples to avoid division by zero
+

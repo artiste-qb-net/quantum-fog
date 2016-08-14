@@ -6,23 +6,34 @@ import operator
 class ChowLiuTreeLner(NetStrucLner):
     """
     ChowLiuTreeLnr (Chow Liu Tree Learner) is a subclass of NetStrucLner. It
-    associates a Chow Liu tree structure with an input states dataframe (
-    see Wikipedia for a description of such trees and original references).
+    learns a Chow Liu tree from a dataframe states_df. See Wikipedia for a
+    description of CL trees and original references.
+
     In a CL tree, the root node has several children and each of those can
-    have children and so on. Each child has a single unisex parent. Each
-    arrow is assigned the empirical mutual information (MI) between the
+    have children and so on. Each child has a single unisex parent.
+
+    The arrows must branch out rather than merge because, by definition,
+    the probability of each node (except the root nodes) of a CL tree must
+    be of the form P(b|a) where b and a are single nodes. i.e., each node
+    must have a single parent. This is not the case if two arrows merge at a
+    node.
+
+    Each arrow is assigned the empirical mutual information (MI) between the
     nodes it connects. The MI decreases as one moves away from the root node.
 
-    Even if the input dataframe is generated from a Chow Liu tree,
-    the learned tree structure will not necessarily look like the original
-    tree.
+    Even if the input dataframe is generated from a tree, the learned tree
+    structure will not necessarily look like the original tree.
+
+    References
+    ----------
+    1. Nicholas Cullen neuroBN at github
 
     Attributes
     ----------
     is_quantum : bool
         True for quantum bnets amd False for classical bnets
     dag : Dag
-        a Dag (Directed Acyclic Graph) into which we load what is learned
+        a Dag (Directed Acyclic Graph) in which we store what is learned
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
@@ -32,21 +43,25 @@ class ChowLiuTreeLner(NetStrucLner):
 
     """
 
-    # Ref. Nicholas Cullen neuroBN at github
-
-    def __init__(self, states_df):
+    def __init__(self, states_df, vtx_to_states=None):
         """
         Constructor
 
         Parameters
         ----------
         states_df : pandas.DataFrame
+        vtx_to_states : dict[str, list[str]]
+            A dictionary mapping each node name to a list of its state names.
+            This information will be stored in self.dag. If
+            vtx_to_states=None, constructor will learn vtx_to_states
+            from states_df
 
         Returns
         -------
+        None
 
         """
-        NetStrucLner.__init__(self, False, states_df)
+        NetStrucLner.__init__(self, False, states_df, vtx_to_states)
         self.learn_dag()
 
     def learn_dag(self):
@@ -62,29 +77,95 @@ class ChowLiuTreeLner(NetStrucLner):
         num_nds = len(nd_names)
         df = self.states_df
 
-        def mi(j, k):
+        def mi__(j, k):
             return DataEntropy.mut_info(df, [nd_names[j]], [nd_names[k]])
 
+        mi_array = np.zeros((num_nds, num_nds), dtype=float) - 1.0
+        ew_list = []
+        for j in range(num_nds):
+            for k in range(j+1, num_nds):
+                w = mi__(j, k)
+                mi_array[j, k] = w
+                ew_list.append((j, k, w))
         # ew = (j, k, w) = edge j->k and weight
-        ew_list = [(j, k, mi(j, k)) for
-                j in range(num_nds) for k in range(j+1, num_nds)]
-        print('ew_list\n', ew_list)
+
+        ew_list = self.prune_ew_list(mi_array, ew_list)
+
         # sort by weight, highest first
         ew_list.sort(key=operator.itemgetter(2), reverse=True)
+        temp_ew_list = []
         # start node_ids set with the left node of first edge in ew_list
-        node_ids = {ew_list[0][0]}
+        node_ids = [ew_list[0][0]]
+        while True:
+            for j, k, w in ew_list:
+                j_is_old = (j in node_ids)
+                k_is_old = (k in node_ids)
+                if j_is_old and not k_is_old:
+                    self.ord_nodes[j].add_child(self.ord_nodes[k])
+                    node_ids.append(k)
+                elif not j_is_old and k_is_old:
+                    self.ord_nodes[k].add_child(self.ord_nodes[j])
+                    node_ids.append(j)
+                elif j_is_old and k_is_old:
+                    self.do_if_both_nds_old(j, k, node_ids)
+                else:  # neither is old
+                    temp_ew_list.append((j, k, w))
+            if not temp_ew_list:
+                break
+            # no need to sort temp_ew_list
+            # as it is already in decreasing w order
+            ew_list = temp_ew_list
+            temp_ew_list = []
+            # start a second tree with a new root node
+            node_ids.append(ew_list[0][0])
 
-        for j, k, w in ew_list:
-            if j in node_ids and k not in node_ids:
-                self.ord_nodes[j].add_child(self.ord_nodes[k])
-                node_ids.add(k)
-            elif j not in node_ids and k in node_ids:
-                self.ord_nodes[k].add_child(self.ord_nodes[j])
-                node_ids.add(j)
+    def prune_ew_list(self, mi_array, ew_list):
+        """
+        This function takes as input an ew_list and returns that list pruned
+        (i.e., with some of its items removed). In this class, it does no
+        pruning but for subclasses like AracneLner it does.
+
+
+        Parameters
+        ----------
+        mi_array : numpy.array
+            a square array with the mutual information of nodes i and j at
+            position (i, j) of the array, with i < j.
+        ew_list : list[tuple[int, int, float]]
+            an edge-weight (ew) list. An ew is a 3-tuple ( i, j, weight)
+            representing an arrow i->j for ints i, j denoting vertices,
+            with weight w equal to the mutual info between the two endpoints
+            i, j of the arrow.
+
+        Returns
+        -------
+        list[tuple(int, int, float)]
+
+        """
+        return ew_list
+
+    def do_if_both_nds_old(self, j, k, nd_ids):
+        """
+        This function processes the case when j and k are both old, i.e.,
+        have been visited already. For this class, it does nothing, which is
+        why this class learns only trees.
+
+        Parameters
+        ----------
+        j : int
+        k : int
+        nd_ids : list[int]
+
+        Returns
+        -------
+        None
+
+        """
+        pass
 
 if __name__ == "__main__":
     from graphs.BayesNet import *
-    from learning.RandNetParamsGen import *
+    from learning.RandGen_NetParams import *
     from learning.NetParamsLner import *
     from examples_cbnets.SimpleTree7nd import *
 
@@ -92,22 +173,8 @@ if __name__ == "__main__":
     csv_path = 'training_data_c\\simple_tree_7nd.csv'
     num_samples = 500
     bnet = SimpleTree7nd.build_bnet()
-    gen = RandNetParamsGen(is_quantum, bnet, num_samples)
+    gen = RandGen_NetParams(is_quantum, bnet, num_samples)
     gen.write_csv(csv_path)
     states_df = pd.read_csv(csv_path)
     lnr = ChowLiuTreeLner(states_df)
     lnr.dag.draw(algo_num=2)
-
-    bnet_emp = SimpleTree7nd.build_bnet()
-    # forget pots of emp=empirical bnet because we want to learn them
-    for nd in bnet_emp.nodes:
-        nd.potential = None
-
-    lnr = NetParamsLner(is_quantum, bnet_emp, states_df)
-    lnr.learn_all_bnet_pots()
-    for nd in bnet.nodes:
-        print('\nnode=', nd.name)
-        print('true:')
-        print(nd.potential)
-        print('empirical:')
-        print(bnet_emp.get_node_named(nd.name).potential)

@@ -24,6 +24,7 @@ def cartesian_product(shape_list):
     x = (range(shape_list[k]) for k in range(len(shape_list)))
     return it.product(*x)
 
+
 def fix(in_str, bad_chs, sub):
     """
     This replaces in 'in_str' each character of 'bad_chs' by a 'sub'
@@ -42,7 +43,6 @@ def fix(in_str, bad_chs, sub):
     for c in bad_chs:
         in_str = in_str.replace(c, sub)
     return in_str
-
 
 if __name__ == "__main__":
     # both work

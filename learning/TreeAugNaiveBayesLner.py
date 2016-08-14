@@ -1,19 +1,22 @@
 from learning.NetStrucLner import *
-from graphs.Dag import *
+from learning.DataEntropy import *
+from learning.ChowLiuTreeLner import *
+import operator
 
 
-class NaiveBayesLner(NetStrucLner):
+class TreeAugNaiveBayesLner(NetStrucLner):
     """
-    NaiveBayesLner (Naive Bayes Learner). This class assumes a Naive Bayes
-    structure without any regard for the data in states_df. This means it
-    assumes a tree structure with arrows radiating from the specified target
-    vertex to all other vertices mentioned in the list of column labels of
-    states_df.
+    TreeAugNaiveBayesLner (Tree Augmented Naive Bayes Learner) is a simple
+    improvement of the Naive Bayes algorithm that combines Naive Bayes with
+    Chow Liu Trees.
 
-    Although ``naive", this model is often sufficiently good for
-    classification purposes. In such problems, the non-target node names (
-    column labels of dataframe) are called ``features" and the states of the
-    target node are called ``classes" of the ``classifier"
+    Whereas in Naive Bayes, the only arrows are those emanating from a
+    target node to all other nodes, TAN Bayes first builds a CL tree from
+    all nodes except the target one, and then it adds arrows from the target
+    node to all other nodes. The idea is that under Naive Bayes all
+    non-target nodes are independent if the target is held fixed. In the TAN
+    Bayes graph, the non-target nodes are given a chance to be correlated,
+    even if the target is held fixed.
 
     Attributes
     ----------
@@ -27,9 +30,10 @@ class NaiveBayesLner(NetStrucLner):
     ord_nodes : list[DirectedNode]
         a list of DirectedNode's named and in the same order as the column
         labels of self.states_df.
+
+
     tar_vtx : str
-        The name of the node that will assume the role of ``target" or
-        center of the graph.
+        target vertex. This node has arrows pointing to all other nodes.
 
     """
 
@@ -49,27 +53,43 @@ class NaiveBayesLner(NetStrucLner):
 
         Returns
         -------
+        None
 
         """
+
         NetStrucLner.__init__(self, False, states_df, vtx_to_states)
         self.tar_vtx = tar_vtx
         self.learn_dag()
 
     def learn_dag(self):
         """
-        Stores in self.dag the info that tar_vtx is parent of all other nodes.
+        This function learns a graph structure (a hybrid of a Naive Bayes
+        tree and a Chow Liu tree) from the data and stores what it learns in
+        self.dag.
 
         Returns
         -------
         None
 
         """
-        tar_nd = self.dag.get_node_named(self.tar_vtx)
+
+        nd_names = self.states_df.columns
+        nd_names_sans_tar = list(set(nd_names) - {self.tar_vtx})
+        num_nds = len(nd_names)
+        df = self.states_df[nd_names_sans_tar]
+
+        lnr = ChowLiuTreeLner(df)
+        self.dag = lnr.dag
+        tar_nd = DirectedNode(num_nds+1, self.tar_vtx)
+        self.dag.add_nodes({tar_nd})
+        self.ord_nodes = [self.dag.get_node_named(name) for name in nd_names]
         tar_nd.add_children([nd for nd in self.ord_nodes if nd != tar_nd])
 
 if __name__ == "__main__":
 
     csv_path = 'training_data_c\\simple_tree_7nd.csv'
     states_df = pd.read_csv(csv_path)
-    lnr = NaiveBayesLner(states_df, 'a0')
+    tar_vtx = 'b0'
+    lnr = TreeAugNaiveBayesLner(states_df, tar_vtx)
     lnr.dag.draw(algo_num=2)
+

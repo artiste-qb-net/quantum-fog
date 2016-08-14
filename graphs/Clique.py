@@ -7,7 +7,6 @@
 from graphs.Sepset import *
 
 
-
 class Clique(Node):
     """
     Clique inherits from Node. Cliques are clusters of subnodes. Each clique

@@ -199,7 +199,7 @@ class BeamSplitter(BayesNode):
         tau = tau_mag*cmath.exp(1j*tau_rads)
         rho = rho_mag*cmath.exp(1j*rho_rads)
 
-        # no incomming photons
+        # no incoming photons
         if n1+n2+m1+m2 == 0:
             return 1+0j
     
@@ -232,7 +232,7 @@ class BeamSplitter(BayesNode):
             else:
                 return 0+0j
 
-        sum = 0+0j
+        tot_sum = 0+0j
 
         for j1 in range(lo_lim, up_lim+1):
             term = np.power(tau, j1)/math.factorial(j1)
@@ -242,11 +242,11 @@ class BeamSplitter(BayesNode):
             term = term*np.power(rho, j)/math.factorial(j)
             j = m1 - j1
             term = term*np.power(np.conj(-rho), j)/math.factorial(j)
-            sum += term
+            tot_sum += term
         
         return math.sqrt(
             math.factorial(n1)*math.factorial(
-                n2)*math.factorial(m1)*math.factorial(m2))*sum
+                n2)*math.factorial(m1)*math.factorial(m2))*tot_sum
 
     def get_bs_amp_self(self, n1, n2, m1, m2):
         """

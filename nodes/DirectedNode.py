@@ -73,7 +73,6 @@ class DirectedNode(Node):
         for nd in node_list:
             self.add_parent(nd)
 
-
     def remove_parent(self, node):
         """
         Remove a parent node.

@@ -1,19 +1,23 @@
 import pandas as pd
 import numpy as np
+import Utilities as ut
 
 
 class DataEntropy:
     """
-    This class calculates classical (not quantum yet) entropy, mutual
-    information (MI) and conditional mutual info (CMI) from a dataframe (
-    hence, from empirical data, not from the true distributions of a bnet).
+    This class calculates classical (not quantum yet) entropy, conditional
+    information (CI), mutual information (MI) and conditional mutual info (
+    CMI) from a dataframe (hence, from empirical data, not from the true
+    distributions of a bnet).
 
+    Error in entropy is ln(n+1) - ln(n) \approx 1/n where n>>1 is the number
+    of samples
     """
 
     @staticmethod
     def ent(df, xcols, verbose=False):
         """
-        Calculates the entropy H(x) where x is given by the list of columns
+        Returns the entropy H(x) where x is given by the list of columns
         xcols in the dataframe df.
 
         Parameters
@@ -30,6 +34,8 @@ class DataEntropy:
         float
 
         """
+        if len(xcols) == 0 or xcols is None:
+            return 0.0
         sample_size = len(df.index)
         df1 = df.copy()
         df1 = df1.groupby(xcols)[xcols].size()
@@ -46,9 +52,46 @@ class DataEntropy:
         return all_ent
 
     @staticmethod
+    def cond_info(df, xcols, ycols, verbose=False):
+        """
+        Returns the conditional information (CI) H(x|y) where x (y,
+        resp.) is given by the list of columns xcols (ycols, resp.) in the
+        dataframe df.
+
+        Parameters
+        ----------
+        df : pandas.DataFrame
+            dataframe for which CI is calculated
+        xcols : list[str]
+            list of column names in df. The x in H(x:y)
+        ycols : list[str]
+            list of column names in df. The y in H(x:y)
+        verbose : bool
+            If True, print extra info in console.
+
+        Returns
+        -------
+        float
+
+        """
+        if xcols is None:
+            xcols = []
+        if ycols is None:
+            ycols = []
+
+        xycols = xcols + ycols
+        hxy = DataEntropy.ent(df, xycols)
+        hy = DataEntropy.ent(df, ycols)
+        info = hxy - hy
+        if verbose:
+            print('\ncond_info for', xcols, '|', ycols)
+            print(info)
+        return info
+
+    @staticmethod
     def mut_info(df, xcols, ycols, verbose=False):
         """
-        Calculates the mutual information (MI) H(x:y) where x (y, resp.) is
+        Returns the mutual information (MI) H(x:y) where x (y, resp.) is
         given by the list of columns xcols (ycols, resp.) in the dataframe df.
 
         Parameters
@@ -67,6 +110,11 @@ class DataEntropy:
         float
 
         """
+        if xcols is None:
+            xcols = []
+        if ycols is None:
+            ycols = []
+
         xycols = xcols + ycols
         hxy = DataEntropy.ent(df, xycols)
         hx = DataEntropy.ent(df, xcols)
@@ -80,8 +128,8 @@ class DataEntropy:
     @staticmethod
     def cond_mut_info(df, xcols, ycols, zcols, verbose=False):
         """
-        Calculates the conditional mutual information (CMI) H(x:y|z) where x
-        (y, z, resp.) is given by the list of columns xcols (y cols, z cols,
+        Returns the conditional mutual information (CMI) H(x:y|z) where x (
+        y, z, resp.) is given by the list of columns xcols (ycols, zcols,
         resp.) in the dataframe df.
 
 
@@ -103,6 +151,13 @@ class DataEntropy:
         float
 
         """
+        if xcols is None:
+            xcols = []
+        if ycols is None:
+            ycols = []
+        if zcols is None:
+            zcols = []
+
         xzcols = xcols + zcols
         yzcols = ycols + zcols
         xyzcols = xcols + ycols + zcols
@@ -115,6 +170,7 @@ class DataEntropy:
             print('\ncond mut_info for', xcols, ':', ycols, '|', zcols)
             print(info)
         return info
+
 
 if __name__ == "__main__":
     df = pd.DataFrame({
@@ -129,5 +185,6 @@ if __name__ == "__main__":
     print(df.dtypes)
     DataEntropy.ent(df, ['A'], verbose=True)
     DataEntropy.ent(df, ['A', 'B'], verbose=True)
+    DataEntropy.cond_info(df, ['A', 'B'], ['C'], verbose=True)
     DataEntropy.mut_info(df, ['A', 'B'], ['C'], verbose=True)
     DataEntropy.cond_mut_info(df, ['A'], ['B', 'E'], ['C'], verbose=True)

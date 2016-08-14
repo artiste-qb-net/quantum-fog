@@ -3,11 +3,11 @@ import csv
 from potentials.Potential import *
 
 
-class RandNetParamsGen:
+class RandGen_NetParams:
     """
-    RandNetParamsGen (Random Net Parameters Generator). This class generates
-    random parameters (i.e. either a single pot or all pots) for a given dag
-    structure.
+    RandGen_NetParams (Random Generator of Net Parameters). This class
+    generates random parameters (i.e. either a single pot or all pots) for a
+    given dag structure.
 
     The states are sampled the same way in the classical and quantum cases.
     In the quantum case, if a node C with parents pa(C) has C=x and pa(C)=y,
@@ -61,8 +61,8 @@ class RandNetParamsGen:
         nd_to_int_st and nd_to_degs. nd_to_int_st maps each node to its
         sampled state given as an integer (the integer being the index of
         the state in the node_states list of the node). In the quantum case,
-        nd_to_deg maps each node to its sampled phase in degrees. In the
-        classical case, nd_to_deg = None
+        nd_to_degs maps each node to its sampled phase in degrees. In the
+        classical case, nd_to_degs = None
 
         Returns
         -------
@@ -75,9 +75,9 @@ class RandNetParamsGen:
         # sampled
         nd_to_int_st = {}
         if self.is_quantum:
-            nd_to_deg = {}
+            nd_to_degs = {}
         else:
-            nd_to_deg = None
+            nd_to_degs = None
         sam_ctr = 0
         while sam_ctr < self.num_samples:
             for nd in self.topo_nd_list:
@@ -99,17 +99,17 @@ class RandNetParamsGen:
                 nd_to_int_st[nd] = nd_int_st
 
                 if self.is_quantum:
-                    nd_to_deg[nd] = np.angle(
+                    nd_to_degs[nd] = np.angle(
                         nd_pot_vals[nd_int_st], deg=True)
 
-            yield nd_to_int_st, nd_to_deg
+            yield nd_to_int_st, nd_to_degs
 
             sam_ctr += 1
 
     def write_csv(self, sts_file_path, degs_file_path=None):
         """
-        Writes a cvs file (comma separated values) for the states_df at the
-        path sts_file_path and for degs_df at the path degs_file_path
+        Writes a cvs file (comma separated values) for states_df at the path
+        sts_file_path and for degs_df at the path degs_file_path
 
         Parameters
         ----------
@@ -130,7 +130,7 @@ class RandNetParamsGen:
             fi_degs = open(degs_file_path, 'w', newline='')
             wr_degs = csv.writer(fi_degs)
             wr_degs.writerows([header])
-        for nd_to_int_st, nd_to_deg in self.sam_generator():
+        for nd_to_int_st, nd_to_degs in self.sam_generator():
             if self.do_int_df:
                 row = [str(nd_to_int_st[nd])
                        for nd in self.topo_nd_list]
@@ -139,7 +139,7 @@ class RandNetParamsGen:
                         for nd in self.topo_nd_list]
             wr_sts.writerows([row])
             if self.is_quantum:
-                row = [str(nd_to_deg[nd])
+                row = [str(nd_to_degs[nd])
                        for nd in self.topo_nd_list]
                 wr_degs.writerows([row])
         fi_sts.close()
@@ -151,25 +151,25 @@ if __name__ == "__main__":
 
     from examples_cbnets.WetGrass import *
     from examples_qbnets.QuWetGrass import *
-    num_samples = 500
+    num_samples = 2000
     do_int_df = True
 
     is_quantum = False
     bnet = WetGrass.build_bnet()
-    gen = RandNetParamsGen(is_quantum, bnet, num_samples, do_int_df)
+    gen = RandGen_NetParams(is_quantum, bnet, num_samples, do_int_df)
     gen.write_csv('training_data_c\\wetgrass.csv')
 
     is_quantum = True
     bnet = QuWetGrass.build_bnet()
-    gen = RandNetParamsGen(is_quantum, bnet, num_samples, do_int_df)
+    gen = RandGen_NetParams(is_quantum, bnet, num_samples, do_int_df)
     gen.write_csv('training_data_q\\wetgrass_sts.csv',
                   'training_data_q\\wetgrass_degs.csv')
 
     is_quantum = False
-    x_net = BayesNet.read_bif(
+    b_net = BayesNet.read_bif(
         '..\\examples_cbnets\\earthquake.bif', is_quantum)
-    num_samples = 200
-    gen = RandNetParamsGen(is_quantum, x_net, num_samples)
+    num_samples = 5000
+    gen = RandGen_NetParams(is_quantum, b_net, num_samples)
     csv_path = 'training_data_c\\earthquake.csv'
     gen.write_csv(csv_path)
 

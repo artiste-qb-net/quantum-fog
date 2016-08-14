@@ -36,6 +36,19 @@ class BayesNet(Dag):
         """
         Dag.__init__(self, nodes)
 
+    def get_vtx_to_state_names(self):
+        """
+        Returns a dictionary mapping node names to the list of their state
+        names
+
+        Returns
+        -------
+        dict[str, list[str]]
+
+        """
+
+        return {nd.name: nd.state_names for nd in self.nodes}
+
     @staticmethod
     def new_from_nx_graph(nx_graph):
         """
@@ -77,23 +90,23 @@ class BayesNet(Dag):
         qb.read_bif(path)
         k = -1
         nodes = set()
-        node_dict = {}
+        name_to_nd = {}
         for nd_name in qb.nd_sizes:
             k += 1
             node = BayesNode(k, nd_name)
             node.state_names = qb.states[nd_name]
             nodes |= {node}
-            node_dict[nd_name] = node
+            name_to_nd[nd_name] = node
         for nd_name, pa_name_list in qb.parents.items():
-            node = node_dict[nd_name]
+            node = name_to_nd[nd_name]
             for pa_name in pa_name_list:
-                pa = node_dict[pa_name]
+                pa = name_to_nd[pa_name]
                 node.add_parent(pa)
 
         for nd_name, parent_names in qb.parents.items():
-            node = node_dict[nd_name]
+            node = name_to_nd[nd_name]
             num_pa = len(parent_names)
-            parents = [node_dict[pa_name] for pa_name in parent_names]
+            parents = [name_to_nd[pa_name] for pa_name in parent_names]
             if num_pa == 0:
                 node.potential = DiscreteUniPot(is_quantum, node)
             else:

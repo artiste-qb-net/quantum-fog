@@ -83,10 +83,10 @@ class JoinTree(Graph):
         list[Clique]
 
         """
-        tri_dict = {node.id_num: node for node in tri_graph.nodes}
-        bnet_dict = {node.id_num: node for node in bnet.nodes}
+        tri_id_to_nd = {node.id_num: node for node in tri_graph.nodes}
+        bnet_id_to_nd = {node.id_num: node for node in bnet.nodes}
         id_nums = [node.id_num for node in bnet.nodes]
-        node_dict = {tri_dict[k]: bnet_dict[k] for k in id_nums}
+        node_dict = {tri_id_to_nd[k]: bnet_id_to_nd[k] for k in id_nums}
         for clique in tri_graph.cliques:
             # this won't work because you can't change index
             # you are iterating over?

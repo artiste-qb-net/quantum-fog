@@ -6,7 +6,6 @@ import numpy as np
 from nodes.BayesNode import *
 
 
-
 class Star:
     """
     A Star contains a focus node and some extra information about edges of

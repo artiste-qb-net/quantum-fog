@@ -2,7 +2,6 @@
 # separate file in this project with PBNT license.
 
 
-
 import pydotplus as pdp
 import networkx as nx
 import matplotlib.pyplot as plt

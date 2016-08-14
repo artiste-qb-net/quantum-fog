@@ -127,6 +127,9 @@ class DiscreteCondPot(Potential):
                     if abs(d) > TOL:
                         self.pot_arr[slicex] /= d
                     else:
+                        print('un-normalizable pot')
+                        print([node.name for node in self.ord_nodes])
+                        print(self.pot_arr)
                         raise ZeroDivisionError
             if postpone:
                 return totals

@@ -139,7 +139,8 @@ class JoinTreeEngine(InferenceEngine):
         # with the lowest topological index number
 
         min_nd_topo_index = min([node.topo_index for node in self.bnet.nodes])
-        start_clique = self.bnet.get_node_with_topo_index(min_nd_topo_index).clique
+        start_clique = self.bnet.get_node_with_topo_index(
+                                        min_nd_topo_index).clique
         if self.do_print:
             print("start clique", start_clique.name)
 

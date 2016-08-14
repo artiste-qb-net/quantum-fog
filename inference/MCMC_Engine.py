@@ -68,7 +68,7 @@ class MCMC_Engine(InferenceEngine):
 
         """
         assert(set(node_list) <= self.bnet.nodes)
-        pot_dict = {node: DiscreteUniPot(self.is_quantum, node, bias=0)
+        nd_to_pot = {node: DiscreteUniPot(self.is_quantum, node, bias=0)
                     for node in node_list}
         # initialize current story to a random one
         cur_story = [ra.choice(node.active_states)
@@ -84,14 +84,14 @@ class MCMC_Engine(InferenceEngine):
                     self.sample_node_given_markov_blanket(
                     node, annotated_story)
 
-                if node in pot_dict:
+                if node in nd_to_pot:
                     if cy > warmup:
-                        pot_dict[node][sam_state] += 1
+                        nd_to_pot[node][sam_state] += 1
 
                 # this didn't work well
-                # for nd in pot_dict:
+                # for nd in nd_to_pot:
                 #     if cy > warmup:
-                #         pot_dict[nd][annotated_story[nd]] += 1
+                #         nd_to_pot[nd][annotated_story[nd]] += 1
 
                 if self.do_print:
                     if num_cycles-4 < cy < num_cycles:
@@ -104,7 +104,7 @@ class MCMC_Engine(InferenceEngine):
                         print("\n")
         pot_list = []
         for node in node_list:
-            pot = pot_dict[node]
+            pot = nd_to_pot[node]
             pot.normalize_self()
             if self.is_quantum:
                 pot = pot.get_probs_from_amps()
