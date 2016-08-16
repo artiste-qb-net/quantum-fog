@@ -181,8 +181,8 @@ if __name__ == "__main__":
     g.draw(algo_num=1)
 
     # double dot to get parent directory
-    path1 = '..\\examples_cbnets\\dot_test1.dot'
-    path2 = '..\\examples_cbnets\\dot_test2.dot'
+    path1 = '../examples_cbnets/dot_test1.dot'
+    path2 = '../examples_cbnets/dot_test2.dot'
     g.write_dot(path1)
     new_g = Dag.read_dot(path1)
     new_g.write_dot(path2)

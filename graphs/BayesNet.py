@@ -153,19 +153,19 @@ if __name__ == "__main__":
 
     bnet.draw(algo_num=2)
 
-    path1 = '..\\examples_cbnets\\dot_test1.dot'
-    path2 = '..\\examples_cbnets\\dot_test2.dot'
+    path1 = '../examples_cbnets/dot_test1.dot'
+    path2 = '../examples_cbnets/dot_test2.dot'
     bnet.write_dot(path1)
     new_bnet = BayesNet.read_dot(path1)
     new_bnet.write_dot(path2)
 
-    path = '..\\examples_cbnets\\HuaDar.bif'
-    path1 = '..\\examples_cbnets\\HuaDar1.bif'
+    path = '../examples_cbnets/HuaDar.bif'
+    path1 = '../examples_cbnets/HuaDar1.bif'
     new_bnet = BayesNet.read_bif(path, False)
     new_bnet.write_bif(path1, False)
 
-    path = '..\\examples_qbnets\\QuWetGrass.bif'
-    path1 = '..\\examples_qbnets\\QuWetGrass1.bif'
+    path = '../examples_qbnets/QuWetGrass.bif'
+    path1 = '../examples_qbnets/QuWetGrass1.bif'
     new_bnet = BayesNet.read_bif(path, True)
     new_bnet.write_bif(path1, True)
 

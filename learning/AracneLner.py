@@ -143,7 +143,7 @@ class AracneLner(ChowLiuTreeLner):
 
 if __name__ == "__main__":
 
-    csv_path = 'training_data_c\\simple_tree_7nd.csv'
+    csv_path = 'training_data_c/simple_tree_7nd.csv'
     states_df = pd.read_csv(csv_path)
     lnr = AracneLner(states_df)
     lnr.dag.draw(algo_num=1)

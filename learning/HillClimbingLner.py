@@ -381,7 +381,7 @@ class HillClimbingLner(NetStrucLner):
         -------
 
         """
-        path1 = 'training_data_c\\wetgrass.csv'
+        path1 = 'training_data_c/wetgrass.csv'
         # true:
         # All arrows pointing down
         #    Cloudy
@@ -390,7 +390,7 @@ class HillClimbingLner(NetStrucLner):
         #   \      /
         #   WetGrass
 
-        path2 = 'training_data_c\\earthquake.csv'
+        path2 = 'training_data_c/earthquake.csv'
         # true:
         # All arrows pointing down
         # burglary   earthquake

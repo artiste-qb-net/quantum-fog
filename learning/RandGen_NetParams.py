@@ -157,19 +157,19 @@ if __name__ == "__main__":
     is_quantum = False
     bnet = WetGrass.build_bnet()
     gen = RandGen_NetParams(is_quantum, bnet, num_samples, do_int_df)
-    gen.write_csv('training_data_c\\wetgrass.csv')
+    gen.write_csv('training_data_c/wetgrass.csv')
 
     is_quantum = True
     bnet = QuWetGrass.build_bnet()
     gen = RandGen_NetParams(is_quantum, bnet, num_samples, do_int_df)
-    gen.write_csv('training_data_q\\wetgrass_sts.csv',
-                  'training_data_q\\wetgrass_degs.csv')
+    gen.write_csv('training_data_q/wetgrass_sts.csv',
+                  'training_data_q/wetgrass_degs.csv')
 
     is_quantum = False
     b_net = BayesNet.read_bif(
-        '..\\examples_cbnets\\earthquake.bif', is_quantum)
+        '../examples_cbnets/earthquake.bif', is_quantum)
     num_samples = 5000
     gen = RandGen_NetParams(is_quantum, b_net, num_samples)
-    csv_path = 'training_data_c\\earthquake.csv'
+    csv_path = 'training_data_c/earthquake.csv'
     gen.write_csv(csv_path)
 

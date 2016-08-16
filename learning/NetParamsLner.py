@@ -330,14 +330,14 @@ if __name__ == "__main__":
             bnet = QuWetGrass.build_bnet()
             bnet_emp = QuWetGrass.build_bnet()
             states_df = pd.read_csv(
-                'training_data_q\\wetgrass_sts.csv', dtype=str)
+                'training_data_q/wetgrass_sts.csv', dtype=str)
             degs_df = pd.read_csv(
-                'training_data_q\\wetgrass_degs.csv', dtype=str)
+                'training_data_q/wetgrass_degs.csv', dtype=str)
         else:
             bnet = WetGrass.build_bnet()
             bnet_emp = WetGrass.build_bnet()
             states_df = pd.read_csv(
-                'training_data_c\\wetgrass.csv', dtype=str)
+                'training_data_c/wetgrass.csv', dtype=str)
             degs_df = None
 
         # forget pots of emp=empirical bnet because we want to learn them
@@ -355,13 +355,13 @@ if __name__ == "__main__":
     print('\nnext test learn bnet, earthquake ---------------')
     is_quantum = False
     bnet = BayesNet.read_bif(
-        '..\\examples_cbnets\\earthquake.bif', is_quantum)
+        '../examples_cbnets/earthquake.bif', is_quantum)
 
     bnet_emp = BayesNet.read_bif(
-        '..\\examples_cbnets\\earthquake.bif', is_quantum)
+        '../examples_cbnets/earthquake.bif', is_quantum)
 
     states_df = pd.read_csv(
-        'training_data_c\\earthquake.csv', dtype=str)
+        'training_data_c/earthquake.csv', dtype=str)
 
     lnr = NetParamsLner(is_quantum, bnet_emp, states_df)
     lnr.learn_all_bnet_pots()
