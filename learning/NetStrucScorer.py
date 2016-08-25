@@ -62,7 +62,7 @@ class NetStrucScorer:
         a dictionary that maps each vertex to a list of its parents.
     vtx_to_states : dict[str, list[str]]
         A dictionary mapping each node name to a list of its state names.
-        This information will be stored in self.dag. If
+        This information will be stored in self.bnet. If
         vtx_to_states=None, constructor will learn vtx_to_states
         from states_df
     vtx_to_score : dict[str, float]

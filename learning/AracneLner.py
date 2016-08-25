@@ -38,8 +38,8 @@ class AracneLner(ChowLiuTreeLner):
     ----------
     is_quantum : bool
         True for quantum bnets amd False for classical bnets
-    dag : Dag
-        a Dag (Directed Acyclic Graph) in which we store what is learned
+    bnet : BayesNet
+        a BayesNet in which we store what is learned
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
@@ -58,7 +58,7 @@ class AracneLner(ChowLiuTreeLner):
         states_df : pandas.DataFrame
         vtx_to_states : dict[str, list[str]]
             A dictionary mapping each node name to a list of its state names.
-            This information will be stored in self.dag. If
+            This information will be stored in self.bnet. If
             vtx_to_states=None, constructor will learn vtx_to_states
             from states_df
 
@@ -146,5 +146,5 @@ if __name__ == "__main__":
     csv_path = 'training_data_c/simple_tree_7nd.csv'
     states_df = pd.read_csv(csv_path)
     lnr = AracneLner(states_df)
-    lnr.dag.draw(algo_num=1)
+    lnr.bnet.draw(algo_num=1)
 

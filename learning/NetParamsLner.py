@@ -10,7 +10,7 @@ class NetParamsLner(NetLner):
     """
     NetParamsLner (Net parameters Learner) is a subclass of NetLner. This
     class learns the parameters (i.e., the pots) of a bnet (either a cbnet
-    or qbnet) given a dag (directed acyclic graph) structure.
+    or qbnet) given the bnet's structure.
 
     The input data from which the parameters are learned consists of one
     dataframe states_df in the classical case, and two dataframes states_df
@@ -37,8 +37,8 @@ class NetParamsLner(NetLner):
 
     is_quantum : bool
         True for quantum bnets amd False for classical bnets
-    dag : Dag
-        a Dag (Directed Acyclic Graph) in which we store what is learned
+    bnet : BayesNet
+        a BayesNet in which we store what is learned
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
@@ -74,7 +74,7 @@ class NetParamsLner(NetLner):
         do_qtls : bool
         vtx_to_states : dict[str, list[str]]
             A dictionary mapping each node name to a list of its state names.
-            This information will be stored in self.dag. If
+            This information will be stored in self.bnet. If
             vtx_to_states=None, constructor will learn vtx_to_states
             from states_df
 
@@ -245,22 +245,22 @@ class NetParamsLner(NetLner):
 
     def learn_all_bnet_pots(self):
         """
-        Learns all the pots of a bnet given a structure (dag) and empirical
-        data in the form of dataframes states_df and degs_df.
+        Learns all the pots of a bnet given its structure and given
+        empirical data in the form of dataframes states_df and degs_df.
 
         Returns
         -------
         BayesNet
 
         """
-        for nd in self.dag.nodes:
+        for nd in self.bnet.nodes:
             ord_nodes = list(nd.parents) + [nd]
             pot = self.learn_pot(ord_nodes)
             # print(nd.name, type(nd))
             # print('pot', pot, type(pot))
             nd.set_potential(pot)
 
-        return self.dag
+        return self.bnet
 
     @staticmethod
     def compare_true_and_emp_pots(bnet, bnet_emp):

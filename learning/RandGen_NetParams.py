@@ -7,7 +7,7 @@ class RandGen_NetParams:
     """
     RandGen_NetParams (Random Generator of Net Parameters). This class
     generates random parameters (i.e. either a single pot or all pots) for a
-    given dag structure.
+    given bnet structure.
 
     The states are sampled the same way in the classical and quantum cases.
     In the quantum case, if a node C with parents pa(C) has C=x and pa(C)=y,

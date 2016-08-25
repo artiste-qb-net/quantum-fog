@@ -58,8 +58,8 @@ class MB_BasedLner(NetStrucLner):
     ----------
     is_quantum : bool
         True for quantum bnets amd False for classical bnets
-    dag : Dag
-        a Dag (Directed Acyclic Graph) in which we store what is learned
+    bnet : BayesNet
+        a BayesNet in which we store what is learned
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
@@ -100,7 +100,7 @@ class MB_BasedLner(NetStrucLner):
         verbose : bool
         vtx_to_states : dict[str, list[str]]
             A dictionary mapping each node name to a list of its state names.
-            This information will be stored in self.dag. If
+            This information will be stored in self.bnet. If
             vtx_to_states=None, constructor will learn vtx_to_states
             from states_df
         learn_later : bool
@@ -128,7 +128,7 @@ class MB_BasedLner(NetStrucLner):
         """
         This is the orchestra conductor of the symphony. Each of the
         functions it calls does a lot. By the end, a whole bnet structure
-        has been learned from the data and has been stored in self.dag.
+        has been learned from the data and has been stored in self.bnet.
 
 
         Returns
@@ -142,7 +142,7 @@ class MB_BasedLner(NetStrucLner):
         self.orient_edges()
         self.undo_cycles()
         self.orient_undecided_edges()
-        self.fill_dag_with_parents(self.vtx_to_parents)
+        self.fill_bnet_with_parents(self.vtx_to_parents)
 
     def find_MB(self, vtx=None):
         """
@@ -439,7 +439,7 @@ class MB_BasedLner(NetStrucLner):
             elif path == path2:
                 alpha = 4/num_sam
             lner = LnerClass(states_df, alpha, verbose=verbose)
-            lner.dag.draw(algo_num=1)
+            lner.bnet.draw(algo_num=1)
             # nx.draw_networkx(lner.nx_graph)
             # plt.axis('off')
             # plt.show()

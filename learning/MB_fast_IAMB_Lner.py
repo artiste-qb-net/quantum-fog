@@ -15,8 +15,8 @@ class MB_fast_IAMB_Lner(MB_BasedLner):
     ----------
     is_quantum : bool
         True for quantum bnets amd False for classical bnets
-    dag : Dag
-        a Dag (Directed Acyclic Graph) in which we store what is learned
+    bnet : BayesNet
+        a BayesNet in which we store what is learned
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
@@ -63,7 +63,7 @@ class MB_fast_IAMB_Lner(MB_BasedLner):
         verbose : bool
         vtx_to_states : dict[str, list[str]]
             A dictionary mapping each node name to a list of its state names.
-            This information will be stored in self.dag. If
+            This information will be stored in self.bnet. If
             vtx_to_states=None, constructor will learn vtx_to_states
             from states_df
         learn_later : bool
@@ -107,7 +107,7 @@ class MB_fast_IAMB_Lner(MB_BasedLner):
         self.vtx_to_MB = {}
 
         num_sam = len(self.states_df.index)
-        vtx_to_size = {nd.name:  nd.size for nd in self.dag.nodes}
+        vtx_to_size = {nd.name:  nd.size for nd in self.bnet.nodes}
 
         def cmi__(y, tar):  # H( y:tar | MB(tar)-y )
             return DataEntropy.cond_mut_info(self.states_df,

@@ -24,8 +24,8 @@ class HC_MMHC_rr_Lner(HC_RandRestartLner):
     ----------
     is_quantum : bool
         True for quantum bnets amd False for classical bnets
-    dag : Dag
-        a Dag (Directed Acyclic Graph) in which we store what is learned
+    bnet : BayesNet
+        a BayesNet in which we store what is learned
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
@@ -98,7 +98,7 @@ class HC_MMHC_rr_Lner(HC_RandRestartLner):
         verbose : bool
         vtx_to_states : dict[str, list[str]]
             A dictionary mapping each node name to a list of its state names.
-            This information will be stored in self.dag. If
+            This information will be stored in self.bnet. If
             vtx_to_states=None, constructor will learn vtx_to_states
             from states_df
 

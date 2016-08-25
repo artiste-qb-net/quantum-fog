@@ -22,8 +22,8 @@ class TreeAugNaiveBayesLner(NetStrucLner):
     ----------
     is_quantum : bool
         True for quantum bnets amd False for classical bnets
-    dag : Dag
-        a Dag (Directed Acyclic Graph) in which we store what is learned
+    bnet : BayesNet
+        a BayesNet in which we store what is learned
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
@@ -47,7 +47,7 @@ class TreeAugNaiveBayesLner(NetStrucLner):
         tar_vtx : str
         vtx_to_states : dict[str, list[str]]
             A dictionary mapping each node name to a list of its state names.
-            This information will be stored in self.dag. If
+            This information will be stored in self.bnet. If
             vtx_to_states=None, constructor will learn vtx_to_states
             from states_df
 
@@ -59,13 +59,13 @@ class TreeAugNaiveBayesLner(NetStrucLner):
 
         NetStrucLner.__init__(self, False, states_df, vtx_to_states)
         self.tar_vtx = tar_vtx
-        self.learn_dag()
+        self.learn_net_struc()
 
-    def learn_dag(self):
+    def learn_net_struc(self):
         """
         This function learns a graph structure (a hybrid of a Naive Bayes
         tree and a Chow Liu tree) from the data and stores what it learns in
-        self.dag.
+        self.bnet.
 
         Returns
         -------
@@ -79,10 +79,10 @@ class TreeAugNaiveBayesLner(NetStrucLner):
         df = self.states_df[nd_names_sans_tar]
 
         lnr = ChowLiuTreeLner(df)
-        self.dag = lnr.dag
+        self.bnet = lnr.bnet
         tar_nd = DirectedNode(num_nds+1, self.tar_vtx)
-        self.dag.add_nodes({tar_nd})
-        self.ord_nodes = [self.dag.get_node_named(name) for name in nd_names]
+        self.bnet.add_nodes({tar_nd})
+        self.ord_nodes = [self.bnet.get_node_named(name) for name in nd_names]
         tar_nd.add_children([nd for nd in self.ord_nodes if nd != tar_nd])
 
 if __name__ == "__main__":
@@ -91,5 +91,5 @@ if __name__ == "__main__":
     states_df = pd.read_csv(csv_path)
     tar_vtx = 'b0'
     lnr = TreeAugNaiveBayesLner(states_df, tar_vtx)
-    lnr.dag.draw(algo_num=2)
+    lnr.bnet.draw(algo_num=2)
 

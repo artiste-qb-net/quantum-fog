@@ -28,8 +28,8 @@ class HillClimbingLner(NetStrucLner):
     ----------
     is_quantum : bool
         True for quantum bnets and False for classical bnets
-    dag : Dag
-        a Dag (Directed Acyclic Graph) in which we store what is learned
+    bnet : BayesNet
+        a BayesNet in which we store what is learned
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
@@ -70,7 +70,7 @@ class HillClimbingLner(NetStrucLner):
         verbose : bool
         vtx_to_states : dict[str, list[str]]
             A dictionary mapping each node name to a list of its state names.
-            This information will be stored in self.dag. If
+            This information will be stored in self.bnet. If
             vtx_to_states=None, constructor will learn vtx_to_states
             from states_df
 
@@ -89,8 +89,8 @@ class HillClimbingLner(NetStrucLner):
         self.vertices = states_df.columns
         self.vtx_to_parents = {vtx: [] for vtx in self.vertices}
 
-        # get vtx_to_states info from self.dag
-        vtx_to_states1 = {nd.name: nd.state_names for nd in self.dag.nodes}
+        # get vtx_to_states info from self.bnet
+        vtx_to_states1 = {nd.name: nd.state_names for nd in self.bnet.nodes}
         self.scorer = NetStrucScorer(self.states_df,
                                      self.vtx_to_parents,
                                      vtx_to_states1,
@@ -163,7 +163,7 @@ class HillClimbingLner(NetStrucLner):
             else:
                 try_again, mtry_num = self.restart(mtry_num)
 
-        self.fill_dag_with_parents(self.vtx_to_parents)
+        self.fill_bnet_with_parents(self.vtx_to_parents)
 
     def do_move(self, move, score_change, do_finish=True):
         """
@@ -411,7 +411,7 @@ class HillClimbingLner(NetStrucLner):
                     states_df, score_type, max_num_mtries,
                     ess=2, verbose=verbose)
                 plt.title(score_type)
-                lner.dag.draw(algo_num=1)
+                lner.bnet.draw(algo_num=1)
                 # nx.draw_networkx(lner.nx_graph)
                 # plt.axis('off')
                 # plt.show()
