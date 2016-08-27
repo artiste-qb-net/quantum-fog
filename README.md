@@ -25,4 +25,5 @@ We hope QFog also proves very useful to
 
 (Alphabetical Order)
 * Dekant, Henning
+* Tregillus, Henry
 * Tucci, Robert
