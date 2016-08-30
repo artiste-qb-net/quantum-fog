@@ -1,16 +1,15 @@
 import pandas as pd
 import numpy as np
 from learning.DataBinner import *
-from learning.NetLner import *
+from learning.NetStrucLner import *
 from potentials.Potential import *
 from potentials.DiscreteCondPot import *
 
 
-class NetParamsLner(NetLner):
+class NetParamsLner:
     """
-    NetParamsLner (Net parameters Learner) is a subclass of NetLner. This
-    class learns the parameters (i.e., the pots) of a bnet (either a cbnet
-    or qbnet) given the bnet's structure.
+    NetParamsLner (Net Parameters Learner) learns the parameters ( i.e.,
+    the pots) of a bnet (either a cbnet or qbnet) given the bnet's structure.
 
     The input data from which the parameters are learned consists of one
     dataframe states_df in the classical case, and two dataframes states_df
@@ -32,6 +31,9 @@ class NetParamsLner(NetLner):
     by a coherent measurement of node bunches, one bunch for each node and
     its parents.
 
+    IMPORTANT: We will use the word 'vtx' = vertex to denote a node name and
+    the word 'node' to denote a Node object.
+
     Attributes
     ----------
 
@@ -42,9 +44,6 @@ class NetParamsLner(NetLner):
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
-    ord_nodes : list[DirectedNode]
-        a list of DirectedNode's named and in the same order as the column
-        labels of self.states_df.
 
     degs_df : pandas.DataFrame
         Only used in the quantum case. None in classical case. A Pandas
@@ -60,9 +59,19 @@ class NetParamsLner(NetLner):
     """
 
     def __init__(self, is_quantum, bnet, states_df, degs_df=None,
-            nd_to_num_deg_bins=None, do_qtls=True, vtx_to_states=None):
+            nd_to_num_deg_bins=None, do_qtls=True):
         """
         Constructor
+
+        This constructor assumes that the parameter bnet is a BayesNet
+        which already contains the correct net structure and the desired
+        state names for each node.
+
+        If bnet does not contain the desired state names for each node,
+        you will have to do some pre-processing of bnet before you pass it
+        in to this constructor. The two static methods
+        NetStrucLner:learn_nd_state_names() and
+        NetStrucLner:import_nd_state_names() can be used for this purpose.
 
         Parameters
         ----------
@@ -72,19 +81,14 @@ class NetParamsLner(NetLner):
         degs_df : pandas.DataFrame
         nd_to_num_deg_bins : dict[DirectedNode, int]
         do_qtls : bool
-        vtx_to_states : dict[str, list[str]]
-            A dictionary mapping each node name to a list of its state names.
-            This information will be stored in self.bnet. If
-            vtx_to_states=None, constructor will learn vtx_to_states
-            from states_df
 
         Returns
         -------
 
         """
-        NetLner.__init__(self, is_quantum, states_df, bnet, vtx_to_states)
-        nd_names = states_df.columns
-        self.ord_nodes = [bnet.get_node_named(name) for name in nd_names]
+        self.is_quantum = is_quantum
+        self.bnet = bnet
+        self.states_df = states_df
 
         self.degs_df = degs_df
         if nd_to_num_deg_bins:
@@ -348,6 +352,7 @@ if __name__ == "__main__":
         # if is_quantum:
         #     print('degs_df=\n', degs_df)
 
+        NetStrucLner.learn_nd_state_names(bnet_emp, states_df)
         lnr = NetParamsLner(is_quantum, bnet_emp, states_df, degs_df)
         lnr.learn_all_bnet_pots()
         lnr.compare_true_and_emp_pots(bnet, bnet_emp)
@@ -376,8 +381,8 @@ if __name__ == "__main__":
     # instead of learning them from states_df
 
     vtx_to_states = bnet.get_vtx_to_state_names()
-    lnr = NetParamsLner(is_quantum, bnet_emp, states_df,
-                        vtx_to_states=vtx_to_states)
+    NetStrucLner.import_nd_state_names(bnet_emp, vtx_to_states)
+    lnr = NetParamsLner(is_quantum, bnet_emp, states_df)
     lnr.learn_all_bnet_pots()
     lnr.compare_true_and_emp_pots(bnet, bnet_emp)
 
