@@ -165,6 +165,83 @@ class HillClimbingLner(NetStrucLner):
 
         self.fill_bnet_with_parents(self.vtx_to_parents)
 
+    @staticmethod
+    def do_move_vtx_to_parents(move, vtx_to_parents, reversal=False):
+        """
+        Applies a move or its reversal to a vtx_to_parents
+
+        Parameters
+        ----------
+        move : tuple[str, str, str]
+        vtx_to_parents : dict[str, list[str]]
+            dictionary mapping each vertex to a list of its parents's names
+        reversal : bool
+            If True, the function applies reversal of move to vtx_to_parents
+
+        Returns
+        -------
+        None
+
+        """
+        (beg_vtx, end_vtx, action) = move
+        if action == 'add':
+            if not reversal:
+                vtx_to_parents[end_vtx].append(beg_vtx)
+            else:
+                vtx_to_parents[end_vtx].remove(beg_vtx)
+        elif action == 'del':
+            if not reversal:
+                vtx_to_parents[end_vtx].remove(beg_vtx)
+            else:
+                vtx_to_parents[end_vtx].append(beg_vtx)
+        elif action == 'rev':
+            if not reversal:
+                vtx_to_parents[end_vtx].remove(beg_vtx)
+                vtx_to_parents[beg_vtx].append(end_vtx)
+            else:
+                vtx_to_parents[beg_vtx].remove(end_vtx)
+                vtx_to_parents[end_vtx].append(beg_vtx)
+        else:
+            assert False
+
+    @staticmethod
+    def do_move_nx_graph(move, nx_graph, reversal=False):
+        """
+        Applies move or its reversal to a networkx dag.
+
+        Parameters
+        ----------
+        move : tuple[str, str, str]
+        nx_graph : networkx.DiGraph
+        reversal : bool
+            If True, the function applies reversal of move to nx_graph
+
+        Returns
+        -------
+        None
+
+        """
+        (beg_vtx, end_vtx, action) = move
+        if action == 'add':
+            if not reversal:
+                nx_graph.add_edge(beg_vtx, end_vtx)
+            else:
+                nx_graph.remove_edge(beg_vtx, end_vtx)
+        elif action == 'del':
+            if not reversal:
+                nx_graph.remove_edge(beg_vtx, end_vtx)
+            else:
+               nx_graph.add_edge(beg_vtx, end_vtx)
+        elif action == 'rev':
+            if not reversal:
+                nx_graph.remove_edge(beg_vtx, end_vtx)
+                nx_graph.add_edge(end_vtx, beg_vtx)
+            else:
+                nx_graph.remove_edge(end_vtx, beg_vtx)
+                nx_graph.add_edge(beg_vtx, end_vtx)
+        else:
+            assert False
+
     def do_move(self, move, score_change, do_finish=True):
         """
         Once the move has been approved/vetted, it is performed by this
@@ -193,21 +270,8 @@ class HillClimbingLner(NetStrucLner):
         None
 
         """
-        (beg_vtx, end_vtx, action) = move
-        if action == 'add':
-            self.vtx_to_parents[end_vtx].append(beg_vtx)
-            self.nx_graph.add_edge(beg_vtx, end_vtx)
-        elif action == 'del':
-            self.vtx_to_parents[end_vtx].remove(beg_vtx)
-            self.nx_graph.remove_edge(beg_vtx, end_vtx)
-        elif action == 'rev':
-            self.vtx_to_parents[end_vtx].remove(beg_vtx)
-            self.vtx_to_parents[beg_vtx].append(end_vtx)
-
-            self.nx_graph.remove_edge(beg_vtx, end_vtx)
-            self.nx_graph.add_edge(end_vtx, beg_vtx)
-        else:
-            assert False
+        HillClimbingLner.do_move_vtx_to_parents(move, self.vtx_to_parents)
+        HillClimbingLner.do_move_nx_graph(move, self.nx_graph)
 
         self.scorer.do_move(move, score_change)
 

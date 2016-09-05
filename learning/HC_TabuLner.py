@@ -1,4 +1,5 @@
 from learning.HillClimbingLner import *
+import copy as cp
 
 
 class HC_TabuLner(HillClimbingLner):
@@ -97,10 +98,39 @@ class HC_TabuLner(HillClimbingLner):
             self, states_df, score_type, max_num_mtries,
             ess, verbose, vtx_to_states)
 
+    @staticmethod
+    def equal_dags(vtx_to_parents1, vtx_to_parents2, num_nodes):
+        """
+        Returns True iff its two input dicts denote the same labelled dag.
+
+        Parameters
+        ----------
+        vtx_to_parents1 : dict[str, list[str]]
+            dictionary mapping each vertex to a list of its parents's names
+        vtx_to_parents2 : dict[str, list[str]]
+            dictionary mapping each vertex to a list of its parents's names
+        num_nodes : int
+            number of nodes
+
+        Returns
+        -------
+        bool
+
+        """
+
+        assert len(vtx_to_parents1) == num_nodes
+        assert len(vtx_to_parents2) == num_nodes
+        for vtx in vtx_to_parents1:
+            if set(vtx_to_parents1[vtx]) != set(vtx_to_parents2[vtx]):
+                return False
+        return True
+
     def move_approved(self, move):
         """
-        Returns bool indicating approval of input move iff the move is not
-        in tabu list.
+        Returns True indicating approval of input move iff the move would
+        NOT take the current dag to a dag which has been visited before,
+        as far as one can infer by backtracking from current vtx_to_parents
+        using tabu list of moves.
 
         Parameters
         ----------
@@ -111,11 +141,24 @@ class HC_TabuLner(HillClimbingLner):
         bool
 
         """
-        # print('inside approved move')
-        # print(move)
-        # print(self.tabu_list)
-        # print(move not in self.tabu_list)
-        return move not in self.tabu_list
+        # initial self.tabu_list has all None entries,
+        # gradually they get replaced by moves.
+        # Remove None's from self.tabu_list
+        mini_tabu_list = [x for x in self.tabu_list if x is not None]
+        vtx_to_parents_next = cp.deepcopy(self.vtx_to_parents)
+        try:
+            HillClimbingLner.do_move_vtx_to_parents(
+                move, vtx_to_parents_next)
+        except:
+            return False
+        vtx_to_parents_past = cp.deepcopy(self.vtx_to_parents)
+        for past_move in reversed(mini_tabu_list):
+            HillClimbingLner.do_move_vtx_to_parents(
+                past_move, vtx_to_parents_past, reversal=True)
+            if HC_TabuLner.equal_dags(vtx_to_parents_next,
+                    vtx_to_parents_past, len(self.vtx_to_parents)):
+                return False
+        return True
 
     def finish_do_move(self, move):
         """
