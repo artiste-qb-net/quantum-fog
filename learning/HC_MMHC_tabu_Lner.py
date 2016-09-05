@@ -119,12 +119,12 @@ class HC_MMHC_tabu_Lner(HC_TabuLner):
 
     def move_approved(self, move):
         """
-        Returns bool indicating whether move is approved. Only moves not in
-        tabu_list are approved. Of those, all 'del' and 'rev' moves are
-        approved but 'add' moves approved only if they add an edge from a
-        vertex to one of its neighbors. Neighbors are given by the
-        dictionary vtx_to_nbors which is calculated before the hill climbing
-        starts.
+        Returns bool indicating whether move is approved. Only moves that
+        are approved by parent class HC_TabuLner are approved. Of those,
+        all 'del' and 'rev' moves are approved but 'add' moves approved only
+        if they add an edge from a vertex to one of its neighbors. Neighbors
+        are given by the dictionary vtx_to_nbors which is calculated before
+        the hill climbing starts.
 
         Parameters
         ----------
@@ -135,18 +135,15 @@ class HC_MMHC_tabu_Lner(HC_TabuLner):
         bool
 
         """
-        m_approved = True
-        if move in self.tabu_list:
-            m_approved = False
-        # print('inside amove approved')
+        if not HC_TabuLner.move_approved(self, move):
+            return False
+        # print('inside move approved')
         # print(move)
         # print(self.vtx_to_nbors)
         if move[2] == 'add':
-            if move[0] not in self.vtx_to_nbors[move[1]] or\
-                    move[1] not in self.vtx_to_nbors[move[0]]:
-                m_approved = False
-        # print(m_approved)
-        return m_approved
+            if move[0] not in self.vtx_to_nbors[move[1]]:
+                return False
+        return True
 
 if __name__ == "__main__":
     HillClimbingLner.HC_lner_test(HC_MMHC_tabu_Lner)
