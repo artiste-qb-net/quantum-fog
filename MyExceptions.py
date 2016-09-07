@@ -5,7 +5,7 @@
 class BadGraphStructure(Exception):
     """
     An exception class raised when a graph's structure is detected to be
-    illegal. Thrown when an alleged DAG is detected to contain cycles.
+    illegal; for instance, when an alleged DAG is detected to contain cycles.
 
     Attributes
     ----------
@@ -36,6 +36,45 @@ class BadGraphStructure(Exception):
 
         """
         return self.txt
+
+
+class UnNormalizablePot(Exception):
+    """
+
+    An exception class raised when an attempt to normalize a DiscreteCondPot
+    fails because it leads to division by zero.
+
+    Attributes
+    ----------
+    pa_indices : tuple[int]
+
+    """
+
+    def __init__(self, pa_indices):
+        """
+        Constructor
+
+        Parameters
+        ----------
+        pa_indices : tuple[int]
+            the indices of the parent state pa(C)=y such that
+            pot(C=x|pa(C)=y) = 0 for all x.
+
+        Returns
+        -------
+
+        """
+        self.pa_indices = pa_indices
+
+    def __repr__(self):
+        """
+
+        Returns
+        -------
+        tuple[int]
+
+        """
+        return self.pa_indices
 
 if __name__ == "__main__":
     print(5)

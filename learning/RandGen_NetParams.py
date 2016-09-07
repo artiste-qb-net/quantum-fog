@@ -19,10 +19,10 @@ class RandGen_NetParams:
     bnet : BayesNet
         The pots of this bnet are sampled to generate a states_df and
         also a degs_df in the quantum case.
-    do_int_df : bool
-        If False, the states_df generated has state names as entries. If
-        True, states_df has int entries. The int entries are the index in
-        the states_names list of the node for that column.
+    use_int_sts : bool
+        If False, states_df has state names as entries. If True, states_df
+        has int entries. The int entries are the index in the states_names
+        list of the node for that column.
     is_quantum : bool
         True if quantum bnets and False if classical ones
     num_samples : int
@@ -32,7 +32,7 @@ class RandGen_NetParams:
         root node first
     """
 
-    def __init__(self, is_quantum, bnet, num_samples, do_int_df=False):
+    def __init__(self, is_quantum, bnet, num_samples, use_int_sts):
         """
         Constructor
 
@@ -41,7 +41,7 @@ class RandGen_NetParams:
         is_quantum : bool
         bnet : BayesNet
         num_samples : int
-        do_int_df : bool
+        use_int_sts : bool
 
         Returns
         -------
@@ -51,7 +51,7 @@ class RandGen_NetParams:
         self.is_quantum = is_quantum
         self.bnet = bnet
         self.num_samples = num_samples
-        self.do_int_df = do_int_df
+        self.use_int_sts = use_int_sts
         self.topo_nd_list = \
             [bnet.get_node_with_topo_index(k) for k in range(bnet.num_nodes)]
 
@@ -131,7 +131,7 @@ class RandGen_NetParams:
             wr_degs = csv.writer(fi_degs)
             wr_degs.writerows([header])
         for nd_to_int_st, nd_to_degs in self.sam_generator():
-            if self.do_int_df:
+            if self.use_int_sts:
                 row = [str(nd_to_int_st[nd])
                        for nd in self.topo_nd_list]
             else:
@@ -151,25 +151,28 @@ if __name__ == "__main__":
 
     from examples_cbnets.WetGrass import *
     from examples_qbnets.QuWetGrass import *
-    num_samples = 2000
-    do_int_df = True
 
     is_quantum = False
+    num_samples = 2000
+    use_int_sts = True
     bnet = WetGrass.build_bnet()
-    gen = RandGen_NetParams(is_quantum, bnet, num_samples, do_int_df)
+    gen = RandGen_NetParams(is_quantum, bnet, num_samples, use_int_sts)
     gen.write_csv('training_data_c/wetgrass.csv')
 
     is_quantum = True
+    num_samples = 2000
+    use_int_sts = True
     bnet = QuWetGrass.build_bnet()
-    gen = RandGen_NetParams(is_quantum, bnet, num_samples, do_int_df)
+    gen = RandGen_NetParams(is_quantum, bnet, num_samples, use_int_sts)
     gen.write_csv('training_data_q/wetgrass_sts.csv',
                   'training_data_q/wetgrass_degs.csv')
 
     is_quantum = False
+    num_samples = 5000
+    use_int_sts = True
     b_net = BayesNet.read_bif(
         '../examples_cbnets/earthquake.bif', is_quantum)
-    num_samples = 5000
-    gen = RandGen_NetParams(is_quantum, b_net, num_samples)
+    gen = RandGen_NetParams(is_quantum, b_net, num_samples, use_int_sts)
     csv_path = 'training_data_c/earthquake.csv'
     gen.write_csv(csv_path)
 

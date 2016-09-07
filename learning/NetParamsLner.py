@@ -20,8 +20,7 @@ class NetParamsLner:
     column node C for that sample. If z = A( C | parents(C) ) is the
     amplitude for node C, then z = |z| exp(i Ang*pi/180).
 
-    In order to use degs_df, its degree entries (floats) are first binned,
-    and then the frequencies of those bins yield a probability for each bin.
+    In order to use degs_df, its degree entries (floats) are first binned.
     Each bin is then mapped to the mean value of the angles that went into
     that bin. No a priori info is used in this class so its approach is
     purely frequentist.
@@ -44,7 +43,10 @@ class NetParamsLner:
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
-
+    use_int_sts : bool
+        If False, the states_df has state names as entries. If True,
+        states_df has int entries. The int entries are the index in the
+        states_names list of the node for that column.
     degs_df : pandas.DataFrame
         Only used in the quantum case. None in classical case. A Pandas
         DataFrame with training data. column=node and row=sample. Each
@@ -58,8 +60,8 @@ class NetParamsLner:
 
     """
 
-    def __init__(self, is_quantum, bnet, states_df, degs_df=None,
-            nd_to_num_deg_bins=None, do_qtls=True):
+    def __init__(self, is_quantum, bnet, states_df, 
+            degs_df=None, nd_to_num_deg_bins=None, do_qtls=True):
         """
         Constructor
 
@@ -89,6 +91,7 @@ class NetParamsLner:
         self.is_quantum = is_quantum
         self.bnet = bnet
         self.states_df = states_df
+        self.use_int_sts = NetStrucLner.int_sts_detector(states_df)
 
         self.degs_df = degs_df
         if nd_to_num_deg_bins:
@@ -101,15 +104,24 @@ class NetParamsLner:
     def learn_pot_df(is_quantum, states_cols, degs_col=None,
                      num_deg_bins=2, do_qtls=True):
         """
-        Returns a dataframe called pot_df in which the rows are labelled by
-        a multi-index giving the state of each node of the net. pot_df has a
-        single column with either complex probability amplitudes A for the
-        quantum case or probabilities |A|^2 for the classical case
+        Returns a dataframe called pot_df containing one more column (the
+        last one) than states_cols. That column contains either complex
+        probability amplitudes A for the quantum case or probabilities |A|^2
+        for the classical case. The non-last columns of pot_df are a list of
+        distinct states of the nodes whose names are given by the column
+        labels of pot_df.
+
+        Besides returning a pot_df, this function also returns two
+        s_d_pair's, max_s_d_pair and min_s_d_pair. An s_d_pair is a tuple of
+        a state entry from states_df and a degs. The state is a state of the
+        focus node (the last column of states_cols corresponds to the focus
+        node). The degs is an angle in degrees. max_s_d_pair (resp.,
+        min_s_d_pair) is a pair with maximum (resp., minimum) likelihood.
 
         Parameters
         ----------
         is_quantum : bool
-            True for quantum bnets, False for classical bnets. In the
+            True for quantum bnets amd False for classical bnets. In the
             classical case, degs_col will be ignored.
         states_cols : pandas.DataFrame
             usually a dataframe containing a subset of the columns of
@@ -118,28 +130,32 @@ class NetParamsLner:
             usually a dataframe or series containing a single column of
             self.degs_df
         num_deg_bins : int
-            how many bins will be used to bin degs_col
+            how many bins will be used to bin degs_col.
         do_qtls : bool
             If True, will use quantile bins when binning degs_col. If False,
             will use equal length bins.
 
+
         Returns
         -------
-        pandas.DataFrame
+        pandas.DataFrame, tuple[int|str, float], tuple[int|str, float]
 
         """
+        focus_vtx = states_cols.columns[-1]
+
         if is_quantum:
             # make sure degs_df is a one column dataframe, not a series
             if isinstance(degs_col, pd.Series):
                 degs_col = degs_col.to_frame()
-            degs_col.columns = ['degs_new_col']
+            degs_col.columns = ['degs_as_bins']
             bin_edges, bin_to_mean = DataBinner.bin_col(
-                degs_col, 'degs_new_col', num_deg_bins, do_qtls)
-            # print('---states_df', states_df)
-            # states_df.loc[:, 'degs_new_col'] = degs_col
+                degs_col, 'degs_as_bins', num_deg_bins, do_qtls)
+            # print('bin_edges, bin_to_mean', bin_edges, bin_to_mean)
+            # print('---states_cols\n', states_cols)
+            # states_df.loc[:, 'degs_as_bins'] = degs_col
             # this works despite warning
-            states_cols['degs_new_col'] = degs_col
-            # print('---states_df', states_df)
+            states_cols['degs_as_bins'] = degs_col
+            # print('---states_cols\n', states_cols)
 
             # doesn't work unless cast to list
             groups = states_cols.groupby(list(states_cols.columns))
@@ -154,58 +170,136 @@ class NetParamsLner:
             amp_df = amp_df.apply(lambda x: np.sqrt(x/col_sum))
             # print('amp_df\n', amp_df)
 
-            ph_df = groups['degs_new_col'].max()
+            ph_df = groups['degs_as_bins'].max()
             # print('ph_df\n', ph_df)
             ph_df = ph_df.apply(lambda x: np.exp(1j*bin_to_mean[x]*np.pi/180))
             # print('ph_df\n', ph_df)
 
             pot_df = amp_df*ph_df
-            del states_cols['degs_new_col']
+            del states_cols['degs_as_bins']
+            
+            # this sets multi-index to column headers           
+            amp_df = amp_df.reset_index(name='last_col_with_vals')
+            ph_df = ph_df.reset_index(name='last_col_with_vals')
+            pot_df = pot_df.reset_index(name='last_col_with_vals')
+            del pot_df['degs_as_bins']
+            # print('ph_df\n', pot_df)
+            
+            max_idx = amp_df['last_col_with_vals'].idxmax()
+            max_st = amp_df.loc[max_idx, focus_vtx]
+            max_degs = bin_to_mean[ph_df.loc[max_idx, 'degs_as_bins']]
+            max_s_d_pair = (max_st, max_degs)
+
+            min_idx = amp_df['last_col_with_vals'].idxmin()
+            min_st = amp_df.loc[min_idx, focus_vtx]
+            min_degs = bin_to_mean[ph_df.loc[min_idx, 'degs_as_bins']]
+            min_s_d_pair = (min_st, min_degs)
 
         else:
             groups = states_cols.groupby(list(states_cols.columns))
             pot_df = groups.size()
             col_sum = pot_df.sum()
             pot_df = pot_df.apply(lambda x: x/col_sum)
-        # this sets multi-index to column headers
-        pot_df = pot_df.reset_index(name='pot_values')
-        return pot_df
+            
+            pot_df = pot_df.reset_index(name='last_col_with_vals')
+            
+            max_idx = pot_df['last_col_with_vals'].idxmax()
+            max_st = pot_df.loc[max_idx, focus_vtx]
+            max_s_d_pair = (max_st, 0)
+            
+            min_idx = pot_df['last_col_with_vals'].idxmin()
+            min_st = pot_df.loc[min_idx, focus_vtx]
+            min_s_d_pair = (min_st, 0)
+
+        return pot_df, max_s_d_pair, min_s_d_pair
 
     @staticmethod
-    def convert_pot_df_to_pot(is_quantum, pot_df, ord_nodes, normalize=True):
+    def convert_pot_df_to_pot(is_quantum, pot_df, ord_nodes,
+                s_d_pair, use_int_sts=None, normalize=True):
         """
-        Returns a Potential pot with ordered nodes ord_nodes.
+        Returns a DiscreteCondPot pot with ordered nodes ord_nodes.
 
         Parameters
         ----------
         is_quantum : bool
         pot_df : pandas.DataFrame
-            a dataframe returned by learn_pot_df()
+            a dataframe returned by learn_pot_df(). pot_df must have one
+            column for each node in ord_nodes plus additioanl final column
+            with pot values
         ord_nodes : list[BayesNode]
-            ordered nodes of Potential pot that is returned
+            ordered nodes of Potential pot that is returned. Nodes must be
+            ordered so that pot_df[:-1].columns = [nd.name for nd in
+            ord_nodes]
+        s_d_pair : tuple[int|str, float]
+            a pair consisting of a state and a degs. The state is taken
+            directly from states_df, so it might be a digit or an actual
+            state name, depending on whether use_int_sts was True or False
+            when states_df was generated. The state is a state of the focus
+            node (the last column of states_cols corresponds to the focus
+            node). The degs is an angle in degrees. For an s_d_pair equal to
+            (x0,ang), whenever pot(C=x| pa(C)=y) = 0 for all x, we will set
+            pot(C=x|pa(C)=y) = exp( 1j*ang*pi/180)*delta(x, x0) in the
+            quantum case and pot( C=x| pa(C)=y) = delta(x, x0) in the
+            classical case.
+        use_int_sts : bool
+            True if states in states_df are integers, False if they are the
+            actual state names. If the parameter use_int_sts is set to None,
+            this function will attempt to find its bool value using the
+            function NetStrucLner:int_sts_detector()
         normalize : bool
             True if want pot to be normalized as a cond probability
-            or cond amplitude, P(x|y) or A(x|y),  where x is ord_nodes[-1]
+            or cond amplitude, P(x|y) or A(x|y), where x is ord_nodes[-1]
 
         Returns
         -------
-        pandas.DataFrame
+        DiscreteCondPot
 
         """
+        for k, vtx in enumerate(pot_df.columns[:-1]):
+                assert ord_nodes[k].name == vtx
+        focus_vtx = pot_df.columns[-2]
+        focus_nd = ord_nodes[-1]
+        if use_int_sts is None:
+            use_int_sts = NetStrucLner.int_sts_detector(pot_df[:-1])
+
+        def int_state(st):
+            if use_int_sts:
+                return int(st)
+            else:
+                return focus_nd.st_name_index(str(st))
+
         pot = DiscreteCondPot(is_quantum, ord_nodes, bias=0)
         for row in range(len(pot_df.index)):
             # print([pot_df.iloc[row, col]
             #                              for col in range(len(ord_nodes))
             #                              ])
-            index = [
+            if not use_int_sts:
+                arr_index = [
                     ord_nodes[col].st_name_index(str(pot_df.iloc[row, col]))
-                    for col in range(len(ord_nodes))
-                ]
-            pot.pot_arr[tuple(index)] = pot_df.loc[row, 'pot_values']
+                    for col in range(len(ord_nodes))]
+                
+            else:
+                arr_index = [int(pot_df.iloc[row, col])
+                            for col in range(len(ord_nodes))]
+            pot.pot_arr[tuple(arr_index)] = \
+                    pot_df.loc[row, 'last_col_with_vals']
 
         if normalize:
-            pot.normalize_self()
-        # print(pot)
+            try:
+                pot.normalize_self()
+            except UnNormalizablePot as xce:
+                # print('caught exception')
+                focus_index = int_state(s_d_pair[0])
+                arr_index = tuple(list(xce.pa_indices) + [focus_index])
+                # print('********************arr_index', arr_index)
+                if is_quantum:
+                    pot.pot_arr[arr_index] = \
+                        np.exp(1j * s_d_pair[1] * np.pi / 180)
+                else:
+                    pot.pot_arr[arr_index] = 1.0
+                print('mended pot:\n', pot)
+                # try normalizing pot again now that it is mended
+                pot.normalize_self()
         return pot
 
     def learn_pot(self, ord_nodes):
@@ -229,22 +323,30 @@ class NetParamsLner:
         """
 
         ord_nd_names = [x.name for x in ord_nodes]
+        focus_vtx = ord_nd_names[-1]
+        focus_nd = ord_nodes[-1]
         if self.is_quantum:
-            degs_col = self.degs_df[ord_nd_names[-1]]
-            num_deg_bins = self.nd_to_num_deg_bins[ord_nodes[-1]]
+            degs_col = self.degs_df[focus_vtx]
+            num_deg_bins = self.nd_to_num_deg_bins[focus_nd]
         else:
             degs_col = None
             num_deg_bins = 2
         # print(self.states_df[col_names])
-        pot_df = NetParamsLner.learn_pot_df(self.is_quantum,
-                                   self.states_df[ord_nd_names],
-                                   degs_col,
-                                   num_deg_bins,
-                                   self.do_qtls)
-        # print(pot_df)
+        pot_df, max_s_d_pair, min_s_d_pair = \
+            NetParamsLner.learn_pot_df(
+                self.is_quantum,
+                self.states_df[ord_nd_names],
+                degs_col=degs_col,
+                num_deg_bins=num_deg_bins,
+                do_qtls=self.do_qtls)
 
-        pot = self.convert_pot_df_to_pot(self.is_quantum, pot_df,
-                    ord_nodes, normalize=True)
+        pot = NetParamsLner.convert_pot_df_to_pot(
+                self.is_quantum,
+                pot_df,
+                ord_nodes,
+                max_s_d_pair,
+                self.use_int_sts,
+                normalize=True)
         return pot
 
     def learn_all_bnet_pots(self):
@@ -313,16 +415,18 @@ if __name__ == "__main__":
 
     for is_quantum in [False, True]:
         print('\nis_quantum=', is_quantum)
-        pot_df = NetParamsLner.learn_pot_df(
-                is_quantum, df, degs_df, num_deg_bins=3)
+        pot_df, max_s_d_pair, min_s_d_pair = NetParamsLner.learn_pot_df(
+                is_quantum, df, degs_col=degs_df, num_deg_bins=3)
         print('pot_df=\n', pot_df)
+        print('max_s_d_pair', max_s_d_pair)
+        print('min_s_d_pair', min_s_d_pair)
         if is_quantum:
             print('should be one=',
-                  pot_df['pot_values'].apply(lambda x:
+                  pot_df['last_col_with_vals'].apply(lambda x:
                                           x*np.conjugate(x)).sum())
 
         else:
-            print('should be one=', pot_df['pot_values'].sum())
+            print('should be one=', pot_df['last_col_with_vals'].sum())
 
     from examples_cbnets.WetGrass import *
     from examples_qbnets.QuWetGrass import *
@@ -372,13 +476,13 @@ if __name__ == "__main__":
     lnr.learn_all_bnet_pots()
     lnr.compare_true_and_emp_pots(bnet, bnet_emp)
 
-    print('\nnext test learn bnet, earthquake2 ---------------')
-
     # The above example didn't match correctly the entries of
     # the true and empirical pots because the state names are
     # alphabetically ordered in bnet_emp but they aren't in
     # bnet. This time we input the state names into bnet_emp
     # instead of learning them from states_df
+
+    print('\nnext test learn bnet, earthquake2 ---------------')
 
     vtx_to_states = bnet.get_vtx_to_state_names()
     NetStrucLner.import_nd_state_names(bnet_emp, vtx_to_states)
@@ -386,11 +490,9 @@ if __name__ == "__main__":
     lnr.learn_all_bnet_pots()
     lnr.compare_true_and_emp_pots(bnet, bnet_emp)
 
-    # sometimes the earthquake training data does not contain
+    # Sometimes the earthquake training data does not contain
     # samples for Burglary=False, Earthquake=False, Alarm=True or False.
     # because P(A=True|E=False, B=False)=.001.
-    # In such cases, one gets a division by zero exception.
-    # Until I put in a mechanism to avoid this,
-    # run the sample generator again. 5000 or more samples
-    # usually yields enough samples to avoid division by zero
+    # In such cases, one gets an UnNormalizablePot exception.
+    # Generating 5000 or more samples usually avoids this exception.
 

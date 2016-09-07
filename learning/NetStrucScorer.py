@@ -462,7 +462,11 @@ class NetStrucScorer:
         ord_nodes = pa_nds + [focus_nd]
 
         pot = NetParamsLner.convert_pot_df_to_pot(
-            False, pot_df, ord_nodes, normalize=False)
+            False,
+            pot_df,
+            ord_nodes,
+            s_d_pair=(0, 0),  # won't be used since we are not normalizing
+            normalize=False)
         return pot
 
     @staticmethod

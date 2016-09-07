@@ -134,5 +134,30 @@ class NetStrucLner:
         for nd in bnet.nodes:
             nd.state_names = vtx_to_states[nd.name]
             nd.size = len(nd.state_names)
+
+    @staticmethod
+    def int_sts_detector(sub_states_df):
+        """
+        This function returns True iff the first row of sub_states_df has
+        only int entries. We will assume that if the first row does,
+        then all rows do.
+
+        Parameters
+        ----------
+        sub_states_df : pandas.DataFrame
+
+        Returns
+        -------
+        bool
+
+        """
+        # print('inside detector\n', sub_states_df.head())
+        for k in range(len(sub_states_df.columns)):
+            if not str(sub_states_df.iloc[0, k]).isdigit():
+                # print('returns false')
+                return False
+        # print('returns true')
+        return True
+
 if __name__ == "__main__":
     print(5)

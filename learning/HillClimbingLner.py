@@ -32,7 +32,7 @@ class HillClimbingLner(NetStrucLner):
         a BayesNet in which we store what is learned
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
-        sample. Each row/sample gives the state of the col/node.
+        sample. Each row/sample gives the state of the col/node
     ord_nodes : list[DirectedNode]
         a list of DirectedNode's named and in the same order as the column
         labels of self.states_df.
@@ -91,11 +91,12 @@ class HillClimbingLner(NetStrucLner):
 
         # get vtx_to_states info from self.bnet
         vtx_to_states1 = {nd.name: nd.state_names for nd in self.bnet.nodes}
-        self.scorer = NetStrucScorer(self.states_df,
-                                     self.vtx_to_parents,
-                                     vtx_to_states1,
-                                     score_type,
-                                     ess)
+        self.scorer = NetStrucScorer(
+            self.states_df,
+            self.vtx_to_parents,
+            vtx_to_states1,
+            score_type,
+            ess)
 
         self.nx_graph = nx.DiGraph()
 

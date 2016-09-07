@@ -43,6 +43,8 @@ class AracneLner(ChowLiuTreeLner):
     states_df : pandas.DataFrame
         a Pandas DataFrame with training data. column = node and row =
         sample. Each row/sample gives the state of the col/node.
+
+
     ord_nodes : list[DirectedNode]
         a list of DirectedNode's named and in the same order as the column
         labels of self.states_df.
@@ -56,6 +58,7 @@ class AracneLner(ChowLiuTreeLner):
         Parameters
         ----------
         states_df : pandas.DataFrame
+
         vtx_to_states : dict[str, list[str]]
             A dictionary mapping each node name to a list of its state names.
             This information will be stored in self.bnet. If

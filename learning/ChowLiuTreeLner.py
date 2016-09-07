@@ -61,7 +61,8 @@ class ChowLiuTreeLner(NetStrucLner):
         None
 
         """
-        NetStrucLner.__init__(self, False, states_df, vtx_to_states)
+        NetStrucLner.__init__(self, False,
+                              states_df, vtx_to_states)
         self.learn_net_struc()
 
     def learn_net_struc(self):

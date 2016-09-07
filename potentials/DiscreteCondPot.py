@@ -7,6 +7,7 @@
 from potentials.Potential import *
 # from DiscreteUniPot import *
 import Utilities as ut
+from MyExceptions import UnNormalizablePot
 from MyConstants import *
 
 
@@ -106,7 +107,7 @@ class DiscreteCondPot(Potential):
                 if abs(d) > TOL:
                     self.pot_arr /= d
                 else:
-                    raise ZeroDivisionError
+                    raise UnNormalizablePot([])
         else:
             totals = {}
             ind_gen = ut.cartesian_product(self.nd_sizes[:-1])
@@ -127,10 +128,11 @@ class DiscreteCondPot(Potential):
                     if abs(d) > TOL:
                         self.pot_arr[slicex] /= d
                     else:
-                        print('un-normalizable pot')
+                        print('****************un-normalizable pot')
+                        print('sick pot:')
                         print([node.name for node in self.ord_nodes])
                         print(self.pot_arr)
-                        raise ZeroDivisionError
+                        raise UnNormalizablePot(indices)
             if postpone:
                 return totals
 
