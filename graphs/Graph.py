@@ -255,7 +255,7 @@ class Graph:
         None
 
         """
-        nx.write_dot(self.get_nx_graph(), path)
+        nx.nx_pydot.write_dot(self.get_nx_graph(), path)
 
     @classmethod
     def read_dot(cls, path):
@@ -275,7 +275,7 @@ class Graph:
         Graph
 
         """
-        nx_graph = nx.read_dot(path)
+        nx_graph = nx.nx_pydot.read_dot(path)
         return cls.new_from_nx_graph(nx_graph)
 
 
