@@ -11,19 +11,19 @@ class InferenceEngine:
     Attributes
     ----------
     bnet : BayesNet
-    do_print : bool
+    verbose : bool
     is_quantum : bool
 
     """
 
-    def __init__(self, bnet, do_print=False, is_quantum=False):
+    def __init__(self, bnet, verbose=False, is_quantum=False):
         """
         Constructor
 
         Parameters
         ----------
         bnet : BayesNet
-        do_print : bool
+        verbose : bool
         is_quantum : bool
 
         Returns
@@ -31,7 +31,7 @@ class InferenceEngine:
 
         """
         self.bnet = bnet
-        self.do_print = do_print
+        self.verbose = verbose
         self.is_quantum = is_quantum
 
     @staticmethod

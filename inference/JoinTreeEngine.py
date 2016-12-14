@@ -42,30 +42,30 @@ class JoinTreeEngine(InferenceEngine):
     jtree : JoinTree
 
     bnet : BayesNet
-    do_print : bool
+    verbose : bool
     is_quantum : bool
 
     """
 
-    def __init__(self, bnet, do_print=False, is_quantum=False):
+    def __init__(self, bnet, verbose=False, is_quantum=False):
         """
         Constructor
 
         Parameters
         ----------
         bnet : BayesNet
-        do_print : bool
+        verbose : bool
         is_quantum : bool
 
         Returns
         -------
 
         """
-        InferenceEngine.__init__(self, bnet, do_print, is_quantum)
+        InferenceEngine.__init__(self, bnet, verbose, is_quantum)
         moral_graph = MoralGraph(self.bnet)
         tri_graph = TriangulatedGraph(moral_graph)
         self.jtree = JoinTree(tri_graph, bnet)
-        if do_print:
+        if verbose:
             tri_graph.describe_yourself()
             self.jtree.describe_yourself()
 
@@ -141,18 +141,18 @@ class JoinTreeEngine(InferenceEngine):
         min_nd_topo_index = min([node.topo_index for node in self.bnet.nodes])
         start_clique = self.bnet.get_node_with_topo_index(
                                         min_nd_topo_index).clique
-        if self.do_print:
+        if self.verbose:
             print("start clique", start_clique.name)
 
         self.jtree.unmark_all_nodes()
 
-        if self.do_print:
+        if self.verbose:
             print("\nNext will pass messages towards start_clique")
         # Below, from_clique=None, to_clique=start_clique, sepset=None
         self.collect_evidence(None, start_clique, None)
         self.jtree.unmark_all_nodes()
 
-        if self.do_print:
+        if self.verbose:
             print("\nNext will pass messages away from start_clique")
 
         self.distribute_evidence(start_clique)
@@ -211,14 +211,14 @@ class JoinTreeEngine(InferenceEngine):
 
         sepset.potential = from_clique.potential.get_new_marginal(
                 sepset.potential.ord_nodes)
-        # if self.do_print:
+        # if self.verbose:
         #     old_to_clique_pot = cp.deepcopy(to_clique.potential)
 
         # Absorb the sepset pot ratio into the to_clique pot
 
         to_clique.potential *= (sepset.potential/old_sepset_pot)
 
-        if self.do_print:
+        if self.verbose:
             print("\npassing message from ",
                   from_clique.name, " to ", to_clique.name)
 
@@ -299,7 +299,7 @@ if __name__ == "__main__":
     bnet.get_node_named("D").active_states = [0]
     bnet.get_node_named("G").active_states = [1]
 
-    inf_eng = JoinTreeEngine(bnet, do_print=True)
+    inf_eng = JoinTreeEngine(bnet, verbose=True)
     id_nums = sorted([node.id_num for node in bnet.nodes])
     node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
 

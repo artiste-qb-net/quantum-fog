@@ -25,26 +25,26 @@ class MCMC_Engine(InferenceEngine):
     bnet_ord_nodes : list[BayesNode]
 
     bnet : BayesNet
-    do_print : bool
+    verbose : bool
     is_quantum : bool
 
     """
 
-    def __init__(self, bnet, do_print=False, is_quantum=False):
+    def __init__(self, bnet, verbose=False, is_quantum=False):
         """
         Constructor
 
         Parameters
         ----------
         bnet : BayesNet
-        do_print : bool
+        verbose : bool
         is_quantum : bool
 
         Returns
         -------
 
         """
-        InferenceEngine.__init__(self, bnet, do_print, is_quantum)
+        InferenceEngine.__init__(self, bnet, verbose, is_quantum)
         self.bnet_ord_nodes = list(self.bnet.nodes)
 
     def get_unipot_list(self, node_list, num_cycles, warmup):
@@ -93,7 +93,7 @@ class MCMC_Engine(InferenceEngine):
                 #     if cy > warmup:
                 #         nd_to_pot[nd][annotated_story[nd]] += 1
 
-                if self.do_print:
+                if self.verbose:
                     if num_cycles-4 < cy < num_cycles:
                         print("cycle=", cy, ", node", node.name,
                               "goes from", prev_state,
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     bnet.get_node_named("D").active_states = [0]
     bnet.get_node_named("G").active_states = [1]
 
-    inf_eng = MCMC_Engine(bnet, do_print=True)
+    inf_eng = MCMC_Engine(bnet, verbose=True)
     id_nums = sorted([node.id_num for node in bnet.nodes])
     node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
 

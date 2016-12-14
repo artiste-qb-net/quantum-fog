@@ -59,7 +59,7 @@ class BayesNode(DirectedNode):
         self.state_names = ["state" + str(k) for k in range(size)]
         self.clique = None
         self.potential = None
-        self.__active_states = [0, 1]  # underscore to use @property
+        self.__active_states = range(size)  # underscore to use @property
 
     def set_potential(self, pot):
         """
@@ -100,6 +100,7 @@ class BayesNode(DirectedNode):
                 "state" + str(k) for k in range(self.size, size)]
             self.potential = None
         self.size = size
+        self.forget_all_evidence()
 
     def set_state_name(self, position, name):
         """

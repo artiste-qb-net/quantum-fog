@@ -27,14 +27,14 @@ class TriangulatedGraph(Graph):
 
     """
 
-    def __init__(self, mo_graph, do_print=False):
+    def __init__(self, mo_graph, verbose=False):
         """
         Constructor
 
         Parameters
         ----------
         mo_graph : MoralGraph
-        do_print : bool
+        verbose : bool
 
         Returns
         -------
@@ -71,7 +71,7 @@ class TriangulatedGraph(Graph):
                 {node_dict[pop_star.node]}
             # a preclique is what Huang and Darwiche call an
             # induced cluster
-            if do_print:
+            if verbose:
                 print(
                     "node(|medges|, w):",
                     pop_star.node.name,
@@ -160,5 +160,5 @@ from examples_cbnets.HuaDar import *
 if __name__ == "__main__":
     bnet = HuaDar.build_bnet()
     mo = MoralGraph(bnet)
-    tri_graph = TriangulatedGraph(mo, do_print=True)
+    tri_graph = TriangulatedGraph(mo, verbose=True)
     tri_graph.describe_yourself()

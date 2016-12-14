@@ -1,0 +1,7 @@
+strict digraph G {
+Price;
+Monty_Opens;
+"1st_Choice";
+Price -> Monty_Opens;
+"1st_Choice" -> Monty_Opens;
+}

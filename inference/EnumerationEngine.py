@@ -18,26 +18,26 @@ class EnumerationEngine(InferenceEngine):
     bnet_ord_nodes : list[BayesNode]
 
     bnet : BayesNet
-    do_print : bool
+    verbose : bool
     is_quantum : bool
 
     """
 
-    def __init__(self, bnet, do_print=False, is_quantum=False):
+    def __init__(self, bnet, verbose=False, is_quantum=False):
         """
         Constructor
 
         Parameters
         ----------
         bnet : BayesNet
-        do_print : bool
+        verbose : bool
         is_quantum : bool
 
         Returns
         -------
 
         """
-        InferenceEngine.__init__(self, bnet, do_print, is_quantum)
+        InferenceEngine.__init__(self, bnet, verbose, is_quantum)
         self.bnet_ord_nodes = list(self.bnet.nodes)
 
     def get_unipot_list(self, node_list):
@@ -67,7 +67,7 @@ class EnumerationEngine(InferenceEngine):
             pot_val = self.get_story_potential_val(
                 annotated_story)
             total_pot_val += pot_val
-            if self.do_print:
+            if self.verbose:
                 print("[", story_counter, "] pot_val=", pot_val)
                 InferenceEngine.print_annotated_story(
                         annotated_story)
@@ -75,7 +75,7 @@ class EnumerationEngine(InferenceEngine):
             state_list = [annotated_story[v] for v in node_list]
             for (pot, state) in zip(pot_list, state_list):
                 pot[state] += pot_val
-        if self.do_print:
+        if self.verbose:
             print("tot_pot_val= ", total_pot_val,
                   "# equals 1 if you comment out the evidence")
             print("\n")
@@ -135,7 +135,7 @@ if __name__ == "__main__":
     # bnet.get_node_named("D").active_states = [0]
     # bnet.get_node_named("G").active_states = [1]
 
-    inf_eng = EnumerationEngine(bnet, do_print=True)
+    inf_eng = EnumerationEngine(bnet, verbose=True)
     id_nums = sorted([node.id_num for node in bnet.nodes])
     node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
 

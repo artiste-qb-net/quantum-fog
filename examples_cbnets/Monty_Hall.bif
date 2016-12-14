@@ -1,0 +1,28 @@
+network Monty {
+variable Price {
+type discrete [ 3 ] {D1, D2, D3};
+}
+variable 1st_Choice {
+type discrete [ 3 ] {D1, D2, D3};
+}
+variable Monty_Opens {
+type discrete [ 3 ] {D1, D2, D3};
+}
+probability ( Monty_Opens | Price, 1st_Choice ) {
+	(D1, D1)  0, 0.5, 0.5;
+	(D1, D2)  0, 0, 1;
+	(D1, D3)  0, 1, 0;
+	(D2, D1)  0, 0, 1;
+	(D2, D2)  0.5, 0, 0.5;
+	(D2, D3)  1, 0, 0;
+	(D3, D1)  0, 1, 0;
+	(D3, D2)  1, 0, 0;
+	(D3, D3)  0.5, 0.5, 0;
+}
+probability ( Price ) {
+	table  0.33333333333333, 0.33333333333333, 0.33333333333333;
+}
+probability ( 1st_Choice ) {
+	table  0.33333333333333, 0.33333333333333, 0.33333333333333;
+}
+}

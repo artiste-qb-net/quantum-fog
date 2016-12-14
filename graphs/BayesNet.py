@@ -95,6 +95,8 @@ class BayesNet(Dag):
             k += 1
             node = BayesNode(k, nd_name)
             node.state_names = qb.states[nd_name]
+            node.size = len(node.state_names)
+            node.forget_all_evidence()
             nodes |= {node}
             name_to_nd[nd_name] = node
         for nd_name, pa_name_list in qb.parents.items():
