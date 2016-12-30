@@ -1,5 +1,6 @@
 import numpy as np
-
+import sys
+sys.path.append('/home/quax/Projects/QF_current/quantum-fog')
 from nodes.BayesNode import *
 from graphs.BayesNet import *
 from potentials.DiscreteUniPot import *
@@ -69,6 +70,9 @@ class QuWetGrass:
 
 if __name__ == "__main__":
     bnet = QuWetGrass.build_bnet()
+
+    path_bif = '../examples_qbnets/YoungDoubleSlit_test.bif'
+    bnet = BayesNet.read_bif(path_bif, True)
 
     # introduce some evidence
     bnet.get_node_named("WetGrass").active_states = [1]

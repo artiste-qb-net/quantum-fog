@@ -1,0 +1,11 @@
+strict digraph "" {
+Difficulty;
+Intelligence;
+Letter;
+Grade;
+GMAT;
+Grade -> Letter;
+Difficulty -> Grade;
+Intelligence -> GMAT;
+Intelligence -> Grade;
+}

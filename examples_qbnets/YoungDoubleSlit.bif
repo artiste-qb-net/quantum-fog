@@ -1,0 +1,32 @@
+network unknown {
+
+variable Root {
+type discrete [ 2 ] {left, right};
+}
+variable Screen {
+type discrete [ 2 ] {spot, other};
+}
+variable NR {
+type discrete [ 2 ] {0, 1};
+}
+variable NL {
+type discrete [ 2 ] {0, 1};
+}
+probability ( Root  ) {
+	table  0.7071067811865475+0.j, 0.7071067811865475+0.j;
+}
+probability ( Screen | NL, NR ) {
+	(0,0)  0.0+0.j, 0.0+0.j;
+	(1,0)  -0.1-0.j, 0.0100546310011561+0.9949366333568337j;
+	(0,1)  0.1+0.j, 0.99498743710661995+0.j;
+	(1,1)  0.0+0.j, 1.0+0.j       ;
+}
+probability ( NR | Root ) {
+	(left)  1.0+0.j, 0.0-0.j;
+	(right)  0.0+0.j, 1.0+0.j;
+}
+probability ( NL | Root ) {
+	(left)  0.0+0.j, 1.0+0.j;
+	(right)  1.0+0.j, 0.0-0.j;
+}
+}

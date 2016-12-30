@@ -1,0 +1,32 @@
+network unknown {
+
+variable Cloudy {
+type discrete [ 2 ] {state0, state1};
+}
+variable WetGrass {
+type discrete [ 2 ] {state0, state1};
+}
+variable Rain {
+type discrete [ 2 ] {state0, state1};
+}
+variable Sprinkler {
+type discrete [ 2 ] {state0, state1};
+}
+probability ( Cloudy  ) {
+	table  0.7071067811865475+0.j, 0.7071067811865475+0.j;
+}
+probability ( WetGrass | Sprinkler, Rain ) {
+	(state0, state0)  0.0+0.j, 0.0+0.j;
+	(state1, state0)  -0.1-0.j, 0.0100546310011561+0.9949366333568337j;
+	(state0, state1)  0.1+0.j, 0.99498743710661995+0.j;
+	(state1, state1)  0.0+0.j, 1.0+0.j       ;
+}
+probability ( Rain | Cloudy ) {
+	(state0)  1.0+0.j, 0.0-0.j;
+	(state1)  0.0+0.j, 1.0+0.j;
+}
+probability ( Sprinkler | Cloudy ) {
+	(state0)  0.0+0.j, 1.0+0.j;
+	(state1)  1.0+0.j, 0.0-0.j;
+}
+}

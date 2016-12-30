@@ -1,0 +1,39 @@
+network student {
+
+variable Difficulty {
+type discrete [ 2 ] {normal, hard};
+}
+variable Intelligence {
+type discrete [ 2 ] {normal, genius};
+}
+variable Grade {
+type discrete [ 2 ] {A,B,C};
+}
+variable Letter {
+type discrete [ 2 ] {No, Yes};
+}
+variable GMAT {
+type discrete [ 2 ] {medium, high};
+}
+probability ( Letter | Grade ) {
+	(A)  0.1, 0.9;
+	(B)  0.4, 0.6;
+	(C)  0.99, 0.01;
+}
+probability ( Grade | Difficulty, Intelligence ) {
+	(normal, normal)  0.3, 0.4, 0.3;
+	(normal, genius)  0.05, 0.25, 0.7;
+	(hard, normal)  0.9, 0.08, 0.02;
+	(hard, genius)  0.5, 0.3, 0.2;
+}
+probability ( GMAT | Intelligence ) {
+	(normal)  0.95, 0.05;
+	(genius)  0.2, 0.8;
+}
+probability ( Difficulty ) {
+	table  0.6, 0.4;
+}
+probability ( Intelligence ) {
+	table  0.7, 0.3;
+}
+}
