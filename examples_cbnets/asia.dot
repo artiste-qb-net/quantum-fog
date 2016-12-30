@@ -1,0 +1,18 @@
+strict digraph "" {
+"Lung-Cancer";
+Dyspnea;
+Tuberculosis;
+Bronchitis;
+Smoke;
+"Travel-Risk";
+Either;
+"X-Ray";
+"Lung-Cancer" -> Either;
+Tuberculosis -> Either;
+Bronchitis -> Dyspnea;
+Smoke -> "Lung-Cancer";
+Smoke -> Bronchitis;
+"Travel-Risk" -> Tuberculosis;
+Either -> "X-Ray";
+Either -> Dyspnea;
+}

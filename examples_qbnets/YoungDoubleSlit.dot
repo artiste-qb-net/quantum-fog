@@ -1,0 +1,10 @@
+strict digraph "" {
+NL;
+NR;
+Screen;
+Root;
+NL -> Screen;
+NR -> Screen;
+Root -> NL;
+Root -> NR;
+}

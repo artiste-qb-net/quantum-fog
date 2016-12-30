@@ -1,58 +1,58 @@
 network unknown {
 
-variable asia {
+variable Travel-Risk {
   type discrete [ 2 ] { yes, no };
 }
-variable tub {
+variable Tuberculosis {
   type discrete [ 2 ] { yes, no };
 }
-variable smoke {
+variable Smoke {
   type discrete [ 2 ] { yes, no };
 }
-variable lung {
+variable Lung-Cancer {
   type discrete [ 2 ] { yes, no };
 }
-variable bronc {
+variable Bronchitis {
   type discrete [ 2 ] { yes, no };
 }
-variable either {
+variable Either {
   type discrete [ 2 ] { yes, no };
 }
-variable xray {
+variable X-Ray {
   type discrete [ 2 ] { yes, no };
 }
-variable dysp {
+variable Dyspnea {
   type discrete [ 2 ] { yes, no };
 }
-probability ( asia ) {
+probability ( Travel-Risk ) {
   table 0.01, 0.99;
 }
-probability ( tub | asia ) {
+probability ( Tuberculosis | Travel-Risk ) {
   (yes) 0.05, 0.95;
   (no) 0.01, 0.99;
 }
-probability ( smoke ) {
+probability ( Smoke ) {
   table 0.5, 0.5;
 }
-probability ( lung | smoke ) {
+probability ( Lung-Cancer | Smoke ) {
   (yes) 0.1, 0.9;
   (no) 0.01, 0.99;
 }
-probability ( bronc | smoke ) {
+probability ( Bronchitis | Smoke ) {
   (yes) 0.6, 0.4;
   (no) 0.3, 0.7;
 }
-probability ( either | lung, tub ) {
+probability ( Either | Lung-Cancer, Tuberculosis ) {
   (yes, yes) 1.0, 0.0;
   (no, yes) 1.0, 0.0;
   (yes, no) 1.0, 0.0;
   (no, no) 0.0, 1.0;
 }
-probability ( xray | either ) {
+probability ( X-Ray | Either ) {
   (yes) 0.98, 0.02;
   (no) 0.05, 0.95;
 }
-probability ( dysp | bronc, either ) {
+probability ( Dyspnea | Bronchitis, Either ) {
   (yes, yes) 0.9, 0.1;
   (no, yes) 0.7, 0.3;
   (yes, no) 0.8, 0.2;
