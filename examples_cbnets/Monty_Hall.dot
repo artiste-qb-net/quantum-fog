@@ -1,7 +1,7 @@
 strict digraph "" {
-Monty_Opens;
-"1st_Choice";
 Prize;
-"1st_Choice" -> Monty_Opens;
+"1st_Choice";
+Monty_Opens;
 Prize -> Monty_Opens;
+"1st_Choice" -> Monty_Opens;
 }
