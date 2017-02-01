@@ -27,3 +27,4 @@ We believe QFog will also prove very useful to
 * Dekant, Henning
 * Tregillus, Henry
 * Tucci, Robert
+* Yin, Tao
