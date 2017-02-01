@@ -11,7 +11,7 @@ Ultimately, we would like to use a QFog based app to program quantum computers i
 
 Qubiter at GitHub (see https://github.com/artiste-qb-net/qubiter) is a twin project started by the same people. We hope that eventually Quantum Fog will call Qubiter to perform some tasks, like quantum compiling.
 
-We hope QFog also proves very useful to 
+We believe QFog will also prove very useful to 
 * teachers of quantum mechanics, at all levels starting from high school.
 * researchers in fields other than quantum computing (for example, quantum artificial intelligence, quantum chemistry and quantum cognition).
 
