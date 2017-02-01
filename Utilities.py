@@ -44,6 +44,24 @@ def fix(in_str, bad_chs, sub):
         in_str = in_str.replace(c, sub)
     return in_str
 
+def log_print(x):
+    """
+    Prints file name of log_print() call, then file line of log_print()
+    call, then x
+
+    Parameters
+    ----------
+    x : object
+
+    Returns
+    -------
+    None
+
+    """
+    from inspect import getframeinfo, stack
+    caller = getframeinfo(stack()[1][0])
+    print(caller.filename, "line=", caller.lineno, ":\n", x)
+
 if __name__ == "__main__":
     # both work
     # ray = np.array([2, 3, 4])

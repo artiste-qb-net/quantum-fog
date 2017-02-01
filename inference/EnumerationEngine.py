@@ -185,17 +185,19 @@ class EnumerationEngine(InferenceEngine):
 
     def single_pd(ax, node_name, pd_df):
         """
-        Renders probability distribution pd_df for the nodes given in the node_name list
+        Plots probability distribution pd_df for the nodes given in the
+        node_name list
 
         Parameters
         ----------
 
         ax = list[axis]
         node_name : list[Node]
-        pd_df : DataFrame(np.array([ float ]), index = list[ string ])
+        pd_df : pd.DataFrame
+
         Returns
         -------
-        complex
+        None
 
         """
         y_pos = np.arange(len(pd_df.index)) + .5
