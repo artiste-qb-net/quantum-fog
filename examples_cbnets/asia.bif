@@ -1,6 +1,6 @@
 network unknown {
 
-variable Travel-Risk {
+variable Visited-Asian-TB-HRA {
   type discrete [ 2 ] { yes, no };
 }
 variable Tuberculosis {
@@ -24,10 +24,10 @@ variable X-Ray {
 variable Dyspnea {
   type discrete [ 2 ] { yes, no };
 }
-probability ( Travel-Risk ) {
+probability ( Visited-Asian-TB-HRA ) {
   table 0.01, 0.99;
 }
-probability ( Tuberculosis | Travel-Risk ) {
+probability ( Tuberculosis | Visited-Asian-TB-HRA ) {
   (yes) 0.05, 0.95;
   (no) 0.01, 0.99;
 }

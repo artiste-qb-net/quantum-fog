@@ -1,11 +1,11 @@
 strict digraph "" {
+Earthquake;
 Burglary;
 MaryCalls;
-Alarm;
-Earthquake;
 JohnCalls;
-Burglary -> Alarm;
-Alarm -> JohnCalls;
-Alarm -> MaryCalls;
+Alarm;
 Earthquake -> Alarm;
+Burglary -> Alarm;
+Alarm -> MaryCalls;
+Alarm -> JohnCalls;
 }
