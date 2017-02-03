@@ -3,8 +3,9 @@
 
 # from BayesNet import *
 # noinspection PyUnresolvedReferences
-from xml.etree.ElementTree import ElementTree, Element, SubElement, tostring
+import xml.etree.ElementTree as xet
 from fractions import Fraction
+
 
 class InferenceEngine:
     """
@@ -15,11 +16,13 @@ class InferenceEngine:
     bnet : BayesNet
     verbose : bool
     is_quantum : bool
-    print_format : string
+    print_format : str
+        verbose print format. Either 'text' or 'HTML'
 
     """
 
-    def __init__(self, bnet, verbose=False, is_quantum=False, print_format='text'):
+    def __init__(self, bnet, verbose=False, is_quantum=False,
+                 print_format='text'):
         """
         Constructor
 
@@ -29,8 +32,10 @@ class InferenceEngine:
         verbose : bool
         is_quantum : bool
         print_format : string
+
         Returns
         -------
+        None
 
         """
         self.bnet = bnet
@@ -59,17 +64,20 @@ class InferenceEngine:
             story_line += str(annotated_story[node]) + ", "
         print(story_line[:-2])
 
-    def annotated_story_table_content(table, pot_val, story_counter,
-                        annotated_story, number_format='Float'):
+    @staticmethod
+    def add_row_to_story_table(table, pot_val, story_counter,
+                               annotated_story, number_format='Float'):
         """
         Assembles a joint potential table row, i.e. story counter, annotated
         story and potential values, as table row in HTML mark-up.
 
         Parameters
         ----------
-        table : HTML/XML table element
-        pot_val: complex
+        table : xet.Element
+            HTML/XML table element
+        pot_val: float|complex
             Potential value
+        story_counter : int
         annotated_story : dict(BayesNode, int)
         number_format: str
 
@@ -78,40 +86,28 @@ class InferenceEngine:
         None
 
         """
-        new_row = SubElement(table, 'tr')
-        new_cell1 = SubElement(new_row, 'td')
-        new_cell1.text = str(story_counter)
-        InferenceEngine.annotated_story_table_body(annotated_story, new_row)
-        new_cell2 = SubElement(new_row, 'td')
-        pot_val_str = InferenceEngine.formated_number_str(
-                    pot_val,number_format)
-        new_cell2.text = pot_val_str
+        new_row = xet.SubElement(table, 'tr')
 
-    def annotated_story_table_body(annotated_story, HTML_table_row):
-        """
-        Returns an annotated story, which is a dictionary mapping all nodes
-        to their current state, as table body in HTML mark-up.
+        new_cell = xet.SubElement(new_row, 'td')
+        new_cell.text = str(story_counter)
 
-        Parameters
-        ----------
-        annotated_story : dict(BayesNode, int)
-        HTML_table_row : HTML/XML table row element
-
-        Returns
-        -------
-        None
-
-        """
         for node in annotated_story.keys():
-            new_cell = SubElement(HTML_table_row, 'td')
-            new_cell.text=str(annotated_story[node])
+            new_cell = xet.SubElement(new_row, 'td')
+            new_cell.text = str(annotated_story[node])
 
-    def formated_number_str(num, num_format):
+        new_cell = xet.SubElement(new_row, 'td')
+        pot_val_str = InferenceEngine.formatted_number_str(
+                    pot_val, number_format)
+        new_cell.text = pot_val_str
+
+    @staticmethod
+    def formatted_number_str(num, num_format):
         """
+        Returns formatted string for num
 
         Parameters
         ----------
-        num : float
+        num : float|complex
         num_format : str
 
         Returns
@@ -121,9 +117,9 @@ class InferenceEngine:
         """
         if num_format == 'Fraction':
             return str(Fraction.from_float(num).limit_denominator(100))
-        if num_format == 'Percentage':
+        elif num_format == 'Percentage':
             return "{:.2%}".format(num)
-        if num_format == 'Float':
+        elif num_format == 'Float':
             return str(num)
         else:
             return num_format.format(num)
