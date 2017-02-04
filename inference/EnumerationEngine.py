@@ -49,7 +49,7 @@ class EnumerationEngine(InferenceEngine):
 
     @staticmethod
     def add_row_to_story_table(table, pot_val, story_counter,
-                               annotated_story, number_format='Float'):
+                               annotated_story, pot_val_format='Float'):
         """
         Assembles a joint potential table row, i.e. story counter, annotated
         story and potential values, as table row in HTML mark-up.
@@ -62,7 +62,7 @@ class EnumerationEngine(InferenceEngine):
             Potential value
         story_counter : int
         annotated_story : dict(BayesNode, int)
-        number_format: str
+        pot_val_format: str
 
         Returns
         -------
@@ -79,19 +79,19 @@ class EnumerationEngine(InferenceEngine):
             new_cell.text = str(annotated_story[node])
 
         new_cell = xet.SubElement(new_row, 'td')
-        pot_val_str = ut.formatted_number_str(pot_val, number_format)
+        pot_val_str = ut.formatted_number_str(pot_val, pot_val_format)
         new_cell.text = pot_val_str
 
     def get_unipot_list(self, node_list, normalize=False,
-            print_stories=False, print_format='text',
-            null_events='All', pot_val_format='Float'):
+                        print_stories=False, print_format='text',
+                        events='all', pot_val_format='Float'):
         """
         For each node in node_list, this method returns a uni-potential that
         gives the probabilities for the states of that node. Obviously,
         such a PD has the active states of the node as support. You can
         print stories by setting print_stories=True. If you do, you can
-        filter out null_events (zero probability events) by setting
-        null_events='None'
+        filter out null events (zero probability events) by setting
+        events='nonull'
 
         Parameters
         ----------
@@ -100,8 +100,8 @@ class EnumerationEngine(InferenceEngine):
         print_stories : bool
         print_format : str
             Either 'text' or 'HTML'
-        null_events : str
-            either 'All', 'Only' or 'None'
+        events : str
+            either 'all', 'null' or 'nonull'
         pot_val_format : str
 
         Returns
@@ -159,9 +159,9 @@ class EnumerationEngine(InferenceEngine):
                     if normalize:
                         pot_val /= total_pot_val
 
-                    grow_table = (null_events == 'Only' and not pot_val) or\
-                                 (null_events == 'None' and pot_val) or\
-                                 (null_events == 'All')
+                    grow_table = (events == 'null' and not pot_val) or \
+                                 (events == 'nonull' and pot_val) or \
+                                 (events == 'all')
 
                     if grow_table:
                         EnumerationEngine.add_row_to_story_table(table,
@@ -176,7 +176,7 @@ class EnumerationEngine(InferenceEngine):
             elif print_format == 'HTML':
                 if normalize:
                     total_pot_val = 1
-                if null_events != 'Only':
+                if events != 'null':
                     total_row = xet.SubElement(table, 'tr')
                     total_cell1 = xet.SubElement(total_row, 'th')
                     total_cell2 = xet.SubElement(total_row, 'th')
