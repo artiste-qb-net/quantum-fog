@@ -63,6 +63,8 @@ class WetGrass:
 
 if __name__ == "__main__":
     bnet = WetGrass.build_bnet()
+    bnet.write_bif('../examples_cbnets/WetGrass.bif', False)
+    bnet.write_dot('../examples_cbnets/WetGrass.dot')
 
     # introduce some evidence
     bnet.get_node_named("WetGrass").active_states = [1]

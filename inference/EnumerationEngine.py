@@ -159,9 +159,9 @@ class EnumerationEngine(InferenceEngine):
                     if normalize:
                         pot_val /= total_pot_val
 
-                    grow_table = (events == 'null' and not pot_val) or \
-                                 (events == 'nonull' and pot_val) or \
-                                 (events == 'all')
+                    grow_table = (events == 'null' and abs(pot_val)<1e-6) or \
+                        (events == 'nonull' and abs(pot_val)>1e-6) or \
+                        (events == 'all')
 
                     if grow_table:
                         EnumerationEngine.add_row_to_story_table(table,
