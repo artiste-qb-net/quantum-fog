@@ -6,7 +6,7 @@ import networkx as nx
 
 from graphs.Dag import *
 # from nodes.BayesNode import *
-from Qubifer import *
+from BifTool import *
 from potentials.DiscreteUniPot import *
 
 
@@ -69,7 +69,7 @@ class BayesNet(Dag):
     @staticmethod
     def read_bif(path, is_quantum):
         """
-        Reads a bif file using our stand-alone class Qubifer and returns a
+        Reads a bif file using our stand-alone class BifTool and returns a
         BayesNet. bif and dot files complement each other. bif: graphical
         info No, pot info Yes. dot: graphical info Yes, pot info No. By pots
         I mean potentials, the transition matrices of the nodes. (aka CPTs,
@@ -86,26 +86,26 @@ class BayesNet(Dag):
 
         """
 
-        qb = Qubifer(is_quantum)
-        qb.read_bif(path)
+        bt = BifTool(is_quantum)
+        bt.read_bif(path)
         k = -1
         nodes = set()
         name_to_nd = {}
-        for nd_name in qb.nd_sizes:
+        for nd_name in bt.nd_sizes:
             k += 1
             node = BayesNode(k, nd_name)
-            node.state_names = qb.states[nd_name]
+            node.state_names = bt.states[nd_name]
             node.size = len(node.state_names)
             node.forget_all_evidence()
             nodes |= {node}
             name_to_nd[nd_name] = node
-        for nd_name, pa_name_list in qb.parents.items():
+        for nd_name, pa_name_list in bt.parents.items():
             node = name_to_nd[nd_name]
             for pa_name in pa_name_list:
                 pa = name_to_nd[pa_name]
                 node.add_parent(pa)
 
-        for nd_name, parent_names in qb.parents.items():
+        for nd_name, parent_names in bt.parents.items():
             node = name_to_nd[nd_name]
             num_pa = len(parent_names)
             parents = [name_to_nd[pa_name] for pa_name in parent_names]
@@ -114,13 +114,13 @@ class BayesNet(Dag):
             else:
                 node.potential = DiscreteCondPot(
                     is_quantum, parents + [node])
-            node.potential.pot_arr = qb.pot_arrays[nd_name]
+            node.potential.pot_arr = bt.pot_arrays[nd_name]
 
         return BayesNet(nodes)
 
     def write_bif(self, path, is_quantum):
         """
-        Writes a bif file using Qubifer class. Complements read_bif().
+        Writes a bif file using BifTool class. Complements read_bif().
 
         Parameters
         ----------
@@ -131,15 +131,15 @@ class BayesNet(Dag):
         -------
 
         """
-        qb = Qubifer(is_quantum)
+        bt = BifTool(is_quantum)
         for node in self.nodes:
-            qb.nd_sizes[node.name] = node.size
-            qb.states[node.name] = node.state_names
+            bt.nd_sizes[node.name] = node.size
+            bt.states[node.name] = node.state_names
             parent_names = \
                 [nd.name for nd in node.potential.ord_nodes[:-1]]
-            qb.parents[node.name] = parent_names
-            qb.pot_arrays[node.name] = node.potential.pot_arr
-        qb.write_bif(path)
+            bt.parents[node.name] = parent_names
+            bt.pot_arrays[node.name] = node.potential.pot_arr
+        bt.write_bif(path)
 
 
 from examples_cbnets.HuaDar import *

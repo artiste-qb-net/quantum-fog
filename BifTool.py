@@ -2,7 +2,7 @@ import numpy as np
 import itertools as it
 
 
-class Qubifer:
+class BifTool:
 
     """
 
@@ -120,7 +120,7 @@ class Qubifer:
         -------
 
         """
-        print("\nQubifer attributes:")
+        print("\nBifTool attributes:")
         print("is_quantum= ", self.is_quantum, "\n")
         print(self.nd_sizes, "\n")
         print(self.states, "\n")
@@ -301,7 +301,7 @@ class Qubifer:
 if __name__ == "__main__":
     in_path = "examples_cbnets/asia.bif"
     out_path = "examples_cbnets/asia1.bif"
-    qb = Qubifer()
+    qb = BifTool()
     qb.read_bif(in_path)
     qb.write_bif(out_path)
 
