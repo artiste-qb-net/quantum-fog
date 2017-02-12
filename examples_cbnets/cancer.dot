@@ -1,0 +1,11 @@
+strict digraph G {
+Cancer;
+Dyspnoea;
+Xray;
+Pollution;
+Smoker;
+Cancer -> Dyspnoea;
+Cancer -> Xray;
+Pollution -> Cancer;
+Smoker -> Cancer;
+}

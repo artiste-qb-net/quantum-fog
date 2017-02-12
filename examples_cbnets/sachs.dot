@@ -1,0 +1,30 @@
+strict digraph G {
+Raf;
+Akt;
+Jnk;
+P38;
+PKA;
+Plcg;
+PIP2;
+Mek;
+PIP3;
+Erk;
+PKC;
+Raf -> Mek;
+PKA -> Raf;
+PKA -> Akt;
+PKA -> Jnk;
+PKA -> P38;
+PKA -> Mek;
+PKA -> Erk;
+Plcg -> PIP3;
+Plcg -> PIP2;
+Mek -> Erk;
+PIP3 -> PIP2;
+Erk -> Akt;
+PKC -> Mek;
+PKC -> Raf;
+PKC -> Jnk;
+PKC -> P38;
+PKC -> PKA;
+}
