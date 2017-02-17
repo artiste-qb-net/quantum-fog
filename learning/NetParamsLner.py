@@ -438,14 +438,14 @@ if __name__ == "__main__":
             bnet = QuWetGrass.build_bnet()
             bnet_emp = QuWetGrass.build_bnet()
             states_df = pd.read_csv(
-                'training_data_q/wetgrass_sts.csv', dtype=str)
+                'training_data_q/WetGrass_sts.csv', dtype=str)
             degs_df = pd.read_csv(
-                'training_data_q/wetgrass_degs.csv', dtype=str)
+                'training_data_q/WetGrass_degs.csv', dtype=str)
         else:
             bnet = WetGrass.build_bnet()
             bnet_emp = WetGrass.build_bnet()
             states_df = pd.read_csv(
-                'training_data_c/wetgrass.csv', dtype=str)
+                'training_data_c/WetGrass.csv', dtype=str)
             degs_df = None
 
         # forget pots of emp=empirical bnet because we want to learn them

@@ -1,6 +1,3 @@
-TOL = 10**(-7)  # tolerance, anything smaller we treat as zero
-
-"""
 Abbreviations used frequently in docstrings
 
 CBnet = Classical Bayesian Network
@@ -13,5 +10,3 @@ pot = potential
 DAG = directed acyclic graph
 DFS = Depth First Search
 MCMC = Markov Chain Monte Carlo
-
-"""

@@ -157,15 +157,15 @@ if __name__ == "__main__":
     use_int_sts = True
     bnet = WetGrass.build_bnet()
     gen = RandGen_NetParams(is_quantum, bnet, num_samples, use_int_sts)
-    gen.write_csv('training_data_c/wetgrass.csv')
+    gen.write_csv('training_data_c/WetGrass.csv')
 
     is_quantum = True
     num_samples = 2000
     use_int_sts = True
     bnet = QuWetGrass.build_bnet()
     gen = RandGen_NetParams(is_quantum, bnet, num_samples, use_int_sts)
-    gen.write_csv('training_data_q/wetgrass_sts.csv',
-                  'training_data_q/wetgrass_degs.csv')
+    gen.write_csv('training_data_q/WetGrass_sts.csv',
+                  'training_data_q/WetGrass_degs.csv')
 
     is_quantum = False
     num_samples = 5000

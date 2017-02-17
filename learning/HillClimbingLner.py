@@ -446,7 +446,7 @@ class HillClimbingLner(NetStrucLner):
         -------
 
         """
-        path1 = 'training_data_c/wetgrass.csv'
+        path1 = 'training_data_c/WetGrass.csv'
         # true:
         # All arrows pointing down
         #    Cloudy

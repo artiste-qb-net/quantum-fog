@@ -11,7 +11,8 @@ class BayesNode(DirectedNode):
     """
     A BayesNode is a DirectedNode wih additional information such as a
     Potential. A Potential is either a PD in the CBnet case, or a PAD in the
-    QBnet case. abbreviations in MyConstants.py. value of node = state of node.
+    QBnet case. abbreviations in abbreviations.md. value of node = state of
+    node.
 
 
     Attributes

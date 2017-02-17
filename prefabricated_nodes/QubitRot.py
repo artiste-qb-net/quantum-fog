@@ -1,7 +1,6 @@
 from potentials.DiscreteCondPot import *
 from nodes.BayesNode import *
 import math
-from MyConstants import *
 
 
 class QubitRot(BayesNode):
@@ -109,7 +108,7 @@ class QubitRot(BayesNode):
         theta_mag = math.sqrt(theta_mag)
 
         theta_hat = [0]*4
-        if theta_mag > TOL:
+        if theta_mag > 1e-6:
             theta_hat = [rads[k]/theta_mag for k in range(4)]
         # theta_hat[0] = 0  will never be used
 

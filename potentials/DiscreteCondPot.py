@@ -8,7 +8,6 @@ from potentials.Potential import *
 # from DiscreteUniPot import *
 import Utilities as ut
 from MyExceptions import UnNormalizablePot
-from MyConstants import *
 
 
 class DiscreteCondPot(Potential):
@@ -18,9 +17,9 @@ class DiscreteCondPot(Potential):
     last node of its ord_nodes and pot_arr. CondPots can hold either
     conditional PDs like P(x| y_1, y_2, ..) or conditional PADs like A(x|
     y_1, y_2, ...), where x is the focus node. abbreviations in
-    MyConstants.py. CondPots need not be normalized, but there is a method
+    abbreviations.md. CondPots need not be normalized, but there is a method
     in the class to normalize them. Normalization depends on whether we are
-    dealing with CNets or QNets, which correspondS to is_quantum= False or
+    dealing with CNets or QNets, which corresponds to is_quantum= False or
     True respectively.
 
     Attributes
@@ -104,7 +103,7 @@ class DiscreteCondPot(Potential):
             if postpone:
                 return d
             else:
-                if abs(d) > TOL:
+                if abs(d) > 1e-6:
                     self.pot_arr /= d
                 else:
                     raise UnNormalizablePot([])
@@ -125,7 +124,7 @@ class DiscreteCondPot(Potential):
                     name_tuple = ut.fix(name_tuple, "'", '')
                     totals[name_tuple] = d
                 else:
-                    if abs(d) > TOL:
+                    if abs(d) > 1e-6:
                         self.pot_arr[slicex] /= d
                     else:
                         print('****************un-normalizable pot')
@@ -156,7 +155,7 @@ class DiscreteCondPot(Potential):
         """
         d = self.normalize_self(postpone=True)
         if brief:
-            d = dict((name, prob) for name, prob in d.items() if prob < 1-TOL)
+            d = dict((name, prob) for name, prob in d.items() if prob < 1-1e-6)
         return d
 
     def __deepcopy__(self, memo):

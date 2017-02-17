@@ -339,7 +339,7 @@ class Potential:
         bool
 
         """
-        return Potential.distance(self, other) < ut.TOL
+        return Potential.distance(self, other) < 1e-6
 
     def __ne__(self, other):
         """
@@ -375,7 +375,7 @@ class Potential:
 
         # clean denominator up to avoid round-off error
         # print(yy)
-        # yy[abs(yy)<TOL] = 0
+        # yy[abs(yy)<1e-6] = 0
 
         with np.errstate(all='ignore'):
 
@@ -412,7 +412,7 @@ class Potential:
         """
 
         # clean denominator up to avoid round-off error
-        # yy[abs(yy)<TOL] = 0
+        # yy[abs(yy)<1e-6] = 0
 
         with np.errstate(all='ignore'):
             # having trouble with xx /= yy

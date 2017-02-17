@@ -2,7 +2,6 @@
 # separate file in this project with PBNT license.
 
 import numpy as np
-from MyConstants import *
 import itertools as it
 import cmath
 from fractions import Fraction

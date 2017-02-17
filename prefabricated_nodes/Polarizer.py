@@ -134,7 +134,7 @@ class Polarizer(BayesNode):
                     for in_st in range(num_of_in_sts):
                         z = self.get_pol_amp(
                                     nx, ny, nloss, mx[in_st], my[in_st])
-                        if abs(z) >= TOL:
+                        if abs(z) >= 1e-6:
                             if dry_run:
                                 degen += 1
                                 break  # goto next nx, ny, nloss triple
@@ -193,14 +193,14 @@ class Polarizer(BayesNode):
         rho_degs = 0 if seno > 0 else 180
 
         # seno = 0 case
-        if abs(seno) < TOL:
+        if abs(seno) < 1e-6:
             if nx == mx and ny == 0 and nloss == my:
                 return pow(coseno, 2*nx + nloss)
             else:
                 return 0+0j
 
         # coseno = 0 case
-        if abs(coseno) < TOL:
+        if abs(coseno) < 1e-6:
             if nx == 0 and ny == my and nloss == mx:
                 return (1 if nloss % 2 == 0 else -1)*pow(seno, 2*ny + nloss)
             else:
@@ -208,7 +208,7 @@ class Polarizer(BayesNode):
 
         z = BeamSplitter.get_bs_amp(nx + ny, nloss, mx, my,
                 tau_mag, tau_degs, rho_degs)
-        if abs(z) < TOL:
+        if abs(z) < 1e-6:
             return 0+0j
     
         return z*pow(coseno, nx)*pow(seno, ny) * \

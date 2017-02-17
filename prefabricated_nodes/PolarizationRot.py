@@ -136,7 +136,7 @@ class PolarizationRot(BayesNode):
                     z = BeamSplitter.get_bs_amp(
                             nx, ny, mx[in_st], my[in_st],
                             tau_mag, tau_degs, rho_degs)
-                    if abs(z) >= TOL:
+                    if abs(z) >= 1e-6:
                         if dry_run:
                             degen += 1
                             break  # goto next nx,ny pair

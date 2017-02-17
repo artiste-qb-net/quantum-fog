@@ -70,7 +70,7 @@ class NaiveBayesLner(NetStrucLner):
 
 if __name__ == "__main__":
 
-    csv_path = 'training_data_c/simple_tree_7nd.csv'
+    csv_path = 'training_data_c/SimpleTree7nd.csv'
     states_df = pd.read_csv(csv_path)
     lnr = NaiveBayesLner(states_df, 'a0')
     lnr.bnet.draw(algo_num=2)

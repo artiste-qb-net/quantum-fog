@@ -189,7 +189,7 @@ class JoinTree(Graph):
         the conditional PDs or conditional PADs of the nodes of the CBnet or
         QBnet. A clique accepts only the PD or PAD of those nodes that
         contain all their family inside that clique. abbreviations in
-        MyConstants.py.
+        abbreviations.md.
 
         Returns
         -------
