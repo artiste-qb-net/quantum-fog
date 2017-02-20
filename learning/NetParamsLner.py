@@ -33,6 +33,16 @@ class NetParamsLner:
     IMPORTANT: We will use the word 'vtx' = vertex to denote a node name and
     the word 'node' to denote a Node object.
 
+    See constructor of class NetStrucLner. All structure learners will
+    either (a) learn the state names from states_df or (b) import them if a
+    vtx_to_states is submitted as input to the constructor.
+
+    This class assumes that its attribute self.bnet knows the net's (1)
+    structure and (2) state names. If self.bnet knows (1) but not (2) as
+    would happen if self.bnet comes from reading a dot file, then before
+    using this class its self.bnet should  learn (2) via
+    bnet.import_nd_state_names() or bnet.learn_nd_state_names().
+
     Attributes
     ----------
 
