@@ -272,7 +272,7 @@ class Graph:
 
         Returns
         -------
-        Graph
+        cls
 
         """
         nx_graph = nx.nx_pydot.read_dot(path)

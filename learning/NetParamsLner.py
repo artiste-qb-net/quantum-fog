@@ -91,7 +91,7 @@ class NetParamsLner:
         self.is_quantum = is_quantum
         self.bnet = bnet
         self.states_df = states_df
-        self.use_int_sts = NetStrucLner.int_sts_detector(states_df)
+        self.use_int_sts = NetParamsLner.int_sts_detector(states_df)
 
         self.degs_df = degs_df
         if nd_to_num_deg_bins:
@@ -99,6 +99,30 @@ class NetParamsLner:
         else:
             self.nd_to_num_deg_bins = {nd: 2 for nd in bnet.nodes}
         self.do_qtls = do_qtls
+
+    @staticmethod
+    def int_sts_detector(sub_states_df):
+        """
+        This function returns True iff the first row of sub_states_df has
+        only int entries. We will assume that if the first row does,
+        then all rows do.
+
+        Parameters
+        ----------
+        sub_states_df : pandas.DataFrame
+
+        Returns
+        -------
+        bool
+
+        """
+        # print('inside detector\n', sub_states_df.head())
+        for k in range(len(sub_states_df.columns)):
+            if not str(sub_states_df.iloc[0, k]).isdigit():
+                # print('returns false')
+                return False
+        # print('returns true')
+        return True
 
     @staticmethod
     def learn_pot_df(is_quantum, states_cols, degs_col=None,
@@ -260,7 +284,7 @@ class NetParamsLner:
         focus_vtx = pot_df.columns[-2]
         focus_nd = ord_nodes[-1]
         if use_int_sts is None:
-            use_int_sts = NetStrucLner.int_sts_detector(pot_df[:-1])
+            use_int_sts = NetParamsLner.int_sts_detector(pot_df[:-1])
 
         def int_state(st):
             if use_int_sts:
@@ -456,7 +480,7 @@ if __name__ == "__main__":
         # if is_quantum:
         #     print('degs_df=\n', degs_df)
 
-        NetStrucLner.learn_nd_state_names(bnet_emp, states_df)
+        bnet_emp.learn_nd_state_names(states_df)
         lnr = NetParamsLner(is_quantum, bnet_emp, states_df, degs_df)
         lnr.learn_all_bnet_pots()
         lnr.compare_true_and_emp_pots(bnet, bnet_emp)
@@ -466,8 +490,10 @@ if __name__ == "__main__":
     bnet = BayesNet.read_bif(
         '../examples_cbnets/earthquake.bif', is_quantum)
 
-    bnet_emp = BayesNet.read_bif(
-        '../examples_cbnets/earthquake.bif', is_quantum)
+    # for bnet_emp, read a dot file (no a priori pots) instead of a bif file
+    bnet_emp = BayesNet.read_dot('../examples_cbnets/earthquake.dot')
+    vtx_to_states = bnet.get_vtx_to_state_names()
+    bnet_emp.import_nd_state_names(vtx_to_states)
 
     states_df = pd.read_csv(
         'training_data_c/earthquake.csv', dtype=str)
@@ -485,7 +511,7 @@ if __name__ == "__main__":
     print('\nnext test learn bnet, earthquake2 ---------------')
 
     vtx_to_states = bnet.get_vtx_to_state_names()
-    NetStrucLner.import_nd_state_names(bnet_emp, vtx_to_states)
+    bnet_emp.import_nd_state_names(vtx_to_states)
     lnr = NetParamsLner(is_quantum, bnet_emp, states_df)
     lnr.learn_all_bnet_pots()
     lnr.compare_true_and_emp_pots(bnet, bnet_emp)

@@ -57,7 +57,7 @@ class NetStrucLner:
 
         """
         nd_names = states_df.columns
-        ord_nodes = [DirectedNode(k, nd_names[k])
+        ord_nodes = [BayesNode(k, nd_names[k])
                           for k in range(len(nd_names))]
         bnet = BayesNet(set(ord_nodes))
         self.is_quantum = is_quantum
@@ -65,9 +65,9 @@ class NetStrucLner:
         self.states_df = states_df
         self.ord_nodes = ord_nodes
         if not vtx_to_states:
-            NetStrucLner.learn_nd_state_names(bnet, states_df)
+            bnet.learn_nd_state_names(states_df)
         else:
-            NetStrucLner.import_nd_state_names(bnet, vtx_to_states)
+            bnet.import_nd_state_names(vtx_to_states)
 
     def fill_bnet_with_parents(self, vtx_to_parents):
         """
@@ -89,75 +89,6 @@ class NetStrucLner:
             nd_parents = [self.bnet.get_node_named(pa_name)
                            for pa_name in vtx_to_parents[vtx]]
             nd.add_parents(nd_parents)
-
-    @staticmethod
-    def learn_nd_state_names(bnet, states_df):
-        """
-        Compiles an alphabetically ordered list of the unique names in each
-        column of states_df and makes those the state names of the
-        corresponding node in bnet.
-
-        Parameters
-        ----------
-        bnet : BayesNet
-        states_df : pandas.DataFrame
-
-        Returns
-        -------
-        None
-
-        """
-        # We will take state names of learned net to be in alphabetical order.
-        # Only if state names of true net are in alphabetical order
-        # too will they match
-        for nd in bnet.nodes:
-            # must turn numpy array to list
-            nd.state_names = sorted(list(pd.unique(states_df[nd.name])))
-            nd.size = len(nd.state_names)
-
-    @staticmethod
-    def import_nd_state_names(bnet, vtx_to_states):
-        """
-        Enters vtx_to_states information into bnet.
-
-        Parameters
-        ----------
-        bnet : BayesNet
-        vtx_to_states : dict[str, list[str]]
-            A dictionary mapping each node name to a list of its state names.
-
-        Returns
-        -------
-        None
-
-        """
-        for nd in bnet.nodes:
-            nd.state_names = vtx_to_states[nd.name]
-            nd.size = len(nd.state_names)
-
-    @staticmethod
-    def int_sts_detector(sub_states_df):
-        """
-        This function returns True iff the first row of sub_states_df has
-        only int entries. We will assume that if the first row does,
-        then all rows do.
-
-        Parameters
-        ----------
-        sub_states_df : pandas.DataFrame
-
-        Returns
-        -------
-        bool
-
-        """
-        # print('inside detector\n', sub_states_df.head())
-        for k in range(len(sub_states_df.columns)):
-            if not str(sub_states_df.iloc[0, k]).isdigit():
-                # print('returns false')
-                return False
-        # print('returns true')
-        return True
 
 if __name__ == "__main__":
     print(5)

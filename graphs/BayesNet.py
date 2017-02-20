@@ -3,6 +3,7 @@
 
 # import copy as cp
 import networkx as nx
+import pandas as pd
 
 from graphs.Dag import *
 # from nodes.BayesNode import *
@@ -49,6 +50,47 @@ class BayesNet(Dag):
 
         return {nd.name: nd.state_names for nd in self.nodes}
 
+    def import_nd_state_names(self, vtx_to_states):
+        """
+        Enters vtx_to_states information into bnet.
+
+        Parameters
+        ----------
+        vtx_to_states : dict[str, list[str]]
+            A dictionary mapping each node name to a list of its state names.
+
+        Returns
+        -------
+        None
+
+        """
+        for nd in self.nodes:
+            nd.state_names = vtx_to_states[nd.name]
+            nd.size = len(nd.state_names)
+
+    def learn_nd_state_names(self, states_df):
+        """
+        Compiles an alphabetically ordered list of the unique names in each
+        column of states_df and makes those the state names of the
+        corresponding node in bnet.
+
+        Parameters
+        ----------
+        states_df : pandas.DataFrame
+
+        Returns
+        -------
+        None
+
+        """
+        # We will take state names of learned net to be in alphabetical order.
+        # Only if state names of true net are in alphabetical order
+        # too will they match
+        for nd in self.nodes:
+            # must turn numpy array to list
+            nd.state_names = sorted(list(pd.unique(states_df[nd.name])))
+            nd.size = len(nd.state_names)
+
     @staticmethod
     def new_from_nx_graph(nx_graph):
         """
@@ -56,15 +98,24 @@ class BayesNet(Dag):
 
         Parameters
         ----------
-        nx_graph : networkx Graph
+        nx_graph : networkx DiGraph
 
         Returns
         -------
         BayesNet
 
         """
-        dagger = Dag.new_from_nx_graph(nx_graph)
-        return BayesNet(dagger.nodes)
+        new_g = BayesNet(set())
+        k = -1
+        for name in nx_graph.nodes():
+            k += 1
+            new_g.add_nodes({BayesNode(k, name=name)})
+
+        node_list = list(new_g.nodes)
+        for nd in node_list:
+            for ch_name in nx_graph.successors(nd.name):
+                nd.add_child(new_g.get_node_named(ch_name))
+        return new_g
 
     @staticmethod
     def read_bif(path, is_quantum):
@@ -141,10 +192,10 @@ class BayesNet(Dag):
             bt.pot_arrays[node.name] = node.potential.pot_arr
         bt.write_bif(path)
 
-
-from examples_cbnets.HuaDar import *
-from examples_qbnets.QuWetGrass import *
 if __name__ == "__main__":
+    from examples_cbnets.HuaDar import *
+    from examples_qbnets.QuWetGrass import *
+
     bnet = HuaDar.build_bnet()
     for node in bnet.nodes:
         print("name: ", node.name)
