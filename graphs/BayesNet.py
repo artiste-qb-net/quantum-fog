@@ -6,7 +6,7 @@ import networkx as nx
 import pandas as pd
 
 from graphs.Dag import *
-# from nodes.BayesNode import *
+from nodes.BayesNode import *
 from BifTool import *
 from potentials.DiscreteUniPot import *
 
