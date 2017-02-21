@@ -243,10 +243,10 @@ class BifTool:
             for node, nd_size in self.nd_sizes.items():
                 f.write('variable ' + node + ' {\n')
 
-                line = 'type discrete [ ' + str(nd_size) + ' ] {'
+                line = 'type discrete [ ' + str(nd_size) + ' ] { '
                 for st in self.states[node]:
                     line += st + ", "
-                line = line[:-2] + "};\n"
+                line = line[:-2] + " };\n"
                 f.write(line)
                 f.write("}\n")
 
@@ -300,12 +300,16 @@ class BifTool:
 
 if __name__ == "__main__":
     in_path = "examples_cbnets/asia.bif"
-    out_path = "examples_cbnets/asia1.bif"
+    out_path = "examples_cbnets/asia_copy.bif"
     qb = BifTool()
     qb.read_bif(in_path)
     qb.write_bif(out_path)
 
-
+    from graphs.BayesNet import *
+    in_path = "examples_cbnets/WetGrass_test.bif"
+    out_path = "examples_cbnets/WetGrass_test.dot"
+    bnet = BayesNet.read_bif(in_path, False)
+    bnet.write_dot(out_path)
 
 
 

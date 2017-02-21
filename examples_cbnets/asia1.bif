@@ -1,28 +1,28 @@
 network unknown {
 
 variable tub {
-type discrete [ 2 ] {yes, no};
+type discrete [ 2 ] { yes, no };
 }
 variable bronc {
-type discrete [ 2 ] {yes, no};
+type discrete [ 2 ] { yes, no };
 }
 variable either {
-type discrete [ 2 ] {yes, no};
+type discrete [ 2 ] { yes, no };
 }
 variable smoke {
-type discrete [ 2 ] {yes, no};
+type discrete [ 2 ] { yes, no };
 }
 variable asia {
-type discrete [ 2 ] {yes, no};
+type discrete [ 2 ] { yes, no };
 }
 variable lung {
-type discrete [ 2 ] {yes, no};
+type discrete [ 2 ] { yes, no };
 }
 variable xray {
-type discrete [ 2 ] {yes, no};
+type discrete [ 2 ] { yes, no };
 }
 variable dysp {
-type discrete [ 2 ] {yes, no};
+type discrete [ 2 ] { yes, no };
 }
 probability ( tub | asia ) {
 	(yes)  0.05, 0.95;
