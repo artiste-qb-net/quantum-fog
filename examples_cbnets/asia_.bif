@@ -1,6 +1,6 @@
 network unknown {
 
-variable Visited_AsianTBHRA {
+variable Visited_Asian_TB_HRA {
   type discrete [ 2 ] { yes, no };
 }
 variable Tuberculosis {
@@ -9,7 +9,7 @@ variable Tuberculosis {
 variable Smoke {
   type discrete [ 2 ] { yes, no };
 }
-variable LungCancer {
+variable Lung_Cancer {
   type discrete [ 2 ] { yes, no };
 }
 variable Bronchitis {
@@ -18,23 +18,23 @@ variable Bronchitis {
 variable Either {
   type discrete [ 2 ] { yes, no };
 }
-variable XRay {
+variable X_Ray {
   type discrete [ 2 ] { yes, no };
 }
 variable Dyspnea {
   type discrete [ 2 ] { yes, no };
 }
-probability ( Visited_AsianTBHRA ) {
+probability ( Visited_Asian_TB_HRA ) {
   table 0.01, 0.99;
 }
-probability ( Tuberculosis | Visited_AsianTBHRA ) {
+probability ( Tuberculosis | Visited_Asian_TB_HRA ) {
   (yes) 0.05, 0.95;
   (no) 0.01, 0.99;
 }
 probability ( Smoke ) {
   table 0.5, 0.5;
 }
-probability ( LungCancer | Smoke ) {
+probability ( Lung_Cancer | Smoke ) {
   (yes) 0.1, 0.9;
   (no) 0.01, 0.99;
 }
@@ -42,13 +42,13 @@ probability ( Bronchitis | Smoke ) {
   (yes) 0.6, 0.4;
   (no) 0.3, 0.7;
 }
-probability ( Either | LungCancer, Tuberculosis ) {
+probability ( Either | Lung_Cancer, Tuberculosis ) {
   (yes, yes) 1.0, 0.0;
   (no, yes) 1.0, 0.0;
   (yes, no) 1.0, 0.0;
   (no, no) 0.0, 1.0;
 }
-probability ( XRay | Either ) {
+probability ( X_Ray | Either ) {
   (yes) 0.98, 0.02;
   (no) 0.05, 0.95;
 }
