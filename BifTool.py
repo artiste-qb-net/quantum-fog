@@ -301,9 +301,9 @@ class BifTool:
 if __name__ == "__main__":
     in_path = "examples_cbnets/asia.bif"
     out_path = "examples_cbnets/asia_copy.bif"
-    qb = BifTool()
-    qb.read_bif(in_path)
-    qb.write_bif(out_path)
+    tool = BifTool()
+    tool.read_bif(in_path)
+    tool.write_bif(out_path)
 
     from graphs.BayesNet import *
     in_path = "examples_cbnets/WetGrass_test.bif"
