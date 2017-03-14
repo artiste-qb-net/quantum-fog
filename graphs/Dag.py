@@ -37,7 +37,6 @@ class Dag(Graph):
 
         """
         Graph.__init__(self, nodes)
-        self.num_nodes = len(self.nodes)
         self.topological_sort()
 
     def detect_two_node_cycle(self):
@@ -114,6 +113,7 @@ class Dag(Graph):
         None
 
         """
+        assert all([isinstance(nd, DirectedNode) for nd in nodes])
         Graph.add_nodes(self, nodes)
         self.topological_sort()
 
@@ -132,9 +132,7 @@ class Dag(Graph):
 
         """
         new_g = Dag(set())
-        k = -1
-        for name in nx_graph.nodes():
-            k += 1
+        for k, name in enumerate(nx_graph.nodes()):
             new_g.add_nodes({DirectedNode(k, name=name)})
 
         node_list = list(new_g.nodes)

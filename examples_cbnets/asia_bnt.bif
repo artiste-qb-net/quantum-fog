@@ -1,0 +1,63 @@
+network unknown {
+
+variable X-Ray {
+type discrete [ 2 ] { yes, no };
+}
+variable Visited-Asian-TB-HRA {
+type discrete [ 2 ] { yes, no };
+}
+variable Lung-Cancer {
+type discrete [ 2 ] { yes, no };
+}
+variable Either {
+type discrete [ 2 ] { yes, no };
+}
+variable Tuberculosis {
+type discrete [ 2 ] { yes, no };
+}
+variable Dyspnea {
+type discrete [ 2 ] { yes, no };
+}
+variable Bronchitis {
+type discrete [ 2 ] { yes, no };
+}
+variable Smoke {
+type discrete [ 2 ] { yes, no };
+}
+probability ( X-Ray | Either ) {
+	(yes)  0.98, 0.02;
+	(no)  0.05, 0.95;
+}
+probability ( Visited-Asian-TB-HRA  ) {
+	table [ 0.01],
+ [ 0.99];
+}
+probability ( Lung-Cancer | Smoke ) {
+	(yes)  0.1, 0.9;
+	(no)  0.01, 0.99;
+}
+probability ( Either | Lung-Cancer, Tuberculosis ) {
+	(yes, yes)  1., 0.;
+	(yes, no)  1., 0.;
+	(no, yes)  1., 0.;
+	(no, no)  0., 1.;
+}
+probability ( Tuberculosis | Visited-Asian-TB-HRA ) {
+	(yes)  0.05, 0.95;
+	(no)  0.01, 0.99;
+}
+probability ( Dyspnea | Either, Bronchitis ) {
+	(yes, yes)  0.9, 0.1;
+	(yes, no)  0.8, 0.2;
+	(no, yes)  0.7, 0.3;
+	(no, no)  0.1, 0.9;
+}
+probability ( Bronchitis | Smoke ) {
+	(yes)  0.6, 0.4;
+	(no)  0.3, 0.7;
+}
+probability ( Smoke  ) {
+	table [ 0.5],
+ [ 0.5];
+}
+}

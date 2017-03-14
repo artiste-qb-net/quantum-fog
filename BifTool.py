@@ -1,5 +1,6 @@
 import numpy as np
 import itertools as it
+import networkx as nx
 
 
 class BifTool:
@@ -298,6 +299,34 @@ class BifTool:
                 f.write("}\n")
             f.write("}\n")
 
+    def bif2dot(self, in_path, out_path):
+        """
+        This function reads a bif file and writes a dot (graphviz) file.
+
+        Parameters
+        ----------
+        in_path : str
+            path to input bif file
+        out_path : str
+            path to output dot file
+
+        Returns
+        -------
+        None
+
+        """
+
+        self.read_bif(in_path)
+
+        nx_graph = nx.DiGraph()
+        vtx_list = self.parents.keys()
+        for vtx in vtx_list:
+            nx_graph.add_node(vtx)
+            for pa_vtx in self.parents[vtx]:
+                nx_graph.add_edge(pa_vtx, vtx)
+
+        nx.nx_pydot.write_dot(nx_graph, out_path)
+
 if __name__ == "__main__":
     in_path = "examples_cbnets/asia.bif"
     out_path = "examples_cbnets/asia_copy.bif"
@@ -306,10 +335,16 @@ if __name__ == "__main__":
     tool.write_bif(out_path)
 
     from graphs.BayesNet import *
-    in_path = "examples_cbnets/WetGrass_test.bif"
-    out_path = "examples_cbnets/WetGrass_test.dot"
+    in_path = "examples_cbnets/WetGrass.bif"
+    out_path = "examples_cbnets/WetGrass_test1.dot"
     bnet = BayesNet.read_bif(in_path, False)
     bnet.write_dot(out_path)
+
+    # the function bif2dot() avoids calls to any QFog files except this one
+    tool = BifTool()
+    in_path = "examples_cbnets/WetGrass.bif"
+    out_path = "examples_cbnets/WetGrass_test2.dot"
+    tool.bif2dot(in_path, out_path)
 
 
 

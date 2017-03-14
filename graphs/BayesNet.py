@@ -19,7 +19,7 @@ class BayesNet(Dag):
     Attributes
     ----------
     nodes : set[BayesNode]
-    num_of_nodes : int
+    num_nodes : int
 
     """
 
@@ -36,6 +36,23 @@ class BayesNet(Dag):
 
         """
         Dag.__init__(self, nodes)
+
+    def add_nodes(self, nodes):
+        """
+        Add a set of nodes.
+
+        Parameters
+        ----------
+        nodes : set[BayesNode]
+
+        Returns
+        -------
+        None
+
+        """
+        assert all([isinstance(nd, BayesNode) for nd in nodes])
+        Graph.add_nodes(self, nodes)
+        self.topological_sort()
 
     def get_vtx_to_state_names(self):
         """
@@ -106,9 +123,7 @@ class BayesNet(Dag):
 
         """
         new_g = BayesNet(set())
-        k = -1
-        for name in nx_graph.nodes():
-            k += 1
+        for k, name in enumerate(nx_graph.nodes()):
             new_g.add_nodes({BayesNode(k, name=name)})
 
         node_list = list(new_g.nodes)
@@ -139,11 +154,9 @@ class BayesNet(Dag):
 
         bt = BifTool(is_quantum)
         bt.read_bif(path)
-        k = -1
         nodes = set()
         name_to_nd = {}
-        for nd_name in bt.nd_sizes:
-            k += 1
+        for k, nd_name in enumerate(bt.nd_sizes):
             node = BayesNode(k, nd_name)
             node.state_names = bt.states[nd_name]
             node.size = len(node.state_names)

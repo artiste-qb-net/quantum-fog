@@ -1,0 +1,10 @@
+strict digraph G {
+Rain;
+Sprinkler;
+WetGrass;
+Cloudy;
+Rain -> WetGrass;
+Sprinkler -> WetGrass;
+Cloudy -> Rain;
+Cloudy -> Sprinkler;
+}

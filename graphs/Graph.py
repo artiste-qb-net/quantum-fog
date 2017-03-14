@@ -21,6 +21,8 @@ class Graph:
     Attributes
     ----------
     nodes : set[Node]
+    num_nodes : int
+        number of nodes.
 
     """
 
@@ -37,6 +39,7 @@ class Graph:
 
         """
         self.nodes = nodes
+        self.num_nodes = len(self.nodes)
 
     def add_nodes(self, nodes):
         """
@@ -52,6 +55,7 @@ class Graph:
 
         """
         self.nodes |= nodes
+        self.num_nodes = len(self.nodes)
 
     def has_node(self, node):
         """
@@ -165,15 +169,12 @@ class Graph:
 
         """
         new_g = Graph(set())
-        k = -1
-        for name in nx_graph.nodes():
-            k += 1
+        for k, name in enumerate(nx_graph.nodes()):
             new_g.add_nodes({Node(k, name=name)})
 
         node_list = list(new_g.nodes)
-        k = -1
-        for nd1 in node_list:
-            k += 1
+
+        for k, nd1 in enumerate(node_list):
             for nd2 in node_list[k+1:]:
                 if nd1.name in nx_graph.neighbors(nd2.name):
                     nd1.add_neighbor(nd2)
