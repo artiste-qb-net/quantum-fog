@@ -1,5 +1,5 @@
-#Quantum Fog at GitHub#
-##What is Quantum Fog?##
+# Quantum Fog at GitHub
+## What is Quantum Fog?
 
 Quantum Fog (QFog) is an app for modelling physical situations that exhibit quantum mechanical behavior. It's a tool for investigating and discussing quantum measurement problems graphically, in terms of network diagrams called quantum Bayesian networks.
 
@@ -15,13 +15,13 @@ We believe QFog will also prove very useful to
 * teachers of quantum mechanics, at all levels starting from high school.
 * researchers in fields other than quantum computing (for example, quantum artificial intelligence, quantum chemistry and quantum cognition).
 
-##Project Information##
+## Project Information
 
 * QFog is licensed under the BSD license (3 clause version) with an added clause at the end, taken almost verbatim from the Apache 2.0 license, granting additional Patent rights. See `LICENSE.md`.
 
 * QFog at GitHub is based on older, formerly proprietary software with the same name for the Mac. Read `QFog-legacy-history.md` for details about legacy history.
 
-##Contributors##
+## Contributors
 
 (Alphabetical Order)
 * Dekant, Henning
