@@ -1,10 +1,10 @@
 strict digraph "" {
-WetGrass;
-Cloudy;
 Sprinkler;
+WetGrass;
 Rain;
-Cloudy -> Sprinkler;
-Cloudy -> Rain;
+Cloudy;
 Sprinkler -> WetGrass;
 Rain -> WetGrass;
+Cloudy -> Sprinkler;
+Cloudy -> Rain;
 }

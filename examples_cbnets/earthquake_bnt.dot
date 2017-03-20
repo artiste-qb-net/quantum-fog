@@ -1,0 +1,11 @@
+strict digraph "" {
+Alarm;
+MaryCalls;
+JohnCalls;
+Earthquake;
+Burglary;
+Alarm -> MaryCalls;
+Alarm -> JohnCalls;
+Earthquake -> Alarm;
+Burglary -> Alarm;
+}

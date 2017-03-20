@@ -3,22 +3,18 @@ network unknown {
 variable Sprinkler {
 type discrete [ 2 ] { state0, state1 };
 }
-variable Cloudy {
-type discrete [ 2 ] { state0, state1 };
-}
 variable WetGrass {
 type discrete [ 2 ] { state0, state1 };
 }
 variable Rain {
 type discrete [ 2 ] { state0, state1 };
 }
+variable Cloudy {
+type discrete [ 2 ] { state0, state1 };
+}
 probability ( Sprinkler | Cloudy ) {
 	(state0)  0.2, 0.8;
 	(state1)  0.7, 0.3;
-}
-probability ( Cloudy  ) {
-	table [ 0.5],
- [ 0.5];
 }
 probability ( WetGrass | Sprinkler, Rain ) {
 	(state0, state0)  0.99, 0.01;
@@ -29,5 +25,8 @@ probability ( WetGrass | Sprinkler, Rain ) {
 probability ( Rain | Cloudy ) {
 	(state0)  0.4, 0.6;
 	(state1)  0.5, 0.5;
+}
+probability ( Cloudy  ) {
+	table  0.5, 0.5;
 }
 }
