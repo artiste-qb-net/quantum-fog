@@ -112,7 +112,7 @@ class DiscreteCondPot(Potential):
             ind_gen = ut.cartesian_product(self.nd_sizes[:-1])
             axes = list(range(self.num_nodes - 1))
             for indices in ind_gen:
-                slicex = self.get_slicex_ax(indices, axes)
+                slicex = self.slicex_from_ax(indices, axes)
                 arr = self.pot_arr[slicex]
                 if not self.is_quantum:
                     d = arr.sum()

@@ -300,7 +300,7 @@ class NetParamsLner:
             if use_int_sts:
                 return int(st)
             else:
-                return focus_nd.st_name_index(str(st))
+                return focus_nd.pos_of_st_name(str(st))
 
         pot = DiscreteCondPot(is_quantum, ord_nodes, bias=0)
         for row in range(len(pot_df.index)):
@@ -309,7 +309,7 @@ class NetParamsLner:
             #                              ])
             if not use_int_sts:
                 arr_index = [
-                    ord_nodes[col].st_name_index(str(pot_df.iloc[row, col]))
+                    ord_nodes[col].pos_of_st_name(str(pot_df.iloc[row, col]))
                     for col in range(len(ord_nodes))]
                 
             else:

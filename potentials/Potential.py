@@ -36,11 +36,14 @@ class Potential:
     ----------
     is_quantum : bool
     nd_sizes : list[int]
+        sizes of nodes in ord_nodes
     nodes : set[BayesNode]
-    num_nodes : int
+    num_nodes:
+        len(nodes)
     ord_nodes : list[BayesNode]
+        nodes in this list are in 1-1 correspondence with axes of pot_arr
     pot_arr : numpy.ndarray
-
+        potential's array
     """
 
     def __init__(self, is_quantum, ord_nodes, pot_arr=None, bias=1):
@@ -52,8 +55,8 @@ class Potential:
         is_quantum : bool
         ord_nodes : list[BayesNode]
         pot_arr : numpy.ndarray
-            potential's array
         bias : complex
+            if pot_arr is None as input, all its entries are set to bias
 
         Returns
         -------
@@ -68,9 +71,8 @@ class Potential:
                          for node in self.ord_nodes]
         if isinstance(pot_arr, np.ndarray):
             self.pot_arr = pot_arr
-            assert (
-                (np.shape(pot_arr) == np.array(self.nd_sizes)).all()
-            ), "Node sizes do not match shape of pot_arr"
+            test = (np.shape(pot_arr) == np.array(self.nd_sizes)).all()
+            assert test, "Node sizes do not match shape of pot_arr"
         else:
             self.set_pot_arr_to(bias)
 
@@ -91,8 +93,7 @@ class Potential:
             ty = np.float64
         else:
             ty = np.complex128
-        self.pot_arr = np.zeros(
-            self.nd_sizes, dtype=ty) + val
+        self.pot_arr = np.zeros(self.nd_sizes, dtype=ty) + val
 
     def set_pot_arr_to_one(self):
         """
@@ -118,7 +119,7 @@ class Potential:
         for node in self.ord_nodes:
             for st in range(node.size):
                 if st not in node.active_states:
-                    slicex = self.get_slicex_nd([st], [node])
+                    slicex = self.slicex_from_nd([st], [node])
                     self.pot_arr[slicex] = 0.
 
     def get_new_marginal(self, fin_node_list):
@@ -142,8 +143,8 @@ class Potential:
         fin_axes = list(range(fin_pot.num_nodes))
         ind_gen = ut.cartesian_product(fin_pot.nd_sizes)
         for fin_indices in ind_gen:
-            slicex = self.get_slicex_nd(fin_indices, fin_node_list)
-            fin_slicex = fin_pot.get_slicex_ax(fin_indices, fin_axes)
+            slicex = self.slicex_from_nd(fin_indices, fin_node_list)
+            fin_slicex = fin_pot.slicex_from_ax(fin_indices, fin_axes)
             fin_pot[fin_slicex] = self[slicex].sum()
         return fin_pot
 
@@ -164,7 +165,7 @@ class Potential:
         assert(self.nodes >= set(node_list))
         return [self.ord_nodes.index(node) for node in node_list]
 
-    def get_slicex_ax(self, indices, axes):
+    def slicex_from_ax(self, indices, axes):
         """
         slicex is a portmanteau that stands for slice index. This function
         works hand in hand with __getitem__ and __setitem__ which override
@@ -194,7 +195,7 @@ class Potential:
         # We want just a basic slice
         return tuple(padded_indices)
 
-    def get_slicex_nd(self, indices, node_list):
+    def slicex_from_nd(self, indices, node_list):
         """
         The _nd version of this function has node_list as argument, the _ax
         version has axes instead, but they return the same thing.
@@ -210,15 +211,14 @@ class Potential:
 
         """
 
-        return self.get_slicex_ax(
-                indices, self.get_axes(node_list))
+        return self.slicex_from_ax(indices, self.get_axes(node_list))
 
     def set_to_transpose(self, node_list):
         """
-        node_list should be a permutation of self.ord_nodes. Like in numpy,
-        we will words "permutation" and "transpose" interchangeably. This
-        function replaces ord_nodes by node_list and applies corresponding
-        numpy transposition to pot_arr.
+        node_list should be a permutation of self.ord_nodes. Like numpy
+        does, we will use the words "permutation" and "transpose"
+        interchangeably. This function replaces ord_nodes by node_list and
+        applies corresponding numpy transposition to pot_arr.
 
 
         Parameters
@@ -250,7 +250,26 @@ class Potential:
         Potential
 
         """
-        return Potential(self.ord_nodes, np.conjugate(self.pot_arr))
+        return Potential(self.is_quantum,
+            self.ord_nodes, np.conjugate(self.pot_arr))
+
+    @staticmethod
+    def conj(pot):
+        """
+        Returns new Potential whose pot_arr is the complex conjugate of
+        pot.pot_arr
+
+        Parameters
+        ----------
+        pot : Potential
+
+        Returns
+        -------
+        Potential
+
+        """
+        return Potential(pot.is_quantum,
+            pot.ord_nodes, np.conjugate(pot.pot_arr))
 
     @staticmethod
     def mag(pot):
@@ -359,8 +378,8 @@ class Potential:
     @staticmethod
     def __safe_truediv(xx, yy):
         """
-        Used instead of __truediv__ for pots. Needed when dividing pointwise
-        two pot_arr's yields either inf or nan.
+        Used instead of __truediv__ for pots. Needed when dividing entrywise
+        two pot_arr's yields either -inf, inf or nan.
 
         Parameters
         ----------
@@ -383,21 +402,19 @@ class Potential:
             # print("xx", xx)
             # print("yy", yy)
 
-            new = xx / yy
-            # replace inf by zero
-            new[new == np.inf] = 0
-            # replace nan by zero
-            new = np.nan_to_num(new)
-
-            # print("xx/yy", new)
-
+            new = xx/yy
+            # np.isfinite(new) returns array of same size as new
+            # with True iff component not -inf, inf or nan
+            # and ~ negates each component
+            new[~ np.isfinite(new)] = 0
         return new
 
     @staticmethod
     def __safe_itruediv(xx, yy):
         """
-        Used instead of __itruediv__ for pots. Needed when dividing
-        pointwise two pot_arr's yields either inf or nan.
+        Used instead of __itruediv__ (in place true division) for pots. 
+        Needed when dividing entrywise two pot_arr's yields either -inf, 
+        inf or nan. 
 
         Parameters
         ----------
@@ -415,23 +432,16 @@ class Potential:
         # yy[abs(yy)<1e-6] = 0
 
         with np.errstate(all='ignore'):
-            # having trouble with xx /= yy
-            # It appears numpy x/=y doesn't modify original x
 
             # print("\nin place divide")
             # print("xx", xx)
             # print("yy", yy)
 
-            xx = xx/yy
-            # replace inf by zero
-            xx[xx == np.inf] = 0
-            # replace nan by zero
-            xx = np.nan_to_num(xx)
-
-            # print("xx/yy", xx)
+            xx /= yy
+            xx[~ np.isfinite(xx)] = 0
         return xx
 
-    def __binary_op(self, right, magic, imagic):
+    def gen_bin_op(self, right, magic):
         """
         This private method will be used to override binary operators
         __add__, __sub__, __mult__ and __truediv__ for pots. A re-alignment
@@ -445,10 +455,6 @@ class Potential:
             This is going to be either
             np.ndarray.[__add__, __sub__, __mul__],
             Potential.__safe_truediv
-        imagic : wrapper_descriptor
-            This is going to be either
-            np.ndarray.[__iadd__, __isub__, __imul__],
-            Potential.__safe_itruediv]
 
         Returns
         -------
@@ -456,12 +462,9 @@ class Potential:
 
         """
         if isinstance(right, (int, float, complex)):
-            new = cp.deepcopy(self)
-            imagic(new.pot_arr, right)
-        elif self.nodes == right.nodes:
-            new = cp.deepcopy(self)
-            new.set_to_transpose(right.ord_nodes)
-            imagic(new.pot_arr, right.pot_arr)
+            new_pot_arr = magic(self.pot_arr, right)
+            new = Potential(self.is_quantum, self.ord_nodes,
+                            pot_arr=new_pot_arr)
         else:
             # nlist = node list
 
@@ -494,7 +497,7 @@ class Potential:
                 self[self_slicex], right[right_slicex])
         return new
 
-    def __inplace_binary_op(self, right, imagic):
+    def gen_inplace_bin_op(self, right, imagic):
         """
         This private method will be used to override the in place binary
         operators __iadd__, __isub__, __imult__ and __itruediv__ for pots. A
@@ -517,12 +520,9 @@ class Potential:
 
         if isinstance(right, (int, float, complex)):
             imagic(self.pot_arr, right)
-        elif self.nodes == right.nodes:
-            self.set_to_transpose(right.ord_nodes)
-            imagic(self.pot_arr, right.pot_arr)
         else:
             assert(self.nodes >= right.nodes),\
-                "can't add or mult in place unless self node set " \
+                "can't add or mult *in place* unless self node set " \
                 "contains right node set"
             # nlist = node list
             self_only_nlist = list(self.nodes - right.nodes)
@@ -546,8 +546,8 @@ class Potential:
 
     def __add__(self, right):
         """
-        Pointwise addition (+) of elements in self and right. self and right
-        can be defined over different, perhaps overlapping node sets.
+        Entrywise addition (+) of self and right. self and right can be
+        defined over different, perhaps overlapping node sets.
 
         Parameters
         ----------
@@ -559,13 +559,12 @@ class Potential:
 
         """
 
-        return self.__binary_op(
-            right, np.ndarray.__add__, np.ndarray.__iadd__)
+        return self.gen_bin_op(right, np.ndarray.__add__)
 
     def __iadd__(self, right):
         """
-        Pointwise in place addition (+=) of elements in self and right. self
-        node set must contain right node set.
+        Entrywise in place addition (+=) of self and right. self node set
+        must contain right node set.
 
         Parameters
         ----------
@@ -577,12 +576,12 @@ class Potential:
 
         """
 
-        return self.__inplace_binary_op(right, np.ndarray.__iadd__)
+        return self.gen_inplace_bin_op(right, np.ndarray.__iadd__)
 
     def __sub__(self, right):
         """
-        Pointwise subtraction (-) of elements in self and right. self and
-        right can be defined over different, perhaps overlapping node sets.
+        Entrywise subtraction (-) of self and right. self and right can be
+        defined over different, perhaps overlapping node sets.
 
         Parameters
         ----------
@@ -594,13 +593,12 @@ class Potential:
 
         """
 
-        return self.__binary_op(
-            right, np.ndarray.__sub__, np.ndarray.__isub__)
+        return self.gen_bin_op(right, np.ndarray.__sub__)
 
     def __isub__(self, right):
         """
-        Pointwise in place subtraction (-=) of elements in self and right.
-        self node set must contain right node set.
+        Entrywise in place subtraction (-=) of self and right. self node set
+        must contain right node set.
 
         Parameters
         ----------
@@ -612,12 +610,12 @@ class Potential:
 
         """
 
-        return self.__inplace_binary_op(right, np.ndarray.__isub__)
+        return self.gen_inplace_bin_op(right, np.ndarray.__isub__)
 
     def __mul__(self, right):
         """
-        Pointwise multiplication (*) of elements in self and right. self and
-        right can be defined over different, perhaps overlapping node sets.
+        Entrywise multiplication (*) of self and right. self and right can
+        be defined over different, perhaps overlapping node sets.
 
         Parameters
         ----------
@@ -629,13 +627,12 @@ class Potential:
 
         """
 
-        return self.__binary_op(
-            right, np.ndarray.__mul__, np.ndarray.__imul__)
+        return self.gen_bin_op(right, np.ndarray.__mul__)
 
     def __imul__(self, right):
         """
-        Pointwise in place multiplication (*=) of elements in self and
-        right. self node set must contain right node set.
+        Entrywise in place multiplication (*=) of self and right. self node
+        set must contain right node set.
 
         Parameters
         ----------
@@ -647,12 +644,12 @@ class Potential:
 
         """
 
-        return self.__inplace_binary_op(right, np.ndarray.__imul__)
+        return self.gen_inplace_bin_op(right, np.ndarray.__imul__)
 
     def __truediv__(self, right):
         """
-        Pointwise division (/) of elements in self and right. self and
-        right can be defined over different, perhaps overlapping node sets.
+        Entrywise division (/) of self and right. self and right can be
+        defined over different, perhaps overlapping node sets.
 
         Parameters
         ----------
@@ -664,13 +661,12 @@ class Potential:
 
         """
 
-        return self.__binary_op(
-            right, Potential.__safe_truediv, Potential.__safe_itruediv)
+        return self.gen_bin_op(right, Potential.__safe_truediv)
 
     def __itruediv__(self, right):
         """
-        Pointwise in place division (/=) of elements in self and
-        right. self node set must contain right node set.
+        Entrywise in place division (/=) of self and right. self node set
+        must contain right node set.
 
         Parameters
         ----------
@@ -682,7 +678,7 @@ class Potential:
 
         """
 
-        return self.__inplace_binary_op(right, Potential.__safe_itruediv)
+        return self.gen_inplace_bin_op(right, Potential.__safe_itruediv)
 
     def __deepcopy__(self, memo):
         """
@@ -705,7 +701,7 @@ class Potential:
     def __str__(self):
         """
         What string is outputted by print(pot) where pot is an object of
-        Potential
+        Potential? The Shadow and __str__ know.
 
         Returns
         -------
@@ -718,10 +714,14 @@ class Potential:
 from nodes.BayesNode import *
 if __name__ == "__main__":
     with np.errstate(all='ignore'):
-        x = np.array([2, 0])/np.array([1, 0])
-        x[x == np.inf] = 0
-        x = np.nan_to_num(x)
-    print("[2, 0]/[1, 0]=", x)
+        x = np.array([2, 0+0j])/np.array([1, 0])
+        x[~ np.isfinite(x)] = 0
+    print("[2, 0+0j]/[1, 0]=", x)
+
+    with np.errstate(all='ignore'):
+        x = np.array([2, 5])/np.array([1, 0])
+        x[~ np.isfinite(x)] = 0
+    print("[2, 5]/[1, 0]=", x)
 
     # define some nodes
     a_node = BayesNode(0, name="A")
@@ -732,7 +732,7 @@ if __name__ == "__main__":
     f_node = BayesNode(5, name="F")
     g_node = BayesNode(6, name="G")
 
-    print("\ndefine some pots")
+    print("\n-----------------define some pots")
 
     # Make sure if entries of numpy array are integers, to specify
     # dtype=float64 or numpy will cast them as integers and this will lead
@@ -767,24 +767,8 @@ if __name__ == "__main__":
     pot_ecg = Potential(False, [e_node, c_node, g_node], ar_ecg)
     print("pot_ecg:", pot_ecg)
 
-    print("\ntry distance")
-    print("distance(pot_abc, pot_bc)=",
-        Potential.distance(pot_abc, pot_bc))
-    print("pot_abc == pot_bc?", pot_abc == pot_bc)
+    print("\n-----------------try transpose, distance and ==")
 
-    new_abc = cp.deepcopy(pot_abc)
-    print("distance(pot_abc, new_abc)=",
-                    Potential.distance(new_abc, pot_abc))
-    print("pot_abc == new_abc?", pot_abc == new_abc)
-
-    print("\ntry add, sub, mult")
-    print("pot_ab + 5:", pot_ab + 5)
-    print("pot_ab * 5:", pot_ab * 5)
-    print("pot_ab + pot_bc:", pot_ab + pot_bc)
-    print("pot_ab - pot_bc:", pot_ab - pot_bc)
-    print("pot_ab * pot_bc:", pot_ab * pot_bc)
-
-    print("\ntry set_to_transpose")
     new_abc = cp.deepcopy(pot_abc)
     new_abc.set_to_transpose([b_node, a_node, c_node])
     print("pot_abc:", pot_abc)
@@ -792,7 +776,28 @@ if __name__ == "__main__":
     assert pot_abc == new_abc
     assert pot_abc != (new_abc + 5)
 
-    print("\ntry iadd, isub, and imul")
+    print("distance(pot_abc, new_abc)=",
+                    Potential.distance(new_abc, pot_abc))
+    print("pot_abc == new_abc?", pot_abc == new_abc)
+
+    print("distance(pot_abc, pot_bc)=",
+        Potential.distance(pot_abc, pot_bc))
+    print("pot_abc == pot_bc?", pot_abc == pot_bc)
+
+    print("\n-----------------try add, sub, mult")
+
+    print("pot_ab + 5:", pot_ab + 5)
+    print("pot_ab - 5:", pot_ab - 5)
+    print("pot_ab * 5:", pot_ab * 5)
+    print("pot_ab + pot_ab2:", pot_ab + pot_ab2)
+    print("pot_ab - pot_ab2:", pot_ab - pot_ab2)
+    print("pot_ab * pot_ab2:", pot_ab * pot_ab2)
+    print("pot_ab + pot_bc:", pot_ab + pot_bc)
+    print("pot_ab - pot_bc:", pot_ab - pot_bc)
+    print("pot_ab * pot_bc:", pot_ab * pot_bc)
+
+    print("\n-----------------try iadd, isub, and imul")
+
     new_abc = cp.deepcopy(pot_abc)
     new_abc.set_to_transpose([b_node, a_node, c_node])
     new_abc += 5
@@ -813,22 +818,29 @@ if __name__ == "__main__":
     new_abc *= pot_bc
     assert new_abc == pot_abc*pot_bc
 
-    print("\ntry truediv")
-    print("pot_ab/pot_ab2 =\n", pot_ab/pot_ab2)
+    print("\n-----------------try truediv")
 
-    print("\ntry itruediv")
+    print("pot_ab/pot_ab2 =", pot_ab/pot_ab2)
+
+    print("\n-----------------try itruediv")
     new_ab = cp.deepcopy(pot_ab)
     new_ab.set_to_transpose([b_node, a_node])
     new_ab /= pot_ab2
-    print("pot_ab/pot_ab2", new_ab)
+    print("pot_ab/pot_ab2=", new_ab)
     assert new_ab == pot_ab/pot_ab2
 
-    print("\ntry marginalizing")
+    print("\n-----------------try marginalizing")
+
+    new_abc = cp.deepcopy(pot_abc)
     print("new_abc=", new_abc)
     new_ac = new_abc.get_new_marginal([a_node, c_node])
-    print("sum_b new_abc=\n", new_ac)
+    print("sum_b new_abc=", new_ac)
 
-    print("pot_ecg:", pot_ecg)
+    print("\nnew_abc=", new_abc)
+    new_ab = new_abc.get_new_marginal([a_node, b_node])
+    print("sum_c new_abc=", new_ab)
+
+    print("\npot_ecg:", pot_ecg)
     pot_ge = pot_ecg.get_new_marginal([g_node, e_node])
     print("sum_c  pot_ecg=", pot_ge)
 

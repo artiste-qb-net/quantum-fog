@@ -145,7 +145,7 @@ class MCMC_Engine(InferenceEngine):
                 states = [
                     annotated_story[node]
                     for node in n_node.potential.ord_nodes]
-                slicex = n_node.potential.get_slicex_nd(
+                slicex = n_node.potential.slicex_from_nd(
                         states, n_node.potential.ord_nodes)
                 sam_pot[state] *= n_node.potential[slicex]
         sam_state = sam_pot.sample()

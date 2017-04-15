@@ -30,9 +30,9 @@ class BayesNode(DirectedNode):
         size of node
     state_names : list[str]
 
-    children : set[Node]
-    neighbors : set[Node]
-    parents : set[Node]
+    children : set[BaysNode]
+    neighbors : set[BayesNode]
+    parents : set[BayesNode]
     id_num : int
     topo_index : int
     name : str
@@ -120,9 +120,9 @@ class BayesNode(DirectedNode):
         assert(0 <= position < self.size)
         self.state_names[position] = name
 
-    def st_name_index(self, st_name):
+    def pos_of_st_name(self, st_name):
         """
-        returns index in state_names list given name
+        returns position in state_names list of input name
 
         Parameters
         ----------
@@ -135,10 +135,40 @@ class BayesNode(DirectedNode):
         """
         return self.state_names.index(st_name)
 
+    def set_state_names_to_product(self, list_of_iters, repeat=1, trim=False):
+        """
+        Sets state names to a sequence of tuples generate by it.product().
+        trim option to remove punctuation marks.
+
+        Parameters
+        ----------
+        list_of_iters : list[str] | list[list[int]]
+            list of iterables like a list of strings, or a list of lists of
+            ints
+        repeat : int
+            In case list_of_iters is list of single string or list of single
+            list of ints, repeat them
+        trim : bool
+            Whether to keep punctuation or not. trim=True removes white
+            spaces, commas and parentheses
+
+        Returns
+        -------
+        None
+
+        """
+        if not trim:
+            bad = ''
+        else:
+            bad = '(,) '
+        self.state_names = [ut.fix(str(t).replace("'", ''), bad, '')
+            for t in it.product(*list_of_iters, repeat=repeat)]
+        self.size == len(self.state_names)
+
     def forget_all_evidence(self):
         """
-        Expand list of self's active states to include all possible states from
-        0 to size-1.
+        Expand list of self's active states to include all possible states
+        from 0 to size-1.
 
         Returns
         -------
@@ -177,86 +207,57 @@ class BayesNode(DirectedNode):
 
     active_states = property(get_active_states, set_active_states)
 
-    def set_state_names_to_product(self, list_of_iters, repeat=1, trim=False):
-        """
-        Sets state names to a sequence of tuples generate by it.product().
-        trim option to remove punctuation marks.
-
-        Parameters
-        ----------
-        list_of_iters : list[str] | list[list[int]]
-            list of iterables like a list of one or more strings, or a list of
-            one or more lists of ints
-        repeat : int
-            In case list_of_iters is list of single string or list of single
-            list of ints, repeat them
-        trim : bool
-            Whether to keep punctuation or not. True removes white spaces,
-            commas and parentheses
-        Returns
-        -------
-        None
-
-        """
-        if not trim:
-            bad = ''
-        else:
-            bad = '(,) '
-        self.state_names = [ut.fix(str(t).replace("'", ''), bad, '')
-            for t in it.product(*list_of_iters, repeat=repeat)]
-        self.size == len(self.state_names)
-
 # These imports are here after the class definition
 # to avoid import loops.
 # The idea is to define the class before these imports occur.
 from potentials.Potential import *
-from potentials.DiscreteCondPot import *
+# from potentials.DiscreteCondPot import *
 if __name__ == "__main__":
 
     a = BayesNode(0, "alice")
 
-    def speak(k):
-        print('test' + str(k) + ":", a.state_names, "\n")
+    def status(k):
+        print('position ' + str(k) + ":", a.state_names, "\n")
 
-    speak(1)
+    status(1)
 
     a.resize(4)
-    speak(2)
+    status(2)
 
     a.resize(3)
-    speak(3)
+    status(3)
 
     a.set_state_name(2, "horse")
-    speak(4)
+    status(4)
 
     a.set_state_names_to_product([range(3)])
-    speak(5)
+    status(5)
 
     a.set_state_names_to_product([range(3)], trim=True)
-    speak(5.1)
+    status(5.1)
 
     a.set_state_names_to_product([range(3)], repeat=3)
-    speak(6)
+    status(6)
 
     a.set_state_names_to_product([range(3), range(2)]),
-    speak(7)
+    status(7)
 
     a.set_state_names_to_product(['abc'])
-    speak(8)
+    status(8)
 
     a.set_state_names_to_product(['abc'], trim=True)
-    speak(8.1)
+    status(8.1)
 
     a.set_state_names_to_product(['abc'], repeat=3)
-    speak(9)
+    status(9)
 
     a.set_state_names_to_product(['abc', 'xyz'])
-    speak(10)
+    status(10)
 
     a.set_state_names_to_product(['abc', 'xyz'], trim=True)
-    speak(10.1)
+    status(10.1)
 
     a.set_state_names_to_product(['01'], repeat=3, trim=True)
-    speak(11)
+    status(11)
 
 

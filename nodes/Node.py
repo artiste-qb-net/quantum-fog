@@ -77,6 +77,22 @@ class Node:
             self.neighbors.add(node)
             node.neighbors.add(self)
 
+    def add_neighbors(self, node_list):
+        """
+        Add neighbor nodes from a list of them.
+
+        Parameters
+        ----------
+        node_list : list(Node)
+
+        Returns
+        -------
+        None
+
+        """
+        for nd in node_list:
+            self.add_neighbor(nd)
+
     def remove_neighbor(self, node):
         """
         Remove 'node' from the list of neighbors, effectively deleting
