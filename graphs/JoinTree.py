@@ -3,7 +3,7 @@
 
 # from potentials.Potential import *
 # from graphs.Graph import *
-# from graphs.Sepset import *
+# from nodes.Sepset import *
 from graphs.BayesNet import *
 from graphs.TriangulatedGraph import *
 # from MyExceptions import *
@@ -12,15 +12,16 @@ from graphs.TriangulatedGraph import *
 class JoinTree(Graph):
     """
     JoinTree is the final undirected graph that is constructed for
-    JoinTreeEngine. The nodes of a JoinTree are cliques. Cliques are
-    themselves sets of subnodes. The cliques are determined in a previous
-    step which involves building a TriangulatedGraph. The Sepset's (
-    separation sets) are not nodes of the JoinTree graph. A clique stores a
-    sepset for each clique adjacent to it.
+    JoinTreeEngine. The nodes of a JoinTree are cliques. A Clique is itself
+    a set of subnodes. The cliques are determined in a previous step which
+    involves building a TriangulatedGraph. The Sepset's ( separation sets)
+    are not nodes of the JoinTree graph. A clique stores a sepset for each
+    clique adjacent to it.
 
     Attributes
     ----------
     nodes : set[Node]
+    num_nodes : int
 
     """
 
@@ -43,7 +44,7 @@ class JoinTree(Graph):
         # and putting them into a list called subgraphs
         subgraphs = [Graph({cl}) for cl in cliques]
         sepset_heap = Sepset.create_sepset_heap(cliques)
-        # Join n - 1 subgraphs together forming (hopefully)
+        # Join all subgraphs together forming (hopefully)
         # a single graph called the join tree.
         for n in range(len(subgraphs) - 1):
             while sepset_heap:
@@ -83,16 +84,15 @@ class JoinTree(Graph):
         list[Clique]
 
         """
-        tri_id_to_nd = {node.id_num: node for node in tri_graph.nodes}
-        bnet_id_to_nd = {node.id_num: node for node in bnet.nodes}
         id_nums = [node.id_num for node in bnet.nodes]
-        node_dict = {tri_id_to_nd[k]: bnet_id_to_nd[k] for k in id_nums}
+        tri_nd_to_bnet_nd = {tri_graph.get_node_with_id_num(k):
+                    bnet.get_node_with_id_num(k) for k in id_nums}
         for clique in tri_graph.cliques:
             # this won't work because you can't change index
             # you are iterating over?
             # for node in clique.subnodes:
-            #      node = node_dict[node]
-            clique.subnodes = {node_dict[node]
+            #      node = tri_nd_to_bnet_nd[node]
+            clique.subnodes = {tri_nd_to_bnet_nd[node]
                                for node in clique.subnodes}
         return tri_graph.cliques
 
@@ -198,26 +198,26 @@ class JoinTree(Graph):
         """
 
         for clique in self.nodes:
-            for v in clique.subnodes:
-                v.clique = None
+            for nd in clique.subnodes:
+                nd.clique = None
 
         for clique in self.nodes:
-            for v in clique.subnodes:
-                if v.clique is None:
-                    v_and_pars = v.parents | {v}  # called the family of v
-                    if clique.subnodes >= v_and_pars:
-                        v.clique = clique
+            for nd in clique.subnodes:
+                if nd.clique is None:
+                    nd_and_pars = nd.parents | {nd}  # called the family of nd
+                    if clique.subnodes >= nd_and_pars:
+                        nd.clique = clique
 
-                        # print("\nnode being absorbed:", v.name)
-                        # print("its clique:", v.clique.name)
+                        # print("\nnode being absorbed:", nd.name)
+                        # print("its clique:", nd.clique.name)
                         # print("clique pot before abs", clique.potential)
                         # old_clique_pot = cp.deepcopy(clique.potential)
 
-                        clique.potential *= v.potential
+                        clique.potential *= nd.potential
 
                         # print("clique pot after abs", clique.potential)
                         # print("this should be small",
-                        #       old_clique_pot*v.get_masked_pot()
+                        #       old_clique_pot*nd.get_masked_pot()
                         #       - clique.potential)
         # for clique in self.nodes:
         #     print("clique pot:", clique.potential, "\n")
@@ -236,30 +236,26 @@ class JoinTree(Graph):
 
     def describe_yourself(self):
         """
-        Prints a pretty summary of the attributes of self.
+        Prints a summary of the attributes of self.
 
         Returns
         -------
 
         """
-        print("JoinTree:")
         for cliq in self.nodes:
-            print("clique name: ", cliq.name)
-            print("subnodes:",
-                  sorted([node.name for node in cliq.subnodes]))
+            print("clique name:", cliq.name)
             print("sepsets:")
             for sep in cliq.sepsets:
                 print(
-                    sorted([node.name for node in sep.subnodes]),
+                    sep.name,
                     " between ",
                     sep.clique_x.name,
                     " and ",
                     sep.clique_y.name)
             print("\n")
 
-
-from examples_cbnets.HuaDar import *
 if __name__ == "__main__":
+    from examples_cbnets.HuaDar import *
     bnet = HuaDar.build_bnet()
     moral_graph = MoralGraph(bnet)
     tri_graph = TriangulatedGraph(moral_graph)

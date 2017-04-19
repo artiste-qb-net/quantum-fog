@@ -1,0 +1,11 @@
+strict graph G {
+p2;
+c1;
+center;
+c2;
+p1;
+p2 -- center;
+c1 -- center;
+center -- c2;
+center -- p1;
+}

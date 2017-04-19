@@ -14,7 +14,8 @@ class InferenceEngine:
     bnet : BayesNet
     verbose : bool
     is_quantum : bool
-
+    bnet_ord_nodes : list[BayesNode]
+        list of nodes of bnet ordered alphabetically by node name
     """
 
     def __init__(self, bnet, verbose=False, is_quantum=False):
@@ -35,12 +36,16 @@ class InferenceEngine:
         self.bnet = bnet
         self.verbose = verbose
         self.is_quantum = is_quantum
+        sorted_nd_names = sorted([nd.name for nd in self.bnet.nodes])
+        self.bnet_ord_nodes = [self.bnet.get_node_named(name) for
+                        name in sorted_nd_names]
 
     @staticmethod
     def print_annotated_story(annotated_story):
         """
-        Prints in a pretty way an annotated story, which is a dictionary
-        mapping all nodes to their current state.
+        An annotated story is a dictionary that maps each node to its
+        current state. This function print an annotated story in
+        alphabetical order of node names.
 
         Parameters
         ----------
@@ -51,10 +56,11 @@ class InferenceEngine:
         None
 
         """
+        pairs = sorted([(node.name, str(annotated_story[node]))
+                    for node in annotated_story.keys()])
         story_line = ""
-        for node in annotated_story.keys():
-            story_line += node.name + "="
-            story_line += str(annotated_story[node]) + ", "
+        for x, y in pairs:
+            story_line += x + "=" + y + ", "
         print(story_line[:-2])
 
 if __name__ == "__main__":

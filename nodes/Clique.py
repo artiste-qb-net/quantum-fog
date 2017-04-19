@@ -4,21 +4,22 @@
 
 # from nodes.BayesNode import *
 # from potentials.Potential import *
-from graphs.Sepset import *
+from nodes.Sepset import *
+from nodes.Node import *
 
 
 class Clique(Node):
     """
-    Clique inherits from Node. Cliques are clusters of subnodes. Each clique
-    acts as a single node of a JoinTree. A JoinTree is an undirected graph
-    whereas a BayesNet is a directed one.
+    Clique inherits from Node. A Clique is a cluster of its subnodes. Each
+    clique acts as a single node of a JoinTree. A JoinTree is an undirected
+    graph whereas a BayesNet is a directed one.
 
     Attributes
     ----------
     potential : Potential
     sepsets : set[Sepset]
-        insert into this set one sepset for each
-        clique adjacent to the self clique.
+        insert into this set one sepset for each clique adjacent to the self
+        clique.
     subnodes : set[BayesNode]
 
     id_num : int
@@ -39,15 +40,15 @@ class Clique(Node):
         ----------
         id_num : int
             Unique int to identify each clique.
-        subnodes : set[Node]
+        subnodes : set[BayesNode]
 
         Returns
         -------
 
         """
         self.subnodes = subnodes
-        joe = '_'.join(sorted([nd.name for nd in subnodes]))
-        Node.__init__(self, id_num, name=joe)
+        mashup = '_'.join(sorted([nd.name for nd in subnodes]))
+        Node.__init__(self, id_num, name=mashup)
         self.sepsets = set()
         self.potential = None
 

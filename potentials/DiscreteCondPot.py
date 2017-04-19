@@ -19,12 +19,13 @@ class DiscreteCondPot(Potential):
     y_1, y_2, ...), where x is the focus node. abbreviations in
     abbreviations.md. CondPots need not be normalized, but there is a method
     in the class to normalize them. Normalization depends on whether we are
-    dealing with CNets or QNets, which corresponds to is_quantum= False or
+    dealing with CNets or QNets, which corresponds to is_quantum=False or
     True respectively.
 
     Attributes
     ----------
     focus_node : Node
+        last node in ord_nodes
 
     is_quantum : bool
     nd_sizes : int
@@ -42,7 +43,7 @@ class DiscreteCondPot(Potential):
         Parameters
         ----------
         is_quantum : bool
-        ord_nodes : list[Node]
+        ord_nodes : list[BayesNode]
         pot_arr : numpy.ndarray
         bias : complex
 
@@ -67,8 +68,7 @@ class DiscreteCondPot(Potential):
         assert self.is_quantum
         arr = self.pot_arr
         arr2 = (arr*np.conjugate(arr)).real
-        return DiscreteCondPot(
-            False, self.ord_nodes, pot_arr=arr2)
+        return DiscreteCondPot(False, self.ord_nodes, pot_arr=arr2)
 
     def normalize_self(self, postpone=False):
         """
@@ -106,7 +106,7 @@ class DiscreteCondPot(Potential):
                 if abs(d) > 1e-6:
                     self.pot_arr /= d
                 else:
-                    raise UnNormalizablePot([])
+                    raise UnNormalizablePot(())
         else:
             totals = {}
             ind_gen = ut.cartesian_product(self.nd_sizes[:-1])
@@ -117,7 +117,7 @@ class DiscreteCondPot(Potential):
                 if not self.is_quantum:
                     d = arr.sum()
                 else:
-                    d = np.sqrt(np.real((arr*np.conj(arr))).sum())
+                    d = np.linalg.norm(arr)
                 if postpone:
                     name_tuple = str(tuple(self.ord_nodes[k].state_names[r]
                                   for k, r in enumerate(indices)))
@@ -139,7 +139,7 @@ class DiscreteCondPot(Potential):
 
     def get_total_probs(self, brief=False):
         """
-        This function is just a flavor of normalize_self(). When
+        This function is just a narrower version of normalize_self(). When
         brief=False, it returns a dictionary giving total prob for each
         input state. When brief=True, it returns a dictionary with only the
         total probs that are less than 1.

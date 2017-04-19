@@ -16,16 +16,17 @@ import Utilities as ut
 
 class EnumerationEngine(InferenceEngine):
     """
-    EnumerationEngine is an InferenceEngine that enumerates all (brute force
-    method) possible instantiations (aka stories, histories, Feynman paths)
-    consistent with the active states of each node.
+    EnumerationEngine is an InferenceEngine that enumerates all possible
+    instantiations (aka stories, histories, Feynman paths) consistent with
+    the active states of each node. Thus it uses a brute force method.
 
     Attributes
     ----------
-    bnet_ord_nodes : list[BayesNode]
     bnet : BayesNet
     verbose : bool
     is_quantum : bool
+    bnet_ord_nodes : list[BayesNode]
+        list of nodes of bnet ordered alphabetically by node name
 
     """
 
@@ -45,23 +46,22 @@ class EnumerationEngine(InferenceEngine):
 
         """
         InferenceEngine.__init__(self, bnet, verbose, is_quantum)
-        self.bnet_ord_nodes = list(self.bnet.nodes)
 
     @staticmethod
-    def add_row_to_story_table(table, pot_val, story_counter,
-                               annotated_story, pot_val_format='Float'):
+    def add_row_to_story_table(table, story_counter, pot_val,
+                               story, pot_val_format='Float'):
         """
-        Assembles a joint potential table row, i.e. story counter, annotated
-        story and potential values, as table row in HTML mark-up.
+        Assembles a table row with story counter, story and potential value,
+        this in HTML mark-up.
 
         Parameters
         ----------
         table : xet.Element
             HTML/XML table element
+        story_counter : int
         pot_val: float|complex
             Potential value
-        story_counter : int
-        annotated_story : dict(BayesNode, int)
+        story : list[int]
         pot_val_format: str
 
         Returns
@@ -74,9 +74,9 @@ class EnumerationEngine(InferenceEngine):
         new_cell = xet.SubElement(new_row, 'td')
         new_cell.text = str(story_counter)
 
-        for node in annotated_story.keys():
+        for val in story:
             new_cell = xet.SubElement(new_row, 'td')
-            new_cell.text = str(annotated_story[node])
+            new_cell.text = str(val)
 
         new_cell = xet.SubElement(new_row, 'td')
         pot_val_str = ut.formatted_number_str(pot_val, pot_val_format)
@@ -88,10 +88,14 @@ class EnumerationEngine(InferenceEngine):
         """
         For each node in node_list, this method returns a uni-potential that
         gives the probabilities for the states of that node. Obviously,
-        such a PD has the active states of the node as support. You can
-        print stories by setting print_stories=True. If you do, you can
-        filter out null events (zero probability events) by setting
-        events='nonull'
+        such a PD has the active states of the node as support.
+
+        Calculating the unipot list with EnumerationEngine entails
+        generating all possible stories. This is interesting info that you
+        might want to look at it. You can print stories by setting
+        print_stories=True. If you do, events='null' prints only null
+        stories (zero probability stories), events='nonull' prints only
+        nonull stories, and events='all' prints all stories.
 
         Parameters
         ----------
@@ -123,59 +127,56 @@ class EnumerationEngine(InferenceEngine):
                 total_pot_val += pot_val
 
         table = None
+        # print first row
+        if print_stories and print_format == 'HTML':
+            table = xet.Element('table')
+            header_row = xet.SubElement(table, 'tr')
+            header_list = ['Story #']
+            for nd in self.bnet_ord_nodes:
+                header_list.append(nd.name)
+            header_list.append('Potential')
+            for h in header_list:
+                cell = xet.SubElement(header_row, 'th')
+                cell.text = h
+
         story_counter = 0
         for cur_story in self.story_generator():
             story_counter += 1
             annotated_story = dict(zip(self.bnet_ord_nodes, cur_story))
             pot_val = self.get_story_potential_val(annotated_story)
+            # if normalize=True, total_pot_val is already calculated,
+            # so don't increment anymore
             if not normalize:
                 total_pot_val += pot_val
 
-            state_list = [annotated_story[v] for v in node_list]
+            state_list = [annotated_story[nd] for nd in node_list]
             for (pot, state) in zip(pot_list, state_list):
                 pot[state] += pot_val
 
-            if print_stories:
-                # this makes an ordered dictionary and
-                # orders node names alphabetically
-                annotated_story = OrderedDict(sorted(annotated_story.items(),
-                           key=lambda item: item[0]))
+            print_cur_story = (events == 'null' and abs(pot_val) < 1e-6) \
+                or (events == 'nonull' and abs(pot_val) > 1e-6) \
+                or (events == 'all')
+
+            if print_stories and print_cur_story:
+                if normalize:
+                    pot_val /= total_pot_val
                 if print_format == 'text':
                     print("[", story_counter, "] pot_val=", pot_val)
                     InferenceEngine.print_annotated_story(annotated_story)
                     print("\n")
                 elif print_format == 'HTML':
-                    if story_counter == 1:
-                        table = xet.Element('table')
-                        header_row = xet.SubElement(table, 'tr')
-                        header_list = []
-                        header_list.append('Story #')
-                        [header_list.append(n.name) for n
-                                            in annotated_story.keys()]
-                        header_list.append('Potential')
-                        for h in header_list:
-                            cell = xet.SubElement(header_row, 'th')
-                            cell.text = h
-                    if normalize:
-                        pot_val /= total_pot_val
-
-                    grow_table = (events == 'null' and abs(pot_val)<1e-6) or \
-                        (events == 'nonull' and abs(pot_val)>1e-6) or \
-                        (events == 'all')
-
-                    if grow_table:
-                        EnumerationEngine.add_row_to_story_table(table,
-                                pot_val, story_counter,
-                                annotated_story, pot_val_format)
-
+                    EnumerationEngine.add_row_to_story_table(table,
+                            story_counter, pot_val,
+                            cur_story, pot_val_format)
+        # print last row
         if print_stories:
+            if normalize:
+                total_pot_val = 1
             if print_format == 'text':
                 print("tot_pot_val= ", total_pot_val,
-                      "# equals 1 if you comment out the evidence")
+                      "# equals 1 if no evidence and normalize=False")
                 print("\n")
             elif print_format == 'HTML':
-                if normalize:
-                    total_pot_val = 1
                 if events != 'null':
                     total_row = xet.SubElement(table, 'tr')
                     total_cell1 = xet.SubElement(total_row, 'th')
@@ -185,9 +186,9 @@ class EnumerationEngine(InferenceEngine):
                     total_pot_val_str = ut.formatted_number_str(
                         total_pot_val, pot_val_format)
                     total_cell2.text = total_pot_val_str
-                Dist_Table = HTML(xet.tostring(table).decode('UTF-8'))
+                table_str = xet.tostring(table).decode('UTF-8')
                 # print(xet.tostring(table).decode('UTF-8'))
-                display(Dist_Table)
+                display(HTML(table_str))
 
         pot_list1 = []
         for pot in pot_list:
@@ -215,10 +216,10 @@ class EnumerationEngine(InferenceEngine):
 
     def get_story_potential_val(self, annotated_story):
         """
-        Given an annotated story (i.e., a dictionary that maps all nodes to
-        their current state), it returns a float for CBnets and a complex
-        for QBnet. The returned value is the pot value for that particular
-        annotated story.
+        Given an annotated story (i.e., a dictionary that maps each node to
+        its current state), this function returns a float for CBnets and a
+        complex for QBnet. The returned value is the pot value for that
+        particular annotated story.
 
         Parameters
         ----------
@@ -236,10 +237,9 @@ class EnumerationEngine(InferenceEngine):
             pot_val *= pot[states]
         return pot_val
 
-
-from examples_cbnets.HuaDar import *
 if __name__ == "__main__":
-
+    print("------------------------HuaDar")
+    from examples_cbnets.HuaDar import *
     bnet = HuaDar.build_bnet()
 
     # introduce some evidence
@@ -247,25 +247,22 @@ if __name__ == "__main__":
     bnet.get_node_named("G").active_states = [1]
 
     inf_eng = EnumerationEngine(bnet, verbose=True)
-    id_nums = sorted([node.id_num for node in bnet.nodes])
-    node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
-
-    # this is simpler but erratic
-    # node_list = list(bnet.nodes)
-
-    pot_list = inf_eng.get_unipot_list(node_list)
+    pot_list = inf_eng.get_unipot_list(inf_eng.bnet_ord_nodes,
+                                       print_stories=True)
     for pot in pot_list:
         print(pot, "\n")
 
+    print("------------------------Monty_Hall")
     from graphs.BayesNet import *
-
     path_bif = '../examples_cbnets/Monty_Hall.bif'
     bnet = BayesNet.read_bif(path_bif, False)
+
+    # introduce some evidence
     bnet.get_node_named("1st_Choice").active_states = [0]
     bnet.get_node_named("Monty_Opens").active_states = [1]
-    brute_eng = EnumerationEngine(bnet, verbose=True)
-    id_nums = sorted([node.id_num for node in bnet.nodes])
-    node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
-    pot_list = brute_eng.get_unipot_list(node_list)
+
+    inf_eng = EnumerationEngine(bnet, verbose=True)
+    pot_list = inf_eng.get_unipot_list(inf_eng.bnet_ord_nodes,
+                                       print_stories=True)
     for pot in pot_list:
         print(pot, "\n")

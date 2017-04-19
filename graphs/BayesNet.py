@@ -91,6 +91,11 @@ class BayesNet(Dag):
         column of states_df and makes those the state names of the
         corresponding node in bnet.
 
+        This function inserts into self the list of state names in
+        alphabetical order. If self is an empirical net learned from
+        states_df, self will only match the true, original bnet if state
+        names of true net are in alphabetical order too.
+
         Parameters
         ----------
         states_df : pandas.DataFrame
@@ -100,9 +105,6 @@ class BayesNet(Dag):
         None
 
         """
-        # We will take state names of learned net to be in alphabetical order.
-        # Only if state names of true net are in alphabetical order
-        # too will they match
         for nd in self.nodes:
             # must turn numpy array to list
             nd.state_names = sorted(list(pd.unique(states_df[nd.name])))
@@ -156,7 +158,7 @@ class BayesNet(Dag):
         bt.read_bif(path)
         nodes = set()
         name_to_nd = {}
-        for k, nd_name in enumerate(bt.nd_sizes):
+        for k, nd_name in enumerate(bt.nd_sizes.keys()):
             node = BayesNode(k, nd_name)
             node.state_names = bt.states[nd_name]
             node.size = len(node.state_names)
@@ -219,8 +221,8 @@ if __name__ == "__main__":
 
     bnet.draw(algo_num=2)
 
-    path1 = '../examples_cbnets/dot_test1.dot'
-    path2 = '../examples_cbnets/dot_test2.dot'
+    path1 = '../examples_cbnets/bnet1.dot'
+    path2 = '../examples_cbnets/bnet2.dot'
     bnet.write_dot(path1)
     new_bnet = BayesNet.read_dot(path1)
     new_bnet.write_dot(path2)

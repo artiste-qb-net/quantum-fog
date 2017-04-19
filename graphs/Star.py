@@ -18,7 +18,7 @@ class Star:
     Attributes
     ----------
     medges : list[set[BayesNode]]
-        medges here means missing edges
+        medges stands for missing edges
     node : BayesNode
     num_medges : int
         number of missing edges
@@ -127,8 +127,8 @@ class Star:
                     edges.append({n1, n2})
         return edges
 
-from nodes.Node import *
 if __name__ == "__main__":
+
     a = BayesNode(0, name="a")
     b = BayesNode(1, name="b")
     c = BayesNode(2, name="c")

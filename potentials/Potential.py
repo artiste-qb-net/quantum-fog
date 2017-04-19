@@ -240,7 +240,7 @@ class Potential:
         self.pot_arr = np.transpose(self.pot_arr, axes)
         self.ord_nodes = node_list
 
-    def conj(self):
+    def cc(self):
         """
         Returns new Potential whose pot_arr is the complex conjugate of
         self.pot_arr
@@ -254,7 +254,7 @@ class Potential:
             self.ord_nodes, np.conjugate(self.pot_arr))
 
     @staticmethod
-    def conj(pot):
+    def cc_of(pot):
         """
         Returns new Potential whose pot_arr is the complex conjugate of
         pot.pot_arr

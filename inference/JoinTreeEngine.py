@@ -5,15 +5,14 @@
 # import heapq as he
 # import copy as cp
 
-from inference.InferenceEngine import *
 # from potentials.DiscreteUniPot import *
 #  from graphs.TriangulatedGraph import *
-from graphs.MoralGraph import *
-# from graphs.Sepset import *
+# from nodes.Sepset import *
 from graphs.JoinTree import *
 # from graphs.BayesNet import *
 # from graphs.Graph import *
-from graphs.Clique import *
+from graphs.MoralGraph import *
+from inference.InferenceEngine import *
 
 
 class JoinTreeEngine(InferenceEngine):
@@ -26,12 +25,11 @@ class JoinTreeEngine(InferenceEngine):
 
     As far as I know, the Join Tree algorithm has only been used in the past
     for CBnets, but this computer program applies it to both CBnets and
-    QBnets with only a few modifications and no hitches. Most of the steps
-    of the algorithm are topological (or graph theoretic) in nature and
-    those steps apply to both the CBnet and QBnet cases. The main difference
-    between CBnets and QBnets arises whenever taking the norm of a potential
-    is required and there one simply uses the 1-norm for classical and the
-    2-norm for quantum.
+    QBnets with only a few modifications. Most of the steps of the algorithm
+    are topological (or graph theoretic) in nature and those steps apply to
+    both the CBnet and QBnet cases. The main difference between CBnets and
+    QBnets arises whenever the norm of a potential is required and there one
+    simply uses the 1-norm for classical and the 2-norm for quantum.
 
     This algorithm first creates a MoralGraph, then a TriangulatedGraph,
     then a JoinTree. A list of UniPots is then computed after performing a
@@ -44,6 +42,8 @@ class JoinTreeEngine(InferenceEngine):
     bnet : BayesNet
     verbose : bool
     is_quantum : bool
+    bnet_ord_nodes : list[BayesNode]
+        list of nodes of bnet ordered alphabetically by node name
 
     """
 
@@ -66,7 +66,9 @@ class JoinTreeEngine(InferenceEngine):
         tri_graph = TriangulatedGraph(moral_graph)
         self.jtree = JoinTree(tri_graph, bnet)
         if verbose:
-            tri_graph.describe_yourself()
+            print("------------------triangulated graph:")
+            tri_graph.print_neighbors()
+            print("------------------JoinTree:")
             self.jtree.describe_yourself()
 
     def get_unipot_list(self, node_list):
@@ -110,7 +112,7 @@ class JoinTreeEngine(InferenceEngine):
     def global_propagation(self):
         """
         Given the JoinTree, this method does all the calculations necessary
-        to give the cliques amd sepsets a potential suitable for
+        to give to each clique and sepset a potential suitable for
         marginalization.
 
         Returns
@@ -232,7 +234,7 @@ class JoinTreeEngine(InferenceEngine):
     def collect_evidence(self, from_clique, to_clique,
                          sepset, clique_counter=1):
         """
-        Pass messages from outern cliques towards the start clique.
+        Pass messages from outer cliques towards the start clique.
 
         Parameters
         ----------
@@ -261,8 +263,7 @@ class JoinTreeEngine(InferenceEngine):
             # over all neighbors, send back a message from each
             # back towards the start clique
             if clique_counter > 1:
-                self.pass_message(
-                        to_clique, from_clique, sepset)
+                self.pass_message(to_clique, from_clique, sepset)
 
     def distribute_evidence(self, cur_clique, clique_counter=1):
         """
@@ -281,18 +282,17 @@ class JoinTreeEngine(InferenceEngine):
         if clique_counter > len(self.jtree.nodes):
             return None
         else:
-            cur_clique.visited = 1
+            cur_clique.visited = True
             for sep in cur_clique.sepsets:
-                # Perform DFS passing messages as we go from
-                # one clique  node to the next
+                # Do a DFS search of the tree, only visiting
+                # unvisited clique nodes
                 neighbor_cliq = sep.get_other_clique(cur_clique)
                 if not neighbor_cliq.visited:
                     self.pass_message(cur_clique, neighbor_cliq, sep)
                     self.distribute_evidence(neighbor_cliq, clique_counter + 1)
 
-from examples_cbnets.HuaDar import *
 if __name__ == "__main__":
-
+    from examples_cbnets.HuaDar import *
     bnet = HuaDar.build_bnet()
 
     # introduce some evidence
@@ -300,12 +300,6 @@ if __name__ == "__main__":
     bnet.get_node_named("G").active_states = [1]
 
     inf_eng = JoinTreeEngine(bnet, verbose=True)
-    id_nums = sorted([node.id_num for node in bnet.nodes])
-    node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
-
-    # this is simpler but erratic
-    # node_list = list(bnet.nodes)
-
-    pot_list = inf_eng.get_unipot_list(node_list)
+    pot_list = inf_eng.get_unipot_list(inf_eng.bnet_ord_nodes)
     for pot in pot_list:
         print(pot, "\n")

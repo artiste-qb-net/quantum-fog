@@ -1,12 +1,10 @@
 # Most of the code in this file comes from PBNT by Elliot Cohen. See
 # separate file in this project with PBNT license.
 
-import copy as cp
-import heapq as he
-
 from graphs.Graph import *
-from graphs.Clique import *
+import heapq as he
 from graphs.Star import *
+from nodes.Clique import *
 
 
 class TriangulatedGraph(Graph):
@@ -24,6 +22,7 @@ class TriangulatedGraph(Graph):
     star _heap : list[Star]
 
     nodes : set[Node]
+    num_nodes : int
 
     """
 
@@ -45,37 +44,37 @@ class TriangulatedGraph(Graph):
         Graph.__init__(self, nodes)
         ord_nodes = list(nodes)
         self.star_heap = []
-        # Make yet another copy of moral graph nodes
-        # to do bookkeeping. _p stands for prime.
-        # Primed nodes will be losing neighbors but
-        # unprimed ones will be gaining them.
 
+        # Make yet another copy of moral graph nodes to do bookkeeping. _key
+        #  nodes in node_dict will be losing neighbors (inside method
+        # refresh_star_heap() ) but value nodes will be gaining them
         node_dict = dict(zip(cp.deepcopy(ord_nodes), ord_nodes))
 
-        # Stuff heap with primed nodes
-        for node_p in node_dict.keys():
-            he.heappush(self.star_heap, Star(node_p))
+        # Stuff heap with _key nodes
+        for node_key in node_dict.keys():
+            he.heappush(self.star_heap, Star(node_key))
         cliques = []
         id_num = 0
         while self.star_heap:
             pop_star = he.heappop(self.star_heap)
             for medge in pop_star.medges:
-                # Heap contains primed nodes but
-                # want to add new links to both
-                # primed and unprimed nodes
-                [n1_p, n2_p] = list(medge)
-                node_dict[n1_p].add_neighbor(node_dict[n2_p])
-                n1_p.add_neighbor(n2_p)
+                # Heap contains key nodes but
+                # want to add new neighbors to both
+                # key and value nodes
+                [n1_key, n2_key] = list(medge)
+                node_dict[n1_key].add_neighbor(node_dict[n2_key])
+                n1_key.add_neighbor(n2_key)
             preclique = {
-                node_dict[nd_p] for nd_p in pop_star.node.neighbors} | \
+                node_dict[nd_key] for nd_key in pop_star.node.neighbors} | \
                 {node_dict[pop_star.node]}
             # a preclique is what Huang and Darwiche call an
             # induced cluster
             if verbose:
                 print(
-                    "node(|medges|, w):",
-                    pop_star.node.name,
-                    (pop_star.num_medges, pop_star.weight), ", ",
+                    "\nnode=", pop_star.node.name,
+                    ", num_medges=", pop_star.num_medges,
+                    ", weight=", pop_star.weight)
+                print(
                     "preclique:",
                     sorted([nd.name for nd in preclique]), ", ",
                     "edges added:",
@@ -90,8 +89,8 @@ class TriangulatedGraph(Graph):
     @staticmethod
     def preclique_is_maximal(clique_list, preclique):
         """
-        Answer whether the set 'preclique' is contained in any of the
-        cliques in 'clique_list'.
+        Return False iff the set 'preclique' is contained in any of the 
+        cliques in 'clique_list'. 
 
         Parameters
         ----------
@@ -140,25 +139,10 @@ class TriangulatedGraph(Graph):
         he.heapify(star_list)
         self.star_heap = star_list
 
-    def describe_yourself(self):
-        """
-        Print a pretty summary of the attributes of self.
-
-        Returns
-        -------
-
-        """
-        print("Triangle Graph:")
-        for node in self.nodes:
-            print("name: ", node.name)
-            print("neighbors: ",
-                  sorted([x.name for x in node.neighbors]))
-            print("\n")
-
-from graphs.MoralGraph import *
-from examples_cbnets.HuaDar import *
 if __name__ == "__main__":
+    from examples_cbnets.HuaDar import *
     bnet = HuaDar.build_bnet()
     mo = MoralGraph(bnet)
     tri_graph = TriangulatedGraph(mo, verbose=True)
-    tri_graph.describe_yourself()
+    print("---------------------neighbors")
+    tri_graph.print_neighbors()

@@ -1,0 +1,12 @@
+strict digraph G {
+p1;
+c1;
+c2;
+p2;
+center;
+p1 -> center;
+p2 -> c2;
+p2 -> center;
+center -> c1;
+center -> c2;
+}
