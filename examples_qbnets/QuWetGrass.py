@@ -66,48 +66,30 @@ class QuWetGrass:
 
         return BayesNet(nodes)
 
-
 if __name__ == "__main__":
     bnet = QuWetGrass.build_bnet()
-
+    brute_eng = EnumerationEngine(bnet, is_quantum=True)
     # introduce some evidence
     bnet.get_node_named("WetGrass").active_states = [1]
-
-    id_nums = sorted([node.id_num for node in bnet.nodes])
-    node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
-
-    # this is simpler but erratic
-    # node_list = list(bnet.nodes)
-
-    brute_eng = EnumerationEngine(bnet, is_quantum=True)
+    node_list = brute_eng.bnet_ord_nodes
     brute_pot_list = brute_eng.get_unipot_list(node_list)
 
-    # print("bnet pots after brute")
-    # # check that bnet pots are not modified by engine
-    # for node in node_list:
-    #     print(node.name)
-    #     print(node.potential, "\n")
-
+    bnet = QuWetGrass.build_bnet()
     monte_eng = MCMC_Engine(bnet, is_quantum=True)
+    # introduce some evidence
+    bnet.get_node_named("WetGrass").active_states = [1]
     num_cycles = 1000
     warmup = 200
+    node_list = monte_eng.bnet_ord_nodes
     monte_pot_list = monte_eng.get_unipot_list(
             node_list, num_cycles, warmup)
 
-    # print("bnet pots after monte")
-    # # check that bnet pots are not modified by engine
-    # for node in node_list:
-    #     print(node.name)
-    #     print(node.potential, "\n")
-
+    bnet = QuWetGrass.build_bnet()
     jtree_eng = JoinTreeEngine(bnet, is_quantum=True)
+    # introduce some evidence
+    bnet.get_node_named("WetGrass").active_states = [1]
+    node_list = jtree_eng.bnet_ord_nodes
     jtree_pot_list = jtree_eng.get_unipot_list(node_list)
-
-    # print("bnet pots after jtree")
-    # # check that bnet pots are not modified by engine
-    # for node in node_list:
-    #     print(node.name)
-    #     print(node.potential, "\n")
 
     for k in range(len(node_list)):
         print(node_list[k].name)

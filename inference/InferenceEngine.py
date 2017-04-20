@@ -44,7 +44,7 @@ class InferenceEngine:
     def print_annotated_story(annotated_story):
         """
         An annotated story is a dictionary that maps each node to its
-        current state. This function print an annotated story in
+        current state. This function prints an annotated story in
         alphabetical order of node names.
 
         Parameters

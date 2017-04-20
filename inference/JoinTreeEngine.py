@@ -294,12 +294,12 @@ class JoinTreeEngine(InferenceEngine):
 if __name__ == "__main__":
     from examples_cbnets.HuaDar import *
     bnet = HuaDar.build_bnet()
+    inf_eng = JoinTreeEngine(bnet, verbose=True)
 
-    # introduce some evidence
+    # introduce some evidence after creating engine
     bnet.get_node_named("D").active_states = [0]
     bnet.get_node_named("G").active_states = [1]
 
-    inf_eng = JoinTreeEngine(bnet, verbose=True)
     pot_list = inf_eng.get_unipot_list(inf_eng.bnet_ord_nodes)
     for pot in pot_list:
         print(pot, "\n")

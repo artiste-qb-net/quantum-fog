@@ -1,7 +1,7 @@
 strict digraph G {
-WetGrass;
 Rain;
 Sprinkler;
+WetGrass;
 Cloudy;
 Rain -> WetGrass;
 Sprinkler -> WetGrass;
