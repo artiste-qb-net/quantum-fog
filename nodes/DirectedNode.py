@@ -212,13 +212,13 @@ if __name__ == "__main__":
     center.add_child(c1)
     center.add_child(c2)
 
-    assert(center.has_child(c1))
-    assert(center.has_child(c2))
-    assert(center.has_parent(p1))
-    assert(center.has_parent(p2))
-    assert(c1.has_parent(center))
+    assert center.has_child(c1)
+    assert center.has_child(c2)
+    assert center.has_parent(p1)
+    assert center.has_parent(p2)
+    assert c1.has_parent(center)
     center.remove_parent(p1)
-    assert(not center.has_parent(p1))
+    assert not center.has_parent(p1)
 
     print(center.name)
 

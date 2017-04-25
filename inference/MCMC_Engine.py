@@ -32,7 +32,10 @@ class MCMC_Engine(InferenceEngine):
 
     def __init__(self, bnet, verbose=False, is_quantum=False):
         """
-        Constructor
+        Constructor. Note that the constructor of every inference engine is
+        designed so that one of its objects can be created just once at the
+        beginning and then reused to calculate probabilities under several
+        evidence assumptions.
 
         Parameters
         ----------
@@ -66,7 +69,7 @@ class MCMC_Engine(InferenceEngine):
         list[DiscreteUniPot]
 
         """
-        assert(set(node_list) <= self.bnet.nodes)
+        assert set(node_list) <= self.bnet.nodes
         nd_to_pot = {node: DiscreteUniPot(self.is_quantum, node, bias=0)
                     for node in node_list}
         # initialize current story to a random one
@@ -144,7 +147,7 @@ class MCMC_Engine(InferenceEngine):
                 states = [
                     annotated_story[node]
                     for node in n_node.potential.ord_nodes]
-                slicex = n_node.potential.slicex_from_nd(
+                slicex = n_node.potential.slicex_from_nds(
                         states, n_node.potential.ord_nodes)
                 sam_pot[(state, )] *= n_node.potential[slicex]
         sam_state = sam_pot.sample()

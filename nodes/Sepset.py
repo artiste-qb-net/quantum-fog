@@ -49,7 +49,7 @@ class Sepset(Node):
         -------
 
         """
-        assert(len(subnodes) > 0)
+        assert len(subnodes) > 0
         mashup = '_'.join(sorted([nd.name for nd in subnodes]))
         Node.__init__(self, id_num, name=mashup)
         self.clique_x = clique_x

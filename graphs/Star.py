@@ -136,4 +136,4 @@ if __name__ == "__main__":
     a.add_neighbor(b)
     a.add_neighbor(c)
 
-    assert(Star.get_missing_edges_of_node(a) == [{b, c}])
+    assert Star.get_missing_edges_of_node(a) == [{b, c}]

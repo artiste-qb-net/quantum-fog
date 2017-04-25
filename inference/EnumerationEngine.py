@@ -32,7 +32,10 @@ class EnumerationEngine(InferenceEngine):
 
     def __init__(self, bnet, verbose=False, is_quantum=False):
         """
-        Constructor
+        Constructor. Note that the constructor of every inference engine is
+        designed so that one of its objects can be created just once at the
+        beginning and then reused to calculate probabilities under several
+        evidence assumptions.
 
         Parameters
         ----------
@@ -114,7 +117,7 @@ class EnumerationEngine(InferenceEngine):
 
         """
 
-        assert(set(node_list) <= self.bnet.nodes)
+        assert set(node_list) <= self.bnet.nodes
         pot_list = [DiscreteUniPot(self.is_quantum, node, bias=0)
                     for node in node_list]
 

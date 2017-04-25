@@ -5,7 +5,7 @@ import numpy as np
 import copy as cp
 
 import Utilities as ut
-# from nodes.BayesNode import *
+from nodes.BayesNode import *
 
 
 class Potential:
@@ -13,14 +13,19 @@ class Potential:
     Potentials are basically just functions of several nodes = random
     variables. A pot contains both a list of ordered nodes ('ord_nodes') and
     a numpy array ('pot_arr'). When we permute the ord_nodes of the pot,
-    we also apply the corresponding numpy transposition to its pot_arr.
-
-    A DiscreteUniPot is a DiscreteCondPot is a Potential.
+    we also apply the corresponding numpy transposition to its pot_arr. We
+    define as equal all the pots reachable from any starting pot by this
+    symmetry operation.
 
     For is_quantum=False (resp., True), pot_arr is a numpy array of dtype
     float64 (resp., complex128)
 
+    nd_sizes is a list of the sizes of the nodes in ord_nodes. pot_arr.shape
+    = nd_sizes
+
     potential[index] yields pot_arr[index]
+
+    A DiscreteUniPot is a DiscreteCondPot is a Potential.
 
     The Potential class is where most of the magical numpy functionality of
     QuantumFog resides.
@@ -38,12 +43,14 @@ class Potential:
     nd_sizes : list[int]
         sizes of nodes in ord_nodes
     nodes : set[BayesNode]
+        set(ord_nodes)
     num_nodes:
         len(nodes)
     ord_nodes : list[BayesNode]
         nodes in this list are in 1-1 correspondence with axes of pot_arr
     pot_arr : numpy.ndarray
-        potential's array
+        potential's array. shape=nd_sizes
+
     """
 
     def __init__(self, is_quantum, ord_nodes, pot_arr=None, bias=1):
@@ -62,21 +69,20 @@ class Potential:
         -------
 
         """
-        assert(len(ord_nodes) > 0)
+        assert len(ord_nodes) > 0
         self.is_quantum = is_quantum
         self.ord_nodes = ord_nodes
         self.nodes = set(ord_nodes)
         self.num_nodes = len(self.ord_nodes)
-        self.nd_sizes = [node.size
-                         for node in self.ord_nodes]
+        self.nd_sizes = [node.size for node in self.ord_nodes]
         if isinstance(pot_arr, np.ndarray):
             self.pot_arr = pot_arr
             test = (np.shape(pot_arr) == np.array(self.nd_sizes)).all()
             assert test, "Node sizes do not match shape of pot_arr"
         else:
-            self.set_pot_arr_to(bias)
+            self.set_all_entries_to(bias)
 
-    def set_pot_arr_to(self, val):
+    def set_all_entries_to(self, val):
         """
         Sets all entries of pot_arr to val.
 
@@ -95,16 +101,33 @@ class Potential:
             ty = np.complex128
         self.pot_arr = np.zeros(self.nd_sizes, dtype=ty) + val
 
-    def set_pot_arr_to_one(self):
+    def set_to_random(self, max_int=None):
         """
-        Sets all entries of pot_arr to one.
+        Sets all entries of pot_arr to random value.
+
+        Parameters
+        ----------
+        max_int : int|None
+            if max_int=None, then use random floats in [0, 1) for real and
+            imaginary part of entries. If max_int is an int, then use random
+            ints in [0, max_int) for real and imaginary part of entries.
 
         Returns
         -------
         None
 
         """
-        self.set_pot_arr_to(1.)
+        self.set_all_entries_to(0)
+        if max_int:
+            # adding in place doesn't change dtype of self.pot_arr
+            self.pot_arr += np.random.randint(0, max_int, size=self.nd_sizes)
+            if self.is_quantum:
+                self.pot_arr += \
+                    1j*np.random.randint(0, max_int, size=self.nd_sizes)
+        else:
+            self.pot_arr += np.random.rand(*self.nd_sizes)
+            if self.is_quantum:
+                self.pot_arr += 1j*np.random.rand(*self.nd_sizes)
 
     def mask_self(self):
         """
@@ -119,7 +142,7 @@ class Potential:
         for node in self.ord_nodes:
             for st in range(node.size):
                 if st not in node.active_states:
-                    slicex = self.slicex_from_nd([st], [node])
+                    slicex = self.slicex_from_nds([st], [node])
                     self.pot_arr[slicex] = 0.
 
     def get_new_marginal(self, fin_node_list):
@@ -137,20 +160,21 @@ class Potential:
         Potential
 
         """
-        assert(self.nodes >= set(fin_node_list))
+        assert self.nodes >= set(fin_node_list)
         fin_pot = Potential(self.is_quantum, fin_node_list, bias=0)
 
         fin_axes = list(range(fin_pot.num_nodes))
         ind_gen = ut.cartesian_product(fin_pot.nd_sizes)
         for fin_indices in ind_gen:
-            slicex = self.slicex_from_nd(fin_indices, fin_node_list)
-            fin_slicex = fin_pot.slicex_from_ax(fin_indices, fin_axes)
+            slicex = self.slicex_from_nds(fin_indices, fin_node_list)
+            fin_slicex = fin_pot.slicex_from_axes(fin_indices, fin_axes)
             fin_pot[fin_slicex] = self[slicex].sum()
         return fin_pot
 
     def get_axes(self, node_list):
         """
-        Generates a list of axes that correspond to node_list.
+        Returns a list of the positions in ord_nodes of the nodes in
+        node_list.
 
         Parameters
         ----------
@@ -162,16 +186,17 @@ class Potential:
 
         """
 
-        assert(self.nodes >= set(node_list))
+        assert self.nodes >= set(node_list)
         return [self.ord_nodes.index(node) for node in node_list]
 
-    def slicex_from_ax(self, indices, axes):
+    def slicex_from_axes(self, indices, axes):
         """
         slicex is a portmanteau that stands for slice index. This function
         works hand in hand with __getitem__ and __setitem__ which override
         getting and setting via [ ]. It takes in a list of indices and a
-        list of axes both of the same length and order. It generates a
-        slicex by padding the list 'indices' with extra slice(None) indices.
+        list of axes both of the same length and in 1-1 correspondence. It
+        returns a slicex generated by padding the list 'indices' with extra
+        slice(None) indices.
 
         Parameters
         ----------
@@ -183,8 +208,8 @@ class Potential:
         tuple
 
         """
-        assert(len(indices) == len(axes))
-        assert(len(axes) <= self.num_nodes)
+        assert len(indices) == len(axes)
+        assert len(axes) <= self.num_nodes
 
         padded_indices = [slice(None)]*self.num_nodes
 
@@ -195,10 +220,10 @@ class Potential:
         # We want just a basic slice
         return tuple(padded_indices)
 
-    def slicex_from_nd(self, indices, node_list):
+    def slicex_from_nds(self, indices, node_list):
         """
-        The _nd version of this function has node_list as argument, the _ax
-        version has axes instead, but they return the same thing.
+        The _nds version of this function has node_list as argument,
+        the _axes version has axes instead, but they return the same thing.
 
         Parameters
         ----------
@@ -211,7 +236,7 @@ class Potential:
 
         """
 
-        return self.slicex_from_ax(indices, self.get_axes(node_list))
+        return self.slicex_from_axes(indices, self.get_axes(node_list))
 
     def set_to_transpose(self, node_list):
         """
@@ -231,7 +256,7 @@ class Potential:
 
         """
 
-        assert(set(node_list) == self.nodes)
+        assert set(node_list) == self.nodes
         axes = self.get_axes(node_list)
 
         # this didn't work
@@ -239,6 +264,7 @@ class Potential:
 
         self.pot_arr = np.transpose(self.pot_arr, axes)
         self.ord_nodes = node_list
+        self.nd_sizes = [node.size for node in self.ord_nodes]
 
     def cc(self):
         """
@@ -441,7 +467,7 @@ class Potential:
             xx[~ np.isfinite(xx)] = 0
         return xx
 
-    def gen_bin_op(self, right, magic):
+    def pot_op(self, right, arr_op):
         """
         This private method will be used to override binary operators
         __add__, __sub__, __mult__ and __truediv__ for pots. A re-alignment
@@ -451,7 +477,7 @@ class Potential:
         Parameters
         ----------
         right : Potential
-        magic : wrapper_descriptor
+        arr_op : wrapper_descriptor
             This is going to be either
             np.ndarray.[__add__, __sub__, __mul__],
             Potential.__safe_truediv
@@ -462,7 +488,7 @@ class Potential:
 
         """
         if isinstance(right, (int, float, complex)):
-            new_pot_arr = magic(self.pot_arr, right)
+            new_pot_arr = arr_op(self.pot_arr, right)
             new = Potential(self.is_quantum, self.ord_nodes,
                             pot_arr=new_pot_arr)
         else:
@@ -493,11 +519,11 @@ class Potential:
             right_slicex = tuple(right_slicex)
 
             # numpy array magic
-            new.pot_arr = magic(
+            new.pot_arr = arr_op(
                 self[self_slicex], right[right_slicex])
         return new
 
-    def gen_inplace_bin_op(self, right, imagic):
+    def pot_iop(self, right, arr_iop):
         """
         This private method will be used to override the in place binary
         operators __iadd__, __isub__, __imult__ and __itruediv__ for pots. A
@@ -507,7 +533,7 @@ class Potential:
         Parameters
         ----------
         right : Potential
-        imagic : wrapper_descriptor
+        arr_iop : wrapper_descriptor
             This is going to be either
             np.ndarray.[__iadd__, __isub__, __imult__],
             Potential.__safe_itruediv
@@ -519,9 +545,9 @@ class Potential:
         """
 
         if isinstance(right, (int, float, complex)):
-            imagic(self.pot_arr, right)
+            arr_iop(self.pot_arr, right)
         else:
-            assert(self.nodes >= right.nodes),\
+            assert self.nodes >= right.nodes,\
                 "can't add or mult *in place* unless self node set " \
                 "contains right node set"
             # nlist = node list
@@ -541,7 +567,7 @@ class Potential:
             right_slicex = tuple(right_slicex)
 
             # numpy array magic
-            imagic(self[self_slicex], right[right_slicex])
+            arr_iop(self[self_slicex], right[right_slicex])
         return self
 
     def __add__(self, right):
@@ -559,7 +585,7 @@ class Potential:
 
         """
 
-        return self.gen_bin_op(right, np.ndarray.__add__)
+        return self.pot_op(right, np.ndarray.__add__)
 
     def __iadd__(self, right):
         """
@@ -576,7 +602,7 @@ class Potential:
 
         """
 
-        return self.gen_inplace_bin_op(right, np.ndarray.__iadd__)
+        return self.pot_iop(right, np.ndarray.__iadd__)
 
     def __sub__(self, right):
         """
@@ -593,7 +619,7 @@ class Potential:
 
         """
 
-        return self.gen_bin_op(right, np.ndarray.__sub__)
+        return self.pot_op(right, np.ndarray.__sub__)
 
     def __isub__(self, right):
         """
@@ -610,7 +636,7 @@ class Potential:
 
         """
 
-        return self.gen_inplace_bin_op(right, np.ndarray.__isub__)
+        return self.pot_iop(right, np.ndarray.__isub__)
 
     def __mul__(self, right):
         """
@@ -627,7 +653,7 @@ class Potential:
 
         """
 
-        return self.gen_bin_op(right, np.ndarray.__mul__)
+        return self.pot_op(right, np.ndarray.__mul__)
 
     def __imul__(self, right):
         """
@@ -644,7 +670,7 @@ class Potential:
 
         """
 
-        return self.gen_inplace_bin_op(right, np.ndarray.__imul__)
+        return self.pot_iop(right, np.ndarray.__imul__)
 
     def __truediv__(self, right):
         """
@@ -661,7 +687,7 @@ class Potential:
 
         """
 
-        return self.gen_bin_op(right, Potential.__safe_truediv)
+        return self.pot_op(right, Potential.__safe_truediv)
 
     def __itruediv__(self, right):
         """
@@ -678,7 +704,7 @@ class Potential:
 
         """
 
-        return self.gen_inplace_bin_op(right, Potential.__safe_itruediv)
+        return self.pot_iop(right, Potential.__safe_itruediv)
 
     def __deepcopy__(self, memo):
         """
@@ -711,7 +737,6 @@ class Potential:
         return str([node.name for node in self.ord_nodes]) \
             + "\n" + str(self.pot_arr)
 
-from nodes.BayesNode import *
 if __name__ == "__main__":
     with np.errstate(all='ignore'):
         x = np.array([2, 0+0j])/np.array([1, 0])
@@ -786,6 +811,8 @@ if __name__ == "__main__":
 
     print("\n-----------------try add, sub, mult")
 
+    print('pot_ab:', pot_ab)
+    print('pot_ab2:', pot_ab2)
     print("pot_ab + 5:", pot_ab + 5)
     print("pot_ab - 5:", pot_ab - 5)
     print("pot_ab * 5:", pot_ab * 5)

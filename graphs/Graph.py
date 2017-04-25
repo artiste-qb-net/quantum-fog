@@ -302,8 +302,8 @@ if __name__ == "__main__":
 
     g = Graph({p1})
     g.add_nodes({p2, center, c1, c2})
-    assert(g.has_node(p1))
-    assert(g.contains({p1, center, c2}))
+    assert g.has_node(p1)
+    assert g.contains({p1, center, c2})
 
     center.add_neighbor(p1)
     center.add_neighbor(p2)
