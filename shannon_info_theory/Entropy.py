@@ -284,7 +284,7 @@ if __name__ == "__main__":
     a_nd = BayesNode(0, name="A", size=2)
     b_nd = BayesNode(1, name="B", size=3)
     c_nd = BayesNode(2, name="C", size=2)
-    d_nd = BayesNode(2, name="D", size=3)
+    d_nd = BayesNode(3, name="D", size=3)
 
     print('----------------------classical case')
     pot = Potential(False, [a_nd, b_nd, c_nd, d_nd])

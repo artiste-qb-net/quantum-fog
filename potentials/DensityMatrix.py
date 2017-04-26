@@ -822,8 +822,8 @@ if __name__ == "__main__":
     a_node = BayesNode(0, name="A", size=2)
     b_node = BayesNode(1, name="B", size=3)
     c_node = BayesNode(2, name="C", size=2)
-    d_node = BayesNode(2, name="D", size=3)
-    e_node = BayesNode(2, name="E", size=2)
+    d_node = BayesNode(3, name="D", size=3)
+    e_node = BayesNode(4, name="E", size=2)
 
     print("\n-----------------define some density matrices")
     rho_ab = DensityMatrix([a_node, b_node])
