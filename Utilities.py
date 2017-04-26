@@ -87,6 +87,38 @@ def formatted_number_str(num, num_format):
     else:
         return num_format.format(num)
 
+def is_sq_arr(arr):
+    """
+    Returns True iff arr is a square array.
+
+    Parameters
+    ----------
+    arr : numpy.ndarray
+
+    Returns
+    -------
+    bool
+
+    """
+    shp = arr.shape
+    return shp == (shp[0], shp[0])
+
+def is_herm(arr):
+    """
+    Returns True iff arr is a Hermitian matrix.
+
+    Parameters
+    ----------
+    arr : numpy.ndarray
+
+    Returns
+    -------
+    bool
+
+    """
+    assert is_sq_arr(arr)
+    return np.linalg.norm(arr - arr.T.conj()) < 1e-6
+
 
 if __name__ == "__main__":
     # both work

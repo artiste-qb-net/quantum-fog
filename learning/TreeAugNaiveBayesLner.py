@@ -1,7 +1,4 @@
-from learning.NetStrucLner import *
-from learning.DataEntropy import *
 from learning.ChowLiuTreeLner import *
-import operator
 
 
 class TreeAugNaiveBayesLner(NetStrucLner):

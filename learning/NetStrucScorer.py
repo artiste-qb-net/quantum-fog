@@ -1,9 +1,7 @@
-import pandas as pd
-import numpy as np
-import copy as cp
 import scipy.special as sp
-from learning.DataEntropy import *
+
 from learning.NetParamsLner import *
+from shannon_info_theory.DataEntropy import *
 
 
 class NetStrucScorer:

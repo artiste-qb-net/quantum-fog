@@ -59,10 +59,10 @@ class QuWetGrass:
         we.potential.pot_arr[0, 1, :] = [.01, .99 + 2.3j]
         we.potential.pot_arr[0, 0, :] = [.99, .01 - .01j]
 
-        cl.potential.normalize_self()
-        ra.potential.normalize_self()
-        sp.potential.normalize_self()
-        we.potential.normalize_self()
+        cl.potential.tr_normalize_self()
+        ra.potential.tr_normalize_self()
+        sp.potential.tr_normalize_self()
+        we.potential.tr_normalize_self()
 
         return BayesNet(nodes)
 

@@ -1,8 +1,7 @@
-from learning.DataEntropy import *
-import itertools as it
-import networkx as nx
 import pprint as pp
+
 from learning.NetStrucLner import *
+from shannon_info_theory.DataEntropy import *
 
 
 class MB_BasedLner(NetStrucLner):

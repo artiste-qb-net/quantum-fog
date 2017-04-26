@@ -82,6 +82,21 @@ class Potential:
         else:
             self.set_all_entries_to(bias)
 
+    def is_joint_prob_dist(self):
+        """
+        Returns True if pot is a classical joint prob distribution of all
+        its nodes.
+
+        Returns
+        -------
+        bool
+
+        """
+        classical = ~self.is_quantum
+        nneg = (self.pot_arr >= 0).all()
+        sum_one = (abs(self.get_new_marginal([])-1) < 1e-6)
+        return classical & nneg & sum_one
+
     def set_all_entries_to(self, val):
         """
         Sets all entries of pot_arr to val.
@@ -149,7 +164,8 @@ class Potential:
         """
         Returns a new potential (marginal) obtained by summing self.pot_arr
         over states of all nodes except those in fin_node_list. fin=final.
-        Note this does not modify pot_arr.
+        Note this does not modify pot_arr. This function works even if
+        fin_node_list=[].
 
         Parameters
         ----------
@@ -157,10 +173,13 @@ class Potential:
 
         Returns
         -------
-        Potential
+        float | Potential
 
         """
         assert self.nodes >= set(fin_node_list)
+        if not fin_node_list:
+            return self.pot_arr.sum()
+
         fin_pot = Potential(self.is_quantum, fin_node_list, bias=0)
 
         fin_axes = list(range(fin_pot.num_nodes))

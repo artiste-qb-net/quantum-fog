@@ -91,7 +91,7 @@ class DiscreteCondPot(Potential):
 
         """
 
-        # print("inside normalize_self")
+        # print("inside tr_normalize_self")
         # print("pot before", self)
 
         assert self.focus_node == self.ord_nodes[-1]
@@ -143,7 +143,7 @@ class DiscreteCondPot(Potential):
 
     def get_total_probs(self, brief=False):
         """
-        This function is just a narrower version of normalize_self(). When
+        This function is just a narrower version of tr_normalize_self(). When
         brief=False, it returns a dictionary giving total prob for each
         input state. When brief=True, it returns a dictionary with only the
         total probs that are less than 1.

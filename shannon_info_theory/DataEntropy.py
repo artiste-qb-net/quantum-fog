@@ -10,6 +10,8 @@ class DataEntropy:
     CMI) from a dataframe (hence, from empirical data, not from the true
     distributions of a bnet).
 
+    logs's in entropies are base e, natural logs
+
     Error in entropy is ln(n+1) - ln(n) \approx 1/n where n>>1 is the number
     of samples
     """

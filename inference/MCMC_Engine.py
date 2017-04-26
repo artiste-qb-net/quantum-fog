@@ -107,7 +107,7 @@ class MCMC_Engine(InferenceEngine):
         pot_list = []
         for node in node_list:
             pot = nd_to_pot[node]
-            pot.normalize_self()
+            pot.tr_normalize_self()
             if self.is_quantum:
                 pot = pot.get_probs_from_amps()
             pot_list.append(pot)

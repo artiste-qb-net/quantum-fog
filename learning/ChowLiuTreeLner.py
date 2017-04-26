@@ -1,6 +1,7 @@
-from learning.NetStrucLner import *
-from learning.DataEntropy import *
 import operator
+
+from learning.NetStrucLner import *
+from shannon_info_theory.DataEntropy import *
 
 
 class ChowLiuTreeLner(NetStrucLner):

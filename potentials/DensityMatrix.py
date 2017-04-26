@@ -2,6 +2,7 @@ from potentials.Potential import *
 import numpy as np
 import pandas as pd
 import copy as cp
+import Utilities as ut
 
 
 class DensityMatrix:
@@ -12,6 +13,7 @@ class DensityMatrix:
     which is not shaped as a square matrix but can be reshaped thus. That
     square matrix need not satisfy (def). It need not even be Hermitian.
     It's up to the user to load into dmat_arr a matrix that satisfies (def).
+    You can check if it satisfies (def) with the function is_legal_dmat().
 
     Think of a Potential object pot with is_quantum=True and ord_nodes = [a,
     b, c] as a pure state |psi_abc>. If dmat_abc represents
@@ -82,6 +84,26 @@ class DensityMatrix:
         else:
             self.set_to_diag_mat(diag_val)
 
+    def is_legal_dmat(self):
+        """
+        Returns True iff self is a legal density matrix; i.e. if dmat_arr,
+        when reshaped to a square array, is a Hermitian matrix such that all
+        its eigenvalues are non-negative and sum to one.
+
+        Returns
+        -------
+        bool
+
+        """
+        arr = self.get_sq_array()
+        is_herm = ut.is_herm(arr)
+        evas = np.linalg.eigvalsh(arr)
+        nneg = (evas >= 0).all()
+        sum_one = (abs(evas.sum()-1) < 1e-6)
+        # print(evas)
+        # print(is_herm, nneg, sum_one)
+        return is_herm & nneg & sum_one
+
     def set_all_entries_to(self, val):
         """
         Sets all entries of dmat_arr to val.
@@ -117,9 +139,11 @@ class DensityMatrix:
         for index in ind_gen:
             self.dmat_arr[tuple(index*2)] = diag_val
 
-    def set_to_random(self, max_int=None):
+    def set_to_random(self, max_int=None, normalize=False):
         """
-        Sets dmat_arr to random Hermitian matrix.
+        Sets dmat_arr to random Hermitian matrix with non-negative
+        eigenvalues. If you want the eigenvalues to sum to one,
+        use normalize=True.
 
         Parameters
         ----------
@@ -127,6 +151,8 @@ class DensityMatrix:
             if max_int=None, then use random floats in [0, 1) for real and
             imaginary part of entries. If max_int is an int, then use random
             ints in [0, max_int) for real and imaginary part of entries.
+
+        normalize : bool
 
         Returns
         -------
@@ -142,6 +168,10 @@ class DensityMatrix:
             arr = np.random.rand(nrows, nrows) + \
                   1j*np.random.rand(nrows, nrows)
         arr += arr.conj().T
+        # matrix multiply arr times itself to make eigenvalues non-negative
+        arr = np.dot(arr, arr)
+        if normalize:
+            arr /= np.trace(arr)
         self.dmat_arr = np.reshape(arr, dims)
 
     @staticmethod
@@ -152,7 +182,8 @@ class DensityMatrix:
         example, suppose pot is a Potential with is_quantum=True and
         ord_nodes = [a, b, c]. pot represents a pure state |psi_abc>. If
         dmat_abc represents |psi_abc><psi_abc| and fin_nd_list = [a, b],
-        then this function returns tr_c dmat_abc = dmat_ab.
+        then this function returns tr_c dmat_abc = dmat_ab. This function
+        works even if fin_node_list=[].
 
         Parameters
         ----------
@@ -192,7 +223,8 @@ class DensityMatrix:
         DensityMatrix dmat over all nodes except those in the list
         fin_nd_list. For example, suppose dmat=dmat_abc is a DensityMatrix
         with ord_nodes = [a, b, c]. If fin_nd_list = [a, b], then this
-        function returns tr_c dmat_abc = dmat_ab.
+        function returns tr_c dmat_abc = dmat_ab. This function works even
+        if fin_node_list=[].
 
         Parameters
         ----------
@@ -229,7 +261,7 @@ class DensityMatrix:
         """
         return DensityMatrix.new_from_tr_of_mixed_st(self, []).dmat_arr
 
-    def normalize_self(self):
+    def tr_normalize_self(self):
         """
         Divides all entries of self.dmat_arr by self.trace(). Returns
         self.trace()
@@ -279,6 +311,23 @@ class DensityMatrix:
         new_shape = (num_rows, num_rows)
         arr = np.reshape(cp.copy(self.dmat_arr), new_shape)
         return arr
+
+    def get_eigen_pot(self):
+        """
+        Creates copy of self.dmat_arr reshaped to be a square array,
+        calculates the eigenvalues of that square array, then returns a
+        Potential pot such that pot.pot_arr contains the eigenvalues as an
+        array with shape = self.nd_sizes.
+
+        Returns
+        -------
+        Potential
+
+        """
+        sq_arr = self.get_sq_array()
+        evals = np.linalg.eigvalsh(sq_arr)
+        evals = np.reshape(evals, self.nd_sizes)
+        return Potential(False, self.ord_nodes, pot_arr=evals)
 
     def get_axes(self, node_list):
         """
@@ -846,7 +895,7 @@ if __name__ == "__main__":
     print("\n-----------------try tracing ops and normalize")
 
     new_abc = cp.deepcopy(rho_abc)
-    new_abc.normalize_self()
+    new_abc.tr_normalize_self()
     # print('new_abc', new_abc)
     print('tr new_abc', new_abc.trace())
 
@@ -861,7 +910,7 @@ if __name__ == "__main__":
     pot = Potential(True, [a_node, b_node, c_node])
     pot.set_to_random()
     new_bc = DensityMatrix.new_from_tr_of_pure_st(pot, [b_node, c_node])
-    new_bc.normalize_self()
+    new_bc.tr_normalize_self()
     print("from this pot", pot)
     print("_________")
     print("new_bc", new_bc)
