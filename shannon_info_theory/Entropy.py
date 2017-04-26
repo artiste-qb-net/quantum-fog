@@ -20,28 +20,6 @@ class Entropy:
     """
 
     @staticmethod
-    def eigen_pot(dmat, x_nds):
-        """
-        Marginalizes the DensityMatrix dmat to x_nds. Returns a pot with the
-        eigenvalues of the marginal of dmat. Replaces very small eigenvalues
-        by 1 (because eps*ln(eps) = 0 = 1*ln(1) for 0< eps <<1)
-        
-        Parameters
-        ----------
-        dmat : DensityMatrix 
-        x_nds : list[BayesNode]
-
-        Returns
-        -------
-        Potential
-
-        """
-        sub_dmat = DensityMatrix.new_from_tr_of_mixed_st(dmat, x_nds)
-        pot = sub_dmat.get_eigen_pot()
-        pot.pot_arr[pot.pot_arr < 1e-6] = 1.
-        return pot
-
-    @staticmethod
     def ent_c(pot, x_nds, verbose=False):
         """
         Returns the classical entropy H(x) for the PD P_x = (pot
@@ -60,6 +38,9 @@ class Entropy:
 
         """
         sub_pot = pot.get_new_marginal(x_nds)
+        # Replace very small probabilities
+        # by 1 (because eps*ln(eps) = 0 = 1*ln(1) for 0< eps <<1)
+        sub_pot.pot_arr[sub_pot.pot_arr < 1e-6] = 1.
         slicex = tuple([slice(None)]*sub_pot.num_nodes)
         ent = -(sub_pot[slicex]*np.log(sub_pot[slicex])).sum()
         if verbose:
@@ -85,7 +66,7 @@ class Entropy:
         float
 
         """
-        pot = Entropy.eigen_pot(dmat, x_nds)
+        pot = dmat.get_eigen_pot(x_nds)
         return Entropy.ent_c(pot, x_nds, verbose)
 
     @staticmethod
@@ -145,7 +126,7 @@ class Entropy:
 
         """
         xy_nds = x_nds + y_nds
-        pot = Entropy.eigen_pot(dmat, xy_nds)
+        pot = dmat.get_eigen_pot(xy_nds)
         return Entropy.cond_info_c(pot, x_nds, y_nds, verbose)
 
     @staticmethod
@@ -206,7 +187,7 @@ class Entropy:
 
         """
         xy_nds = x_nds + y_nds
-        pot = Entropy.eigen_pot(dmat, xy_nds)
+        pot = dmat.get_eigen_pot(xy_nds)
         return Entropy.mut_info_c(pot, x_nds, y_nds, verbose)
 
     @staticmethod
@@ -276,7 +257,7 @@ class Entropy:
 
         """
         xyz_nds = x_nds + y_nds + z_nds
-        pot = Entropy.eigen_pot(dmat, xyz_nds)
+        pot = dmat.get_eigen_pot(xyz_nds)
         return Entropy.cond_mut_info_c(pot, x_nds, y_nds, z_nds, verbose)
 
 if __name__ == "__main__":

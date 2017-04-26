@@ -312,22 +312,32 @@ class DensityMatrix:
         arr = np.reshape(cp.copy(self.dmat_arr), new_shape)
         return arr
 
-    def get_eigen_pot(self):
+    def get_eigen_pot(self, fin_nd_list):
         """
-        Creates copy of self.dmat_arr reshaped to be a square array,
-        calculates the eigenvalues of that square array, then returns a
-        Potential pot such that pot.pot_arr contains the eigenvalues as an
-        array with shape = self.nd_sizes.
+        This function first marginalizes self to fin_nd_list. Then it
+        reshapes that marginal to a square array, and calculates the
+        eigenvalues of that square array. Finally, it returns a Potential
+        pot such that pot.pot_arr contains the eigenvalues as an array with
+        shape = [x.size for x in fin_nd_list].
+
+        Parameters
+        ----------
+        fin_nd_list : list[BayesNode]
 
         Returns
         -------
         Potential
 
         """
-        sq_arr = self.get_sq_array()
-        evals = np.linalg.eigvalsh(sq_arr)
-        evals = np.reshape(evals, self.nd_sizes)
-        return Potential(False, self.ord_nodes, pot_arr=evals)
+        assert self.nodes >= set(fin_nd_list)
+        sub_dmat = DensityMatrix.new_from_tr_of_mixed_st(self, fin_nd_list)
+        arr = sub_dmat.dmat_arr
+        shp = sub_dmat.nd_sizes
+        num_rows = np.prod(np.array(shp))
+        arr = np.reshape(arr, (num_rows, num_rows))
+        evals = np.linalg.eigvalsh(arr)
+        evals = np.reshape(evals, shp)
+        return Potential(False, fin_nd_list, pot_arr=evals)
 
     def get_axes(self, node_list):
         """
