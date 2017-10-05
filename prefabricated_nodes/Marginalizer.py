@@ -40,21 +40,9 @@ class Marginalizer(BayesNode):
     Attributes
     ----------
     has_commas : bool
-    projected_axis : int
-
     potential : Potential
-    active_states : list[int]
-    clique : Clique
-    size : int
+    projected_axis : int
     state_names : list[str]
-    children : set[BayesNode]
-    neighbors : set[BayesNode]
-    parents : set[BayesNode]
-    id_num : int
-    topo_index : int
-    name : str
-    visited : bool
-
 
     """
 

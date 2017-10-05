@@ -17,10 +17,6 @@ class DirectedNode(Node):
     neighbors : set[DirectedNode]
     parents : set[DirectedNode]
 
-    id_num : int
-    topo_index : int
-    name : str
-    visited : bool
     """
 
     def __init__(self, id_num, name="blank"):

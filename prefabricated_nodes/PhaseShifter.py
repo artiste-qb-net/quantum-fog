@@ -36,20 +36,9 @@ class PhaseShifter(BayesNode):
     Attributes
     ----------
     occ_nums : bool
-    theta_degs : float
-
     potential : Potential
-    active_states : list[int]
-    clique : Clique
-    size : int
     state_names : list[str]
-    children : set[BayesNode]
-    neighbors : set[BayesNode]
-    parents : set[BayesNode]
-    id_num : int
-    topo_index : int
-    name : str
-    visited : bool
+    theta_degs : float
 
     """
 

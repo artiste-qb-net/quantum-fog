@@ -18,9 +18,6 @@ class Dag(Graph):
     Attributes
     ----------
     nodes : set[DirectedNode]
-    num_nodes : int
-        number of nodes.
-
 
     """
 

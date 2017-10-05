@@ -19,10 +19,6 @@ class RandGen_NetParams:
     bnet : BayesNet
         The pots of this bnet are sampled to generate a states_df and
         also a degs_df in the quantum case.
-    use_int_sts : bool
-        If False, states_df has state names as entries. If True, states_df
-        has int entries. The int entries are the index in the states_names
-        list of the node for that column.
     is_quantum : bool
         True if quantum bnets and False if classical ones
     num_samples : int
@@ -30,6 +26,10 @@ class RandGen_NetParams:
     topo_nd_list : list[BayesNode]
         List of the nodes of the bnet in topological (=chronological) order,
         root node first
+    use_int_sts : bool
+        If False, states_df has state names as entries. If True, states_df
+        has int entries. The int entries are the index in the states_names
+        list of the node for that column.
     """
 
     def __init__(self, is_quantum, bnet, num_samples, use_int_sts):

@@ -46,17 +46,8 @@ class NetParamsLner:
     Attributes
     ----------
 
-    is_quantum : bool
-        True for quantum bnets amd False for classical bnets
     bnet : BayesNet
         a BayesNet in which we store what is learned
-    states_df : pandas.DataFrame
-        a Pandas DataFrame with training data. column = node and row =
-        sample. Each row/sample gives the state of the col/node.
-    use_int_sts : bool
-        If False, the states_df has state names as entries. If True,
-        states_df has int entries. The int entries are the index in the
-        states_names list of the node for that column.
     degs_df : pandas.DataFrame
         Only used in the quantum case. None in classical case. A Pandas
         DataFrame with training data. column=node and row=sample. Each
@@ -64,9 +55,18 @@ class NetParamsLner:
     do_qtls : bool
         If True (False, resp.), will use quantiles (equal size bins,
         resp) to bin ALL columns of degs_df.
+    is_quantum : bool
+        True for quantum bnets amd False for classical bnets
     nd_to_num_deg_bins: dict[DirectedNode, int]
         node to number of degree bins. Use this to specify how many bins you
         want to use for each node when binning degs_df.
+    states_df : pandas.DataFrame
+        a Pandas DataFrame with training data. column = node and row =
+        sample. Each row/sample gives the state of the col/node.
+    use_int_sts : bool
+        If False, the states_df has state names as entries. If True,
+        states_df has int entries. The int entries are the index in the
+        states_names list of the node for that column.
 
     """
 

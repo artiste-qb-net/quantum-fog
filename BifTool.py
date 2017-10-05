@@ -88,9 +88,9 @@ class BifTool:
     ----------
     is_quantum : bool
     nd_sizes : dict[str, int]
-    states : dict[str, list[str]]
     parents : dict[str, list[str]]
     pot_arrays : dict[str, numpy.ndarray]
+    states : dict[str, list[str]]
 
     """
 

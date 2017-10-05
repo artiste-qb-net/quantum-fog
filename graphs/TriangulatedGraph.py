@@ -21,9 +21,6 @@ class TriangulatedGraph(Graph):
     cliques : list[Clique]
     star _heap : list[Star]
 
-    nodes : set[Node]
-    num_nodes : int
-
     """
 
     def __init__(self, mo_graph, verbose=False):

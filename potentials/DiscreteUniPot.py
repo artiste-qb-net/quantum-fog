@@ -16,14 +16,6 @@ class DiscreteUniPot(DiscreteCondPot):
 
     Attributes
     ----------
-    focus_node : BayesNode
-
-    is_quantum : bool
-    nd_sizes : list[int]
-    nodes ; set[Node]
-    num_nodes : int
-    ord_nodes : list[Node]
-    por_arr : numpy.ndarray
 
     """
 

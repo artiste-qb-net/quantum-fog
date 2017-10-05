@@ -39,12 +39,6 @@ class JoinTreeEngine(InferenceEngine):
     ----------
     jtree : JoinTree
 
-    bnet : BayesNet
-    verbose : bool
-    is_quantum : bool
-    bnet_ord_nodes : list[BayesNode]
-        list of nodes of bnet ordered alphabetically by node name
-
     """
 
     def __init__(self, bnet, verbose=False, is_quantum=False):

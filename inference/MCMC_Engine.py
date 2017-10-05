@@ -22,11 +22,6 @@ class MCMC_Engine(InferenceEngine):
 
     Attributes
     ----------
-    bnet : BayesNet
-    verbose : bool
-    is_quantum : bool
-    bnet_ord_nodes : list[BayesNode]
-        list of nodes of bnet ordered alphabetically by node name
 
     """
 

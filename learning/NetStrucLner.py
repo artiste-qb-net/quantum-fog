@@ -26,16 +26,17 @@ class NetStrucLner:
 
     Attributes
     ----------
-    is_quantum : bool
-        True for quantum bnets amd False for classical bnets
     bnet : BayesNet
         a BayesNet in which we store what is learned
-    states_df : pandas.DataFrame
-        a Pandas DataFrame with training data. column = node and row =
-        sample. Each row/sample gives the state of the col/node.
+    is_quantum : bool
+        True for quantum bnets amd False for classical bnets
     ord_nodes : list[DirectedNode]
         a list of DirectedNode's named and in the same order as the column
         labels of self.states_df.
+    states_df : pandas.DataFrame
+        a Pandas DataFrame with training data. column = node and row =
+        sample. Each row/sample gives the state of the col/node.
+
     """
 
     def __init__(self, is_quantum, states_df, vtx_to_states=None):

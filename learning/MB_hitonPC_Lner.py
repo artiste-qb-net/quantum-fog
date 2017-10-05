@@ -20,25 +20,6 @@ class MB_hitonPC_Lner(MB_BasedLner):
 
     Attributes
     ----------
-    is_quantum : bool
-        True for quantum bnets amd False for classical bnets
-    bnet : BayesNet
-        a BayesNet in which we store what is learned
-    states_df : pandas.DataFrame
-        a Pandas DataFrame with training data. column = node and row =
-        sample. Each row/sample gives the state of the col/node.
-    ord_nodes : list[DirectedNode]
-        a list of DirectedNode's named and in the same order as the column
-        labels of self.states_df.
-
-    alpha : float
-        threshold used for deciding whether a conditional or unconditional
-        mutual info is said to be close to zero (independence) or not (
-        dependence). The error in a data entropy is on the order of ln(n+1)
-        - ln(n) \approx 1/n where n is the number of samples so 5/n is a
-        good default value for alpha.
-    verbose : bool
-        True for this prints a running commentary to console
     vtx_to_MB : dict[str, list[str]]
         A dictionary mapping each vertex to a list of the vertices in its
         Markov Blanket. (The MB of a node consists of its parents, children
@@ -47,8 +28,6 @@ class MB_hitonPC_Lner(MB_BasedLner):
         a dictionary mapping each vertex to a list of its neighbors. The
         literature also calls the set of neighbors of a vertex its PC (
         parents-children) set.
-    vtx_to_parents : dict[str, list[str]]
-        dictionary mapping each vertex to a list of its parents's names
 
     """
 

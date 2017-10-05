@@ -42,18 +42,18 @@ class DensityMatrix:
 
     Attributes
     ----------
+    dmat_arr : numpy.ndarray
+        density matrix's array, shape=nd_sizes*2, dtype=complex
     nd_sizes : list[int]
         sizes of nodes in ord_nodes
     nodes : set[BayesNode]
         set(ord_nodes)
-    num_nodes:
+    num_nodes: int
         len(nodes)
     ord_nodes : list[BayesNode]
         nodes in this list are in 1-1 correspondence with first half of axes
         of dmat_arr. They are also in 1-1 correspondence with second half of
         axes of dmat_arr.
-    dmat_arr : numpy.ndarray
-        density matrix's array, shape=nd_sizes*2, dtype=complex
 
     """
 
@@ -311,6 +311,21 @@ class DensityMatrix:
         new_shape = (num_rows, num_rows)
         arr = np.reshape(cp.copy(self.dmat_arr), new_shape)
         return arr
+
+    def get_impurity(self):
+        """
+        Returns abs(trace(den_mat^2) -1). This is zero iff the density
+        matrix den_mat represents a pure state. For example, for a pure
+        state den_mat = |a><a|, den_mat^2 = den_mat = |a><a| so this
+        quantity is indeed zero.
+
+        Returns
+        -------
+        float
+
+        """
+        sq_arr = self.get_sq_array()
+        return abs(np.trace(np.dot(sq_arr, sq_arr)) - 1)
 
     def get_eigen_pot(self, fin_nd_list):
         """

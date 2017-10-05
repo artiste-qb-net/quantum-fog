@@ -20,8 +20,6 @@ class JoinTree(Graph):
 
     Attributes
     ----------
-    nodes : set[Node]
-    num_nodes : int
 
     """
 

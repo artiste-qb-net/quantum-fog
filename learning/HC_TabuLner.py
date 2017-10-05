@@ -17,36 +17,6 @@ class HC_TabuLner(HillClimbingLner):
 
     Attributes
     ----------
-    is_quantum : bool
-        True for quantum bnets amd False for classical bnets
-    bnet : BayesNet
-        a BayesNet in which we store what is learned
-    states_df : pandas.DataFrame
-        a Pandas DataFrame with training data. column = node and row =
-        sample. Each row/sample gives the state of the col/node.
-    ord_nodes : list[DirectedNode]
-        a list of DirectedNode's named and in the same order as the column
-        labels of self.states_df.
-
-    max_num_mtries : int
-        maximum number of move tries
-    nx_graph : networkx.DiGraph
-        a networkx directed graph used to store arrows
-    score_type : str
-        score type, either 'LL', 'BIC, 'AIC', 'BDEU' or 'K2'
-    scorer : NetStrucScorer
-        object of NetStrucScorer class that keeps a running record of scores
-    verbose : bool
-        True for this prints a running commentary to console
-    vertices : list[str]
-        list of vertices (node names). Same as states_df.columns
-    vtx_to_parents : dict[str, list[str]]
-        dictionary mapping each vertex to a list of its parents's names
-
-    tabu_list : list[tuple[str, str, str]]
-        a list of the previous moves. The list's length is specified in the
-        constructor by means of tabu_len parameter. Every time a new move is
-        added to end of the tabu list, the first item of the list is removed.
     best_loc_max_graph : networkx.DiGraph
     best_loc_max_score : float
         Every time the restart() function is called because a try yields no
@@ -56,7 +26,12 @@ class HC_TabuLner(HillClimbingLner):
         best_loc_max_graph by those of the better local max.
     loc_max_ctr : int
         local maximum counter, counts the number of local maxs encountered.
-
+    nx_graph : networkx.DiGraph
+        a networkx directed graph used to store arrows
+    tabu_list : list[tuple[str, str, str]]
+        a list of the previous moves. The list's length is specified in the
+        constructor by means of tabu_len parameter. Every time a new move is
+        added to end of the tabu list, the first item of the list is removed.
 
     """
 

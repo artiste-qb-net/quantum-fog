@@ -27,13 +27,6 @@ class DiscreteCondPot(Potential):
     focus_node : Node
         last node in ord_nodes
 
-    is_quantum : bool
-    nd_sizes : int
-    nodes : set[Node]
-    num_nodes : int
-    ord_nodes : list[Node]
-    pot_arr : numpy.ndarray
-
     """
 
     def __init__(self, is_quantum, ord_nodes, pot_arr=None, bias=1):

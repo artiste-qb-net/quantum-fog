@@ -44,26 +44,13 @@ class CNot(BayesNode):
 
     Attributes
     ----------
-    pa1_is_control : bool
-        True (False) if parent 1 (parent 2) is the control. In the above
-        table example, pa1_is_control=True
     flipped_by_0 : bool
         True (False) if target flips when control is in state 0 (state 1).
         In the above table example, flipped_by_0=False
-
+    pa1_is_control : bool
+        True (False) if parent 1 (parent 2) is the control. In the above
+        table example, pa1_is_control=True
     potential : Potential
-    active_states : list[int]
-    clique : Clique
-    size : int
-    state_names : list[str]
-    children : set[BayesNode]
-    neighbors : set[BayesNode]
-    parents : set[BayesNode]
-    id_num : int
-    topo_index : int
-    name : str
-    visited : bool
-
 
     """
 

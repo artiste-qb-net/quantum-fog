@@ -22,60 +22,16 @@ class HC_MMHC_rr_Lner(HC_RandRestartLner):
 
     Attributes
     ----------
-    is_quantum : bool
-        True for quantum bnets amd False for classical bnets
-    bnet : BayesNet
-        a BayesNet in which we store what is learned
-    states_df : pandas.DataFrame
-        a Pandas DataFrame with training data. column = node and row =
-        sample. Each row/sample gives the state of the col/node.
-    ord_nodes : list[DirectedNode]
-        a list of DirectedNode's named and in the same order as the column
-        labels of self.states_df.
-
-    max_num_mtries : int
-        maximum number of move tries
-    nx_graph : networkx.DiGraph
-        a networkx directed graph used to store arrows
-    score_type : str
-        score type, either 'LL', 'BIC, 'AIC', 'BDEU' or 'K2'
-    scorer : NetStrucScorer
-        object of NetStrucScorer class that keeps a running record of scores
-    verbose : bool
-        True for this prints a running commentary to console
-    vertices : list[str]
-        list of vertices (node names). Same as states_df.columns
-    vtx_to_parents : dict[str, list[str]]
-        dictionary mapping each vertex to a list of its parents's names
-
-    mcache : list[tuple[str, str, str]]
-        a list that stores all moves of a try. This list is cleared at
-        beginning of each try.
-    score_ch_cache : list[tuple[float, float, float]]
-        A list that stores the score changes of each move of a try. Score
-        changes here are given as a 3-tuple of 3 floats, (beg_score_ch,
-        end_score_ch, tot_score_ch).
-    best_start_graph : networkx.DiGraph
-    best_start_score : float
-        Each time restart() function is called, the current tot score is
-        compared with best_start_score, and if it is higher, then both the
-        current nx_graph and its score are stored in best_start_graph and
-        best_start_score.
-    cur_start : int
-        current start. Increases by one every time restart() is called.
-    num_starts : int
-        number of starts. Number of times minus 1 that restart function is
-        called.
-    vtx_to_nbors : dict[str, list[str]]
-        a dictionary mapping each vertex to a list of its neighbors. The
-        literature also calls the set of neighbors of a vertex its PC (
-        parents-children) set.
     alpha : float
         threshold used for deciding whether a conditional or unconditional
         mutual info is said to be close to zero (independence) or not (
         dependence). The error in a data entropy is on the order of ln(n+1)
         - ln(n) \approx 1/n where n is the number of samples so 5/n is a
         good default value for alpha.
+    vtx_to_nbors : dict[str, list[str]]
+        a dictionary mapping each vertex to a list of its neighbors. The
+        literature also calls the set of neighbors of a vertex its PC (
+        parents-children) set.
 
     """
 

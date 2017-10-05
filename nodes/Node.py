@@ -12,13 +12,13 @@ class Node:
     ----------
     id_num : int
         Should be an int that is immutable and different for each node.
+    name : str
+        Optional, preferably different for each node.
+    neighbors : set[Nodes]
     topo_index : int
         Initially defined to be equal to id_num. After a topological sort,
         indices are permuted amongst the nodes so as to be in topological
         order, root nodes having lowest topo_index.
-    name : str
-        Optional, preferably different for each node.
-    neighbors : set[Nodes]
     visited : bool
 
     """

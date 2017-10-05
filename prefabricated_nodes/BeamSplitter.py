@@ -72,27 +72,14 @@ class BeamSplitter(BayesNode):
 
     Attributes
     ----------
+    max_n_sum : int
     num_of_comps : int
         number of components, equals 1 for scalar case and 2 for vector case.
-    tau_mag : float
-    tau_degs : float
-    rho_degs : float
-    max_n_sum : int
-    true_max_n_sum : int
-
     potential : Potential
-    active_states : list[int]
-    clique : Clique
-    size : int
-    state_names : list[str]
-    children : set[BayesNode]
-    neighbors : set[BayesNode]
-    parents : set[BayesNode]
-    id_num : int
-    topo_index : int
-    name : str
-    visited : bool
-
+    rho_degs : float
+    tau_degs : float
+    tau_mag : float
+    true_max_n_sum : int
 
     """
 

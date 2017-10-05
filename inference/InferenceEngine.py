@@ -12,10 +12,11 @@ class InferenceEngine:
     Attributes
     ----------
     bnet : BayesNet
-    verbose : bool
-    is_quantum : bool
     bnet_ord_nodes : list[BayesNode]
         list of nodes of bnet ordered alphabetically by node name
+    is_quantum : bool
+    verbose : bool
+
     """
 
     def __init__(self, bnet, verbose=False, is_quantum=False):

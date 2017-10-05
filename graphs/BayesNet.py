@@ -18,8 +18,6 @@ class BayesNet(Dag):
 
     Attributes
     ----------
-    nodes : set[BayesNode]
-    num_nodes : int
 
     """
 

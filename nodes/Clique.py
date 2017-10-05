@@ -22,12 +22,6 @@ class Clique(Node):
         clique.
     subnodes : set[BayesNode]
 
-    id_num : int
-    topo_index : int
-    name : str
-    neighbors : set[Node]
-    visited : bool
-
     """
 
     def __init__(self, id_num, subnodes):

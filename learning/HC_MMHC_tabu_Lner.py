@@ -23,56 +23,17 @@ class HC_MMHC_tabu_Lner(HC_TabuLner):
 
     Attributes
     ----------
-    is_quantum : bool
-        True for quantum bnets amd False for classical bnets
-    bnet : BayesNet
-        a BayesNet in which we store what is learned
-    states_df : pandas.DataFrame
-        a Pandas DataFrame with training data. column = node and row =
-        sample. Each row/sample gives the state of the col/node.
-    ord_nodes : list[DirectedNode]
-        a list of DirectedNode's named and in the same order as the column
-        labels of self.states_df.
-
-    max_num_mtries : int
-        maximum number of move tries
-    nx_graph : networkx.DiGraph
-        a networkx directed graph used to store arrows
-    score_type : str
-        score type, either 'LL', 'BIC, 'AIC', 'BDEU' or 'K2'
-    scorer : NetStrucScorer
-        object of NetStrucScorer class that keeps a running record of scores
-    verbose : bool
-        True for this prints a running commentary to console
-    vertices : list[str]
-        list of vertices (node names). Same as states_df.columns
-    vtx_to_parents : dict[str, list[str]]
-        dictionary mapping each vertex to a list of its parents's names
-
-    tabu_list : list[tuple[str, str, str]]
-        a list of the previous moves. The list's length is specified in the
-        constructor by means of tabu_len parameter. Every time a new move is
-        added to end of the tabu list, the first item of the list is removed.
-    best_loc_max_graph : networkx.DiGraph
-    best_loc_max_score : float
-        Every time the restart() function is called because a try yields no
-        moves with positive score change, we infer that a new local max has
-        been reached. If total score of the current loc max is higher than
-        best_loc_mac_score, we replace both best_loc_max_score and
-        best_loc_max_graph by those of the better local max.
-    loc_max_ctr : int
-        local maximum counter, counts the number of local maxs encountered.
-
-    vtx_to_nbors : dict[str, list[str]]
-        a dictionary mapping each vertex to a list of its neighbors. The
-        literature also calls the set of neighbors of a vertex its PC (
-        parents-children) set.
     alpha : float
         threshold used for deciding whether a conditional or unconditional
         mutual info is said to be close to zero (independence) or not (
         dependence). The error in a data entropy is on the order of ln(n+1)
         - ln(n) \approx 1/n where n is the number of samples so 5/n is a
         good default value for alpha.
+    vtx_to_nbors : dict[str, list[str]]
+        a dictionary mapping each vertex to a list of its neighbors. The
+        literature also calls the set of neighbors of a vertex its PC (
+        parents-children) set.
+
     """
 
     def __init__(self, states_df, score_type, max_num_mtries,

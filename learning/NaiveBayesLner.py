@@ -17,16 +17,6 @@ class NaiveBayesLner(NetStrucLner):
 
     Attributes
     ----------
-    is_quantum : bool
-        True for quantum bnets amd False for classical bnets
-    bnet : BayesNet
-        a BayesNet in which we store what is learned
-    states_df : pandas.DataFrame
-        a Pandas DataFrame with training data. column = node and row =
-        sample. Each row/sample gives the state of the col/node.
-    ord_nodes : list[DirectedNode]
-        a list of DirectedNode's named and in the same order as the column
-        labels of self.states_df.
     tar_vtx : str
         The name of the node that will assume the role of ``target" or
         center of the graph.
