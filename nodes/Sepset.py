@@ -25,11 +25,6 @@ class Sepset(Node):
     potential : Potential
     subnodes : set[Node]
 
-    id_num : int
-    topo_index : int
-    name : str
-    neighbors : set[Node]
-    visited : bool
     """
 
     def __init__(self, id_num, clique_x, clique_y, subnodes):
