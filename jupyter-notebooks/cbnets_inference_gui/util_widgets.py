@@ -89,10 +89,11 @@ def run_gui(bnet):
     plotted_nds_wdg.observe(plotted_nds_wdg_do, names='value')
 
     def single_pd(ax, node_name, pd_df):
-            y_pos = np.arange(len(pd_df.index)) + .5
             plt.sca(ax)
-            plt.yticks(y_pos, pd_df.index)
             ax.invert_yaxis()
+
+            y_pos = np.arange(len(pd_df.index)) + .5
+            plt.yticks(y_pos, pd_df.index)
 
             ax.set_xticks([0, .25, .5, .75, 1])
             ax.set_xlim(0, 1)
@@ -105,7 +106,8 @@ def run_gui(bnet):
         # clear_output()
         plt.close('all')
         num_ax = len(plotted_nds)
-        fig, ax_list = plt.subplots(nrows=num_ax, ncols=1)
+        fig, ax_list = plt.subplots(nrows=num_ax, ncols=1,
+                                    figsize=(4, num_ax))
         if num_ax == 1:
             ax_list = [ax_list]
         jtree_pot_list = engine.get_unipot_list(plotted_nds)
