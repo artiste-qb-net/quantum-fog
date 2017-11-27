@@ -106,8 +106,13 @@ def run_gui(bnet):
         # clear_output()
         plt.close('all')
         num_ax = len(plotted_nds)
+        # h_scale is a horizontal scale factor for
+        # figure size to compensate for nodes having more than
+        # 2 states. h_scale=1 if all plotted nodes have 2 states.
+        h_scale = sum([len(plotted_nds[k].state_names)
+                   for k in range(num_ax)])/(2*num_ax)
         fig, ax_list = plt.subplots(nrows=num_ax, ncols=1,
-                                    figsize=(4, num_ax))
+                                    figsize=(4, num_ax*h_scale))
         if num_ax == 1:
             ax_list = [ax_list]
         jtree_pot_list = engine.get_unipot_list(plotted_nds)
