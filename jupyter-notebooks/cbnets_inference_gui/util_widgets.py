@@ -106,7 +106,7 @@ def run_gui(bnet):
         # clear_output()
         plt.close('all')
         num_ax = len(plotted_nds)
-        # h_scale is a horizontal scale factor for
+        # h_scale is a height scale factor for
         # figure size to compensate for nodes having more than
         # 2 states. h_scale=1 if all plotted nodes have 2 states.
         h_scale = sum([len(plotted_nds[k].state_names)
