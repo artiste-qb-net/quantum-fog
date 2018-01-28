@@ -102,7 +102,7 @@ class MCMC_Engine(InferenceEngine):
         pot_list = []
         for node in node_list:
             pot = nd_to_pot[node]
-            pot.tr_normalize_self()
+            pot.normalize_self()
             if self.is_quantum:
                 pot = pot.get_probs_from_amps()
             pot_list.append(pot)
@@ -131,7 +131,7 @@ class MCMC_Engine(InferenceEngine):
 
         """
         if len(focus_node.active_states) == 1:
-            return (focus_node.active_states[0], None)
+            return focus_node.active_states[0], None
         sam_pot = DiscreteUniPot(self.is_quantum, focus_node, bias=0)
         sam_pot[focus_node.active_states] = 1
         near_nodes = focus_node.get_markov_blanket() | {focus_node}
@@ -147,20 +147,24 @@ class MCMC_Engine(InferenceEngine):
                 sam_pot[(state, )] *= n_node.potential[slicex]
         sam_state = sam_pot.sample()
         annotated_story[focus_node] = sam_state
-        return (sam_state, sam_pot)
+        return sam_state, sam_pot
 
 if __name__ == "__main__":
     from examples_cbnets.HuaDar import *
-    bnet = HuaDar.build_bnet()
-    inf_eng = MCMC_Engine(bnet, verbose=True)
 
-    # introduce some evidence after creating engine
-    bnet.get_node_named("D").active_states = [0]
-    bnet.get_node_named("G").active_states = [1]
+    def main():
 
-    num_cycles = 4000
-    warmup = 200
-    pot_list = inf_eng.get_unipot_list(
-            inf_eng.bnet_ord_nodes, num_cycles, warmup)
-    for pot in pot_list:
-        print(pot, "\n")
+        bnet = HuaDar.build_bnet()
+        inf_eng = MCMC_Engine(bnet, verbose=True)
+
+        # introduce some evidence after creating engine
+        bnet.get_node_named("D").active_states = [0]
+        bnet.get_node_named("G").active_states = [1]
+
+        num_cycles = 4000
+        warmup = 200
+        pot_list = inf_eng.get_unipot_list(
+                inf_eng.bnet_ord_nodes, num_cycles, warmup)
+        for pot in pot_list:
+            print(pot, "\n")
+    main()

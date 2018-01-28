@@ -448,7 +448,7 @@ class NetStrucScorer:
         groups = states_cols.groupby(list(states_cols.columns))
         pot_df = groups.size()
         # this sets multi-index to column headers
-        pot_df = pot_df.reset_index(name='pot_values')
+        pot_df = pot_df.reset_index(name='last_col_with_vals')
 
         num_pa = len(new_parents)
 
@@ -558,5 +558,8 @@ class NetStrucScorer:
         return NetStrucScorer.BD_family_vtx_score(n_ijk, a_ijk)
 
 if __name__ == "__main__":
-    print(5)
+    def main():
+        print(5)
+    main()
+
 

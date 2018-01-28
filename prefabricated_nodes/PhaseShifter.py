@@ -86,12 +86,15 @@ class PhaseShifter(BayesNode):
             self.potential[k, k] = cmath.exp(1j*phase)
 
 if __name__ == "__main__":
-    pa_nd = BayesNode(0, "pa_nd", size=4)
-    pa_nd.state_names = [str(k) for k in range(4)]
+    def main():
+        pa_nd = BayesNode(0, "pa_nd", size=4)
+        pa_nd.state_names = [str(k) for k in range(4)]
 
-    p_sh = PhaseShifter(1, "pshifter", pa_nd, 30, occ_nums=True)
+        p_sh = PhaseShifter(1, "pshifter", pa_nd, 30, occ_nums=True)
 
-    print("pa_nd state names: ", pa_nd.state_names)
-    print("phase shifter state names: ", p_sh.state_names)
-    print(p_sh.potential)
-    print(p_sh.potential.get_total_probs())
+        print("pa_nd state names: ", pa_nd.state_names)
+        print("phase shifter state names: ", p_sh.state_names)
+        print(p_sh.potential)
+        print(p_sh.potential.get_total_probs())
+    main()
+

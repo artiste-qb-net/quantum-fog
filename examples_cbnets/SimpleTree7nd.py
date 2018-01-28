@@ -66,8 +66,11 @@ class SimpleTree7nd:
 
 
 if __name__ == "__main__":
-    bnet = SimpleTree7nd.build_bnet()
-    for nd in bnet.nodes:
-        print('\n node', nd.name)
-        print(nd.potential)
-    bnet.draw(algo_num=1)
+    def main():
+        bnet = SimpleTree7nd.build_bnet()
+        for nd in bnet.nodes:
+            print('\n node', nd.name)
+            print(nd.potential)
+        bnet.draw(algo_num=1)
+    main()
+

@@ -236,31 +236,34 @@ class EnumerationEngine(InferenceEngine):
         return pot_val
 
 if __name__ == "__main__":
-    print("------------------------HuaDar")
     from examples_cbnets.HuaDar import *
-    bnet = HuaDar.build_bnet()
-    inf_eng = EnumerationEngine(bnet, verbose=True)
-
-    # introduce some evidence after creating engine
-    bnet.get_node_named("D").active_states = [0]
-    bnet.get_node_named("G").active_states = [1]
-
-    pot_list = inf_eng.get_unipot_list(inf_eng.bnet_ord_nodes,
-                                       print_stories=True)
-    for pot in pot_list:
-        print(pot, "\n")
-
-    print("------------------------Monty_Hall")
     from graphs.BayesNet import *
-    path_bif = '../examples_cbnets/Monty_Hall.bif'
-    bnet = BayesNet.read_bif(path_bif, False)
-    inf_eng = EnumerationEngine(bnet, verbose=True)
 
-    # introduce some evidence after creating engine
-    bnet.get_node_named("1st_Choice").active_states = [0]
-    bnet.get_node_named("Monty_Opens").active_states = [1]
+    def main():
+        print("------------------------HuaDar")
+        bnet = HuaDar.build_bnet()
+        inf_eng = EnumerationEngine(bnet, verbose=True)
 
-    pot_list = inf_eng.get_unipot_list(inf_eng.bnet_ord_nodes,
-                                       print_stories=True)
-    for pot in pot_list:
-        print(pot, "\n")
+        # introduce some evidence after creating engine
+        bnet.get_node_named("D").active_states = [0]
+        bnet.get_node_named("G").active_states = [1]
+
+        pot_list = inf_eng.get_unipot_list(inf_eng.bnet_ord_nodes,
+                                           print_stories=True)
+        for pot in pot_list:
+            print(pot, "\n")
+
+        print("------------------------Monty_Hall")
+        path_bif = '../examples_cbnets/Monty_Hall.bif'
+        bnet = BayesNet.read_bif(path_bif, False)
+        inf_eng = EnumerationEngine(bnet, verbose=True)
+
+        # introduce some evidence after creating engine
+        bnet.get_node_named("1st_Choice").active_states = [0]
+        bnet.get_node_named("Monty_Opens").active_states = [1]
+
+        pot_list = inf_eng.get_unipot_list(inf_eng.bnet_ord_nodes,
+                                           print_stories=True)
+        for pot in pot_list:
+            print(pot, "\n")
+    main()

@@ -213,7 +213,7 @@ class NetParamsLner:
             del states_cols['degs_as_bins']
             
             # this sets multi-index to column headers           
-            amp_df = amp_df.reset_index(name='last_col_with_vals')
+            amp_df = amp_df.reset_index(name='"...')
             ph_df = ph_df.reset_index(name='last_col_with_vals')
             pot_df = pot_df.reset_index(name='last_col_with_vals')
             del pot_df['degs_as_bins']
@@ -314,7 +314,7 @@ class NetParamsLner:
                 
             else:
                 arr_index = [int(pot_df.iloc[row, col])
-                            for col in range(len(ord_nodes))]
+                             for col in range(len(ord_nodes))]
             pot.pot_arr[tuple(arr_index)] = \
                     pot_df.loc[row, 'last_col_with_vals']
 
@@ -434,101 +434,104 @@ class NetParamsLner:
             print(emp_pot)
 
 if __name__ == "__main__":
-    print('first test learn pot_df ---------------')
-    df = pd.DataFrame({
-        'A': [3, 1, 3, 1, 1, 4, 5, 6],
-        'B': [1, 4, 1, 4, 4, 7, 8, 3],
-        'C': [2, 3, 2, 3, 3, 5, 6, 7],
-        'D': [3, 1, 3, 1, 1, 2, 9, 5],
-        'E': [5, 2, 5, 2, 2, 9, 1, 3]
-    })
-    print('input df=\n', df)
-
-    degs_df = df['B']*10 + .7
-    print('input degs_df=\n', degs_df)
-
-    for is_quantum in [False, True]:
-        print('\nis_quantum=', is_quantum)
-        pot_df, max_s_d_pair, min_s_d_pair = NetParamsLner.learn_pot_df(
-                is_quantum, df, degs_col=degs_df, num_deg_bins=3)
-        print('pot_df=\n', pot_df)
-        print('max_s_d_pair', max_s_d_pair)
-        print('min_s_d_pair', min_s_d_pair)
-        if is_quantum:
-            print('should be one=',
-                  pot_df['last_col_with_vals'].apply(lambda x:
-                                          x*np.conjugate(x)).sum())
-
-        else:
-            print('should be one=', pot_df['last_col_with_vals'].sum())
-
     from examples_cbnets.WetGrass import *
     from examples_qbnets.QuWetGrass import *
 
-    print('\nnext test learn bnet, wetgrass---------------')
-    for is_quantum in [False, True]:
-        print('------is_quantum=', is_quantum)
-        if is_quantum:
-            bnet = QuWetGrass.build_bnet()
-            bnet_emp = QuWetGrass.build_bnet()
-            states_df = pd.read_csv(
-                'training_data_q/WetGrass_sts.csv', dtype=str)
-            degs_df = pd.read_csv(
-                'training_data_q/WetGrass_degs.csv', dtype=str)
-        else:
-            bnet = WetGrass.build_bnet()
-            bnet_emp = WetGrass.build_bnet()
-            states_df = pd.read_csv(
-                'training_data_c/WetGrass.csv', dtype=str)
-            degs_df = None
+    def main():
+        print('first test learn pot_df ---------------')
+        df = pd.DataFrame({
+            'A': [3, 1, 3, 1, 1, 4, 5, 6],
+            'B': [1, 4, 1, 4, 4, 7, 8, 3],
+            'C': [2, 3, 2, 3, 3, 5, 6, 7],
+            'D': [3, 1, 3, 1, 1, 2, 9, 5],
+            'E': [5, 2, 5, 2, 2, 9, 1, 3]
+        })
+        print('input df=\n', df)
 
-        # forget pots of emp=empirical bnet because we want to learn them
-        for nd in bnet_emp.nodes:
-            nd.potential = None
+        degs_df = df['B']*10 + .7
+        print('input degs_df=\n', degs_df)
 
-        # print('states_df=\n', states_df)
-        # if is_quantum:
-        #     print('degs_df=\n', degs_df)
+        for is_quantum in [False, True]:
+            print('\nis_quantum=', is_quantum)
+            pot_df, max_s_d_pair, min_s_d_pair = NetParamsLner.learn_pot_df(
+                    is_quantum, df, degs_col=degs_df, num_deg_bins=3)
+            print('pot_df=\n', pot_df)
+            print('max_s_d_pair', max_s_d_pair)
+            print('min_s_d_pair', min_s_d_pair)
+            if is_quantum:
+                print('should be one=',
+                      pot_df['last_col_with_vals'].apply(lambda x:
+                                              x*np.conjugate(x)).sum())
 
-        bnet_emp.learn_nd_state_names(states_df)
-        lnr = NetParamsLner(is_quantum, bnet_emp, states_df, degs_df)
+            else:
+                print('should be one=', pot_df['last_col_with_vals'].sum())
+
+        print('\nnext test learn bnet, wetgrass---------------')
+        for is_quantum in [False, True]:
+            print('------is_quantum=', is_quantum)
+            if is_quantum:
+                bnet = QuWetGrass.build_bnet()
+                bnet_emp = QuWetGrass.build_bnet()
+                states_df = pd.read_csv(
+                    'training_data_q/WetGrass_sts.csv', dtype=str)
+                degs_df = pd.read_csv(
+                    'training_data_q/WetGrass_degs.csv', dtype=str)
+            else:
+                bnet = WetGrass.build_bnet()
+                bnet_emp = WetGrass.build_bnet()
+                states_df = pd.read_csv(
+                    'training_data_c/WetGrass.csv', dtype=str)
+                degs_df = None
+
+            # forget pots of emp=empirical bnet because we want to learn them
+            for nd in bnet_emp.nodes:
+                nd.potential = None
+
+            # print('states_df=\n', states_df)
+            # if is_quantum:
+            #     print('degs_df=\n', degs_df)
+
+            bnet_emp.learn_nd_state_names(states_df)
+            lnr = NetParamsLner(is_quantum, bnet_emp, states_df, degs_df)
+            lnr.learn_all_bnet_pots()
+            lnr.compare_true_and_emp_pots(bnet, bnet_emp)
+
+        print('\nnext test learn bnet, earthquake ---------------')
+        is_quantum = False
+        bnet = BayesNet.read_bif(
+            '../examples_cbnets/earthquake.bif', is_quantum)
+
+        # for bnet_emp, read a dot file (no a priori pots)
+        # instead of a bif file
+        bnet_emp = BayesNet.read_dot('../examples_cbnets/earthquake.dot')
+        vtx_to_states = bnet.get_vtx_to_state_names()
+        bnet_emp.import_nd_state_names(vtx_to_states)
+
+        states_df = pd.read_csv(
+            'training_data_c/earthquake.csv', dtype=str)
+
+        lnr = NetParamsLner(is_quantum, bnet_emp, states_df)
         lnr.learn_all_bnet_pots()
         lnr.compare_true_and_emp_pots(bnet, bnet_emp)
 
-    print('\nnext test learn bnet, earthquake ---------------')
-    is_quantum = False
-    bnet = BayesNet.read_bif(
-        '../examples_cbnets/earthquake.bif', is_quantum)
+        # The above example didn't match correctly the entries of
+        # the true and empirical pots because the state names are
+        # alphabetically ordered in bnet_emp but they aren't in
+        # bnet. This time we input the state names into bnet_emp
+        # instead of learning them from states_df
 
-    # for bnet_emp, read a dot file (no a priori pots) instead of a bif file
-    bnet_emp = BayesNet.read_dot('../examples_cbnets/earthquake.dot')
-    vtx_to_states = bnet.get_vtx_to_state_names()
-    bnet_emp.import_nd_state_names(vtx_to_states)
+        print('\nnext test learn bnet, earthquake2 ---------------')
 
-    states_df = pd.read_csv(
-        'training_data_c/earthquake.csv', dtype=str)
+        vtx_to_states = bnet.get_vtx_to_state_names()
+        bnet_emp.import_nd_state_names(vtx_to_states)
+        lnr = NetParamsLner(is_quantum, bnet_emp, states_df)
+        lnr.learn_all_bnet_pots()
+        lnr.compare_true_and_emp_pots(bnet, bnet_emp)
 
-    lnr = NetParamsLner(is_quantum, bnet_emp, states_df)
-    lnr.learn_all_bnet_pots()
-    lnr.compare_true_and_emp_pots(bnet, bnet_emp)
-
-    # The above example didn't match correctly the entries of
-    # the true and empirical pots because the state names are
-    # alphabetically ordered in bnet_emp but they aren't in
-    # bnet. This time we input the state names into bnet_emp
-    # instead of learning them from states_df
-
-    print('\nnext test learn bnet, earthquake2 ---------------')
-
-    vtx_to_states = bnet.get_vtx_to_state_names()
-    bnet_emp.import_nd_state_names(vtx_to_states)
-    lnr = NetParamsLner(is_quantum, bnet_emp, states_df)
-    lnr.learn_all_bnet_pots()
-    lnr.compare_true_and_emp_pots(bnet, bnet_emp)
-
-    # Sometimes the earthquake training data does not contain
-    # samples for Burglary=False, Earthquake=False, Alarm=True or False.
-    # because P(A=True|E=False, B=False)=.001.
-    # In such cases, one gets an UnNormalizablePot exception.
-    # Generating 5000 or more samples usually avoids this exception.
+        # Sometimes the earthquake training data does not contain
+        # samples for Burglary=False, Earthquake=False, Alarm=True or False.
+        # because P(A=True|E=False, B=False)=.001.
+        # In such cases, one gets an UnNormalizablePot exception.
+        # Generating 5000 or more samples usually avoids this exception.
+    main()
 

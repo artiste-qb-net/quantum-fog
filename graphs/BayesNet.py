@@ -209,29 +209,32 @@ if __name__ == "__main__":
     from examples_cbnets.HuaDar import *
     from examples_qbnets.QuWetGrass import *
 
-    bnet = HuaDar.build_bnet()
-    for node in bnet.nodes:
-        print("name: ", node.name)
-        print("parents: ", [x.name for x in node.parents])
-        print("children: ", [x.name for x in node.children])
-        print("pot_arr: \n", node.potential.pot_arr)
-        print("\n")
+    def main():
 
-    bnet.draw(algo_num=2)
+        bnet = HuaDar.build_bnet()
+        for node in bnet.nodes:
+            print("name: ", node.name)
+            print("parents: ", [x.name for x in node.parents])
+            print("children: ", [x.name for x in node.children])
+            print("pot_arr: \n", node.potential.pot_arr)
+            print("\n")
 
-    path1 = '../examples_cbnets/bnet1.dot'
-    path2 = '../examples_cbnets/bnet2.dot'
-    bnet.write_dot(path1)
-    new_bnet = BayesNet.read_dot(path1)
-    new_bnet.write_dot(path2)
+        bnet.draw(algo_num=2)
 
-    path = '../examples_cbnets/HuaDar.bif'
-    path1 = '../examples_cbnets/HuaDar1.bif'
-    new_bnet = BayesNet.read_bif(path, False)
-    new_bnet.write_bif(path1, False)
+        path1 = '../examples_cbnets/bnet1.dot'
+        path2 = '../examples_cbnets/bnet2.dot'
+        bnet.write_dot(path1)
+        new_bnet = BayesNet.read_dot(path1)
+        new_bnet.write_dot(path2)
 
-    path = '../examples_qbnets/QuWetGrass.bif'
-    path1 = '../examples_qbnets/QuWetGrass1.bif'
-    new_bnet = BayesNet.read_bif(path, True)
-    new_bnet.write_bif(path1, True)
+        path = '../examples_cbnets/HuaDar.bif'
+        path1 = '../examples_cbnets/HuaDar1.bif'
+        new_bnet = BayesNet.read_bif(path, False)
+        new_bnet.write_bif(path1, False)
+
+        path = '../examples_qbnets/QuWetGrass.bif'
+        path1 = '../examples_qbnets/QuWetGrass1.bif'
+        new_bnet = BayesNet.read_bif(path, True)
+        new_bnet.write_bif(path1, True)
+    main()
 

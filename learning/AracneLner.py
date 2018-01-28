@@ -133,9 +133,10 @@ class AracneLner(ChowLiuTreeLner):
         self.ord_nodes[older].add_child(self.ord_nodes[younger])
 
 if __name__ == "__main__":
-
-    csv_path = 'training_data_c/SimpleTree7nd.csv'
-    states_df = pd.read_csv(csv_path)
-    lnr = AracneLner(states_df)
-    lnr.bnet.draw(algo_num=1)
+    def main():
+        csv_path = 'training_data_c/SimpleTree7nd.csv'
+        states_df = pd.read_csv(csv_path)
+        lnr = AracneLner(states_df)
+        lnr.bnet.draw(algo_num=1)
+    main()
 

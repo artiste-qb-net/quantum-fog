@@ -107,4 +107,7 @@ class HC_MMHC_tabu_Lner(HC_TabuLner):
         return True
 
 if __name__ == "__main__":
-    HillClimbingLner.HC_lner_test(HC_MMHC_tabu_Lner)
+    def main():
+        HillClimbingLner.HC_lner_test(HC_MMHC_tabu_Lner)
+    main()
+

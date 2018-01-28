@@ -757,137 +757,137 @@ class Potential:
             + "\n" + str(self.pot_arr)
 
 if __name__ == "__main__":
-    with np.errstate(all='ignore'):
-        x = np.array([2, 0+0j])/np.array([1, 0])
-        x[~ np.isfinite(x)] = 0
-    print("[2, 0+0j]/[1, 0]=", x)
+    def main():
+        with np.errstate(all='ignore'):
+            x = np.array([2, 0+0j])/np.array([1, 0])
+            x[~ np.isfinite(x)] = 0
+        print("[2, 0+0j]/[1, 0]=", x)
 
-    with np.errstate(all='ignore'):
-        x = np.array([2, 5])/np.array([1, 0])
-        x[~ np.isfinite(x)] = 0
-    print("[2, 5]/[1, 0]=", x)
+        with np.errstate(all='ignore'):
+            x = np.array([2, 5])/np.array([1, 0])
+            x[~ np.isfinite(x)] = 0
+        print("[2, 5]/[1, 0]=", x)
 
-    # define some nodes
-    a_node = BayesNode(0, name="A")
-    b_node = BayesNode(1, name="B")
-    c_node = BayesNode(2, name="C")
-    d_node = BayesNode(3, name="D")
-    e_node = BayesNode(4, name="E")
-    f_node = BayesNode(5, name="F")
-    g_node = BayesNode(6, name="G")
+        # define some nodes
+        a_node = BayesNode(0, name="A")
+        b_node = BayesNode(1, name="B")
+        c_node = BayesNode(2, name="C")
+        d_node = BayesNode(3, name="D")
+        e_node = BayesNode(4, name="E")
+        f_node = BayesNode(5, name="F")
+        g_node = BayesNode(6, name="G")
 
-    print("\n-----------------define some pots")
+        print("\n-----------------define some pots")
 
-    # Make sure if entries of numpy array are integers, to specify
-    # dtype=float64 or numpy will cast them as integers and this will lead
-    # to type casting errors
+        # Make sure if entries of numpy array are integers, to specify
+        # dtype=float64 or numpy will cast them as integers and this will lead
+        # to type casting errors
 
-    ar_ab = np.arange(4, dtype=np.float64).reshape(2, 2)
-    pot_ab = Potential(False, [a_node, b_node], ar_ab)
-    print("pot_ab:", pot_ab)
+        ar_ab = np.arange(4, dtype=np.float64).reshape(2, 2)
+        pot_ab = Potential(False, [a_node, b_node], ar_ab)
+        print("pot_ab:", pot_ab)
 
-    ar_ab2 = np.arange(0, 40, 10, dtype=np.float64).reshape(2, 2)
-    pot_ab2 = Potential(False, [a_node, b_node], ar_ab2)
-    print("pot_ab2:", pot_ab2)
+        ar_ab2 = np.arange(0, 40, 10, dtype=np.float64).reshape(2, 2)
+        pot_ab2 = Potential(False, [a_node, b_node], ar_ab2)
+        print("pot_ab2:", pot_ab2)
 
-    ar_bc = np.arange(0, 40, 10, dtype=np.float64).reshape(2, 2)
-    pot_bc = Potential(False, [b_node, c_node], ar_bc)
-    print("pot_bc:", pot_bc)
+        ar_bc = np.arange(0, 40, 10, dtype=np.float64).reshape(2, 2)
+        pot_bc = Potential(False, [b_node, c_node], ar_bc)
+        print("pot_bc:", pot_bc)
 
-    ar_abc = np.arange(8, dtype=np.float64).reshape((2, 2, 2))
-    pot_abc = Potential(False, [a_node, b_node, c_node], ar_abc)
-    print("pot_abc:", pot_abc)
+        ar_abc = np.arange(8, dtype=np.float64).reshape((2, 2, 2))
+        pot_abc = Potential(False, [a_node, b_node, c_node], ar_abc)
+        print("pot_abc:", pot_abc)
 
-    ar_bcd = np.arange(0, 80, 10, dtype=np.float64).reshape((2, 2, 2))
-    pot_bcd = Potential(False, [b_node, c_node, d_node], ar_bcd)
-    print("pot_bcd:", pot_bcd)
+        ar_bcd = np.arange(0, 80, 10, dtype=np.float64).reshape((2, 2, 2))
+        pot_bcd = Potential(False, [b_node, c_node, d_node], ar_bcd)
+        print("pot_bcd:", pot_bcd)
 
-    # no need to specify dtype here because using decimal points
-    ar_ecg = np.array(
-        [[[0., 0.60000002],
-        [0., 0.30000001]],
-        [[0., 0.40000001],
-        [0., 0.69999999]]])
-    pot_ecg = Potential(False, [e_node, c_node, g_node], ar_ecg)
-    print("pot_ecg:", pot_ecg)
+        # no need to specify dtype here because using decimal points
+        ar_ecg = np.array(
+            [[[0., 0.60000002],
+            [0., 0.30000001]],
+            [[0., 0.40000001],
+            [0., 0.69999999]]])
+        pot_ecg = Potential(False, [e_node, c_node, g_node], ar_ecg)
+        print("pot_ecg:", pot_ecg)
 
-    print("\n-----------------try transpose, distance and ==")
+        print("\n-----------------try transpose, distance and ==")
 
-    new_abc = cp.deepcopy(pot_abc)
-    new_abc.set_to_transpose([b_node, a_node, c_node])
-    print("pot_abc:", pot_abc)
-    print("new_abc:", new_abc)
-    assert pot_abc == new_abc
-    assert pot_abc != (new_abc + 5)
+        new_abc = cp.deepcopy(pot_abc)
+        new_abc.set_to_transpose([b_node, a_node, c_node])
+        print("pot_abc:", pot_abc)
+        print("new_abc:", new_abc)
+        assert pot_abc == new_abc
+        assert pot_abc != (new_abc + 5)
 
-    print("distance(pot_abc, new_abc)=",
-                    Potential.distance(new_abc, pot_abc))
-    print("pot_abc == new_abc?", pot_abc == new_abc)
+        print("distance(pot_abc, new_abc)=",
+                        Potential.distance(new_abc, pot_abc))
+        print("pot_abc == new_abc?", pot_abc == new_abc)
 
-    print("distance(pot_abc, pot_bc)=",
-        Potential.distance(pot_abc, pot_bc))
-    print("pot_abc == pot_bc?", pot_abc == pot_bc)
+        print("distance(pot_abc, pot_bc)=",
+            Potential.distance(pot_abc, pot_bc))
+        print("pot_abc == pot_bc?", pot_abc == pot_bc)
 
-    print("\n-----------------try add, sub, mult")
+        print("\n-----------------try add, sub, mult")
 
-    print('pot_ab:', pot_ab)
-    print('pot_ab2:', pot_ab2)
-    print("pot_ab + 5:", pot_ab + 5)
-    print("pot_ab - 5:", pot_ab - 5)
-    print("pot_ab * 5:", pot_ab * 5)
-    print("pot_ab + pot_ab2:", pot_ab + pot_ab2)
-    print("pot_ab - pot_ab2:", pot_ab - pot_ab2)
-    print("pot_ab * pot_ab2:", pot_ab * pot_ab2)
-    print("pot_ab + pot_bc:", pot_ab + pot_bc)
-    print("pot_ab - pot_bc:", pot_ab - pot_bc)
-    print("pot_ab * pot_bc:", pot_ab * pot_bc)
+        print('pot_ab:', pot_ab)
+        print('pot_ab2:', pot_ab2)
+        print("pot_ab + 5:", pot_ab + 5)
+        print("pot_ab - 5:", pot_ab - 5)
+        print("pot_ab * 5:", pot_ab * 5)
+        print("pot_ab + pot_ab2:", pot_ab + pot_ab2)
+        print("pot_ab - pot_ab2:", pot_ab - pot_ab2)
+        print("pot_ab * pot_ab2:", pot_ab * pot_ab2)
+        print("pot_ab + pot_bc:", pot_ab + pot_bc)
+        print("pot_ab - pot_bc:", pot_ab - pot_bc)
+        print("pot_ab * pot_bc:", pot_ab * pot_bc)
 
-    print("\n-----------------try iadd, isub, and imul")
+        print("\n-----------------try iadd, isub, and imul")
 
-    new_abc = cp.deepcopy(pot_abc)
-    new_abc.set_to_transpose([b_node, a_node, c_node])
-    new_abc += 5
-    assert new_abc == pot_abc + 5
+        new_abc = cp.deepcopy(pot_abc)
+        new_abc.set_to_transpose([b_node, a_node, c_node])
+        new_abc += 5
+        assert new_abc == pot_abc + 5
 
-    new_abc = cp.deepcopy(pot_abc)
-    new_abc.set_to_transpose([b_node, a_node, c_node])
-    new_abc += pot_bc
-    assert new_abc == pot_abc + pot_bc
+        new_abc = cp.deepcopy(pot_abc)
+        new_abc.set_to_transpose([b_node, a_node, c_node])
+        new_abc += pot_bc
+        assert new_abc == pot_abc + pot_bc
 
-    new_abc = cp.deepcopy(pot_abc)
-    new_abc.set_to_transpose([b_node, a_node, c_node])
-    new_abc -= pot_bc
-    assert new_abc == pot_abc - pot_bc
+        new_abc = cp.deepcopy(pot_abc)
+        new_abc.set_to_transpose([b_node, a_node, c_node])
+        new_abc -= pot_bc
+        assert new_abc == pot_abc - pot_bc
 
-    new_abc = cp.deepcopy(pot_abc)
-    new_abc.set_to_transpose([b_node, a_node, c_node])
-    new_abc *= pot_bc
-    assert new_abc == pot_abc*pot_bc
+        new_abc = cp.deepcopy(pot_abc)
+        new_abc.set_to_transpose([b_node, a_node, c_node])
+        new_abc *= pot_bc
+        assert new_abc == pot_abc*pot_bc
 
-    print("\n-----------------try truediv")
+        print("\n-----------------try truediv")
 
-    print("pot_ab/pot_ab2 =", pot_ab/pot_ab2)
+        print("pot_ab/pot_ab2 =", pot_ab/pot_ab2)
 
-    print("\n-----------------try itruediv")
-    new_ab = cp.deepcopy(pot_ab)
-    new_ab.set_to_transpose([b_node, a_node])
-    new_ab /= pot_ab2
-    print("pot_ab/pot_ab2=", new_ab)
-    assert new_ab == pot_ab/pot_ab2
+        print("\n-----------------try itruediv")
+        new_ab = cp.deepcopy(pot_ab)
+        new_ab.set_to_transpose([b_node, a_node])
+        new_ab /= pot_ab2
+        print("pot_ab/pot_ab2=", new_ab)
+        assert new_ab == pot_ab/pot_ab2
 
-    print("\n-----------------try marginalizing")
+        print("\n-----------------try marginalizing")
 
-    new_abc = cp.deepcopy(pot_abc)
-    print("new_abc=", new_abc)
-    new_ac = new_abc.get_new_marginal([a_node, c_node])
-    print("sum_b new_abc=", new_ac)
+        new_abc = cp.deepcopy(pot_abc)
+        print("new_abc=", new_abc)
+        new_ac = new_abc.get_new_marginal([a_node, c_node])
+        print("sum_b new_abc=", new_ac)
 
-    print("\nnew_abc=", new_abc)
-    new_ab = new_abc.get_new_marginal([a_node, b_node])
-    print("sum_c new_abc=", new_ab)
+        print("\nnew_abc=", new_abc)
+        new_ab = new_abc.get_new_marginal([a_node, b_node])
+        print("sum_c new_abc=", new_ab)
 
-    print("\npot_ecg:", pot_ecg)
-    pot_ge = pot_ecg.get_new_marginal([g_node, e_node])
-    print("sum_c  pot_ecg=", pot_ge)
-
-
+        print("\npot_ecg:", pot_ecg)
+        pot_ge = pot_ecg.get_new_marginal([g_node, e_node])
+        print("sum_c  pot_ecg=", pot_ge)
+    main()

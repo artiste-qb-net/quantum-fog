@@ -126,4 +126,7 @@ class DiscreteUniPot(DiscreteCondPot):
                                 self.focus_node, pot_arr=copy_pot_arr)
 
 if __name__ == "__main__":
-    print(5)
+    def main():
+        print(5)
+    main()
+

@@ -59,42 +59,44 @@ class QuWetGrass:
         we.potential.pot_arr[0, 1, :] = [.01, .99 + 2.3j]
         we.potential.pot_arr[0, 0, :] = [.99, .01 - .01j]
 
-        cl.potential.tr_normalize_self()
-        ra.potential.tr_normalize_self()
-        sp.potential.tr_normalize_self()
-        we.potential.tr_normalize_self()
+        cl.potential.normalize_self()
+        ra.potential.normalize_self()
+        sp.potential.normalize_self()
+        we.potential.normalize_self()
 
         return BayesNet(nodes)
 
 if __name__ == "__main__":
-    bnet = QuWetGrass.build_bnet()
-    brute_eng = EnumerationEngine(bnet, is_quantum=True)
-    # introduce some evidence
-    bnet.get_node_named("WetGrass").active_states = [1]
-    node_list = brute_eng.bnet_ord_nodes
-    brute_pot_list = brute_eng.get_unipot_list(node_list)
+    def main():
+        bnet = QuWetGrass.build_bnet()
+        brute_eng = EnumerationEngine(bnet, is_quantum=True)
+        # introduce some evidence
+        bnet.get_node_named("WetGrass").active_states = [1]
+        node_list = brute_eng.bnet_ord_nodes
+        brute_pot_list = brute_eng.get_unipot_list(node_list)
 
-    bnet = QuWetGrass.build_bnet()
-    monte_eng = MCMC_Engine(bnet, is_quantum=True)
-    # introduce some evidence
-    bnet.get_node_named("WetGrass").active_states = [1]
-    num_cycles = 1000
-    warmup = 200
-    node_list = monte_eng.bnet_ord_nodes
-    monte_pot_list = monte_eng.get_unipot_list(
-            node_list, num_cycles, warmup)
+        bnet = QuWetGrass.build_bnet()
+        monte_eng = MCMC_Engine(bnet, is_quantum=True)
+        # introduce some evidence
+        bnet.get_node_named("WetGrass").active_states = [1]
+        num_cycles = 1000
+        warmup = 200
+        node_list = monte_eng.bnet_ord_nodes
+        monte_pot_list = monte_eng.get_unipot_list(
+                node_list, num_cycles, warmup)
 
-    bnet = QuWetGrass.build_bnet()
-    jtree_eng = JoinTreeEngine(bnet, is_quantum=True)
-    # introduce some evidence
-    bnet.get_node_named("WetGrass").active_states = [1]
-    node_list = jtree_eng.bnet_ord_nodes
-    jtree_pot_list = jtree_eng.get_unipot_list(node_list)
+        bnet = QuWetGrass.build_bnet()
+        jtree_eng = JoinTreeEngine(bnet, is_quantum=True)
+        # introduce some evidence
+        bnet.get_node_named("WetGrass").active_states = [1]
+        node_list = jtree_eng.bnet_ord_nodes
+        jtree_pot_list = jtree_eng.get_unipot_list(node_list)
 
-    for k in range(len(node_list)):
-        print(node_list[k].name)
-        print("brute engine:", brute_pot_list[k])
-        print("monte engine:", monte_pot_list[k])
-        print("jtree engine:", jtree_pot_list[k])
-        print("\n")
+        for k in range(len(node_list)):
+            print(node_list[k].name)
+            print("brute engine:", brute_pot_list[k])
+            print("monte engine:", monte_pot_list[k])
+            print("jtree engine:", jtree_pot_list[k])
+            print("\n")
+    main()
 

@@ -193,4 +193,6 @@ class HC_TabuLner(HillClimbingLner):
         return restart_approved, mtry_num
 
 if __name__ == "__main__":
-    HillClimbingLner.HC_lner_test(HC_TabuLner, verbose=True)
+    def main():
+        HillClimbingLner.HC_lner_test(HC_TabuLner, verbose=False)
+    main()

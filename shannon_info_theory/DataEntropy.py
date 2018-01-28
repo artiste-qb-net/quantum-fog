@@ -175,18 +175,20 @@ class DataEntropy:
 
 
 if __name__ == "__main__":
-    df = pd.DataFrame({
-        'A': [3, 1, 1, 1, 1, 4, 5, 6],
-        'B': [1, 4, 1, 1, 4, 7, 8, 3],
-        'C': [2, 3, 5, 1, 3, 5, 6, 7],
-        'D': [3, 1, 3, 1, 1, 2, 9, 5],
-        'E': [5, 2, 1, 2, 2, 9, 1, 3]
-    })
-    df = df.astype('int')
-    print(df)
-    print(df.dtypes)
-    DataEntropy.ent(df, ['A'], verbose=True)
-    DataEntropy.ent(df, ['A', 'B'], verbose=True)
-    DataEntropy.cond_info(df, ['A', 'B'], ['C'], verbose=True)
-    DataEntropy.mut_info(df, ['A', 'B'], ['C'], verbose=True)
-    DataEntropy.cond_mut_info(df, ['A'], ['B', 'E'], ['C'], verbose=True)
+    def main():
+        df = pd.DataFrame({
+            'A': [3, 1, 1, 1, 1, 4, 5, 6],
+            'B': [1, 4, 1, 1, 4, 7, 8, 3],
+            'C': [2, 3, 5, 1, 3, 5, 6, 7],
+            'D': [3, 1, 3, 1, 1, 2, 9, 5],
+            'E': [5, 2, 1, 2, 2, 9, 1, 3]
+        })
+        df = df.astype('int')
+        print(df)
+        print(df.dtypes)
+        DataEntropy.ent(df, ['A'], verbose=True)
+        DataEntropy.ent(df, ['A', 'B'], verbose=True)
+        DataEntropy.cond_info(df, ['A', 'B'], ['C'], verbose=True)
+        DataEntropy.mut_info(df, ['A', 'B'], ['C'], verbose=True)
+        DataEntropy.cond_mut_info(df, ['A'], ['B', 'E'], ['C'], verbose=True)
+    main()

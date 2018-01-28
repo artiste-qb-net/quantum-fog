@@ -127,16 +127,19 @@ class Node:
         return node in self.neighbors
 
 if __name__ == "__main__":
-    a = Node(0, name="a")
-    b = Node(1, name="b")
-    c = Node(2, name="c")
+    def main():
+        a = Node(0, name="a")
+        b = Node(1, name="b")
+        c = Node(2, name="c")
 
-    a.add_neighbor(b)
-    a.add_neighbor(c)
-    aa = a
-    assert aa == a
-    assert a != b
-    assert a.has_neighbor(b)
-    a.remove_neighbor(b)
-    assert not a.has_neighbor(b)
+        a.add_neighbor(b)
+        a.add_neighbor(c)
+        aa = a
+        assert aa == a
+        assert a != b
+        assert a.has_neighbor(b)
+        a.remove_neighbor(b)
+        assert not a.has_neighbor(b)
+    main()
+
 

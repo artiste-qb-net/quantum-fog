@@ -118,4 +118,6 @@ class MB_GrowShrinkLner(MB_BasedLner):
                 print('end shrinking phase')
 
 if __name__ == "__main__":
-    MB_BasedLner.MB_lner_test(MB_GrowShrinkLner, verbose=True)
+    def main():
+        MB_BasedLner.MB_lner_test(MB_GrowShrinkLner, verbose=True)
+    main()

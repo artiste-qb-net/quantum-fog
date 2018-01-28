@@ -128,12 +128,13 @@ class Star:
         return edges
 
 if __name__ == "__main__":
+    def main():
+        a = BayesNode(0, name="a")
+        b = BayesNode(1, name="b")
+        c = BayesNode(2, name="c")
 
-    a = BayesNode(0, name="a")
-    b = BayesNode(1, name="b")
-    c = BayesNode(2, name="c")
+        a.add_neighbor(b)
+        a.add_neighbor(c)
 
-    a.add_neighbor(b)
-    a.add_neighbor(c)
-
-    assert Star.get_missing_edges_of_node(a) == [{b, c}]
+        assert Star.get_missing_edges_of_node(a) == [{b, c}]
+    main()

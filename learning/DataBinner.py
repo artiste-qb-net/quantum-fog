@@ -71,17 +71,19 @@ class DataBinner:
         return bin_edges, bin_to_mean
 
 if __name__ == "__main__":
-    df = pd.DataFrame({
-        'A': [3, 1, 3, 1, 1, 4, 5, 6],
-        'B': [1, 4, 1, 4, 4, 7, 8, 3],
-        'C': [2, 3, 2, 3, 3, 5, 6, 7],
-        'D': [3, 1, 3, 1, 1, 2, 9, 5],
-        'E': [5, 2, 5, 2, 2, 9, 1, 3]
-    })
-    df['B'] = df['B']*10 + .2
-    print('input df=\n', df)
+    def main():
+        df = pd.DataFrame({
+            'A': [3, 1, 3, 1, 1, 4, 5, 6],
+            'B': [1, 4, 1, 4, 4, 7, 8, 3],
+            'C': [2, 3, 2, 3, 3, 5, 6, 7],
+            'D': [3, 1, 3, 1, 1, 2, 9, 5],
+            'E': [5, 2, 5, 2, 2, 9, 1, 3]
+        })
+        df['B'] = df['B']*10 + .2
+        print('input df=\n', df)
 
-    bin_edges, bin_to_mean = DataBinner.bin_col(df, 'B', 3)
-    print('after binning B, df=\n', df)
-    print('bin_edges=\n', bin_edges)
-    print('bin_to_mean=\n', bin_to_mean)
+        bin_edges, bin_to_mean = DataBinner.bin_col(df, 'B', 3)
+        print('after binning B, df=\n', df)
+        print('bin_edges=\n', bin_edges)
+        print('bin_to_mean=\n', bin_to_mean)
+    main()

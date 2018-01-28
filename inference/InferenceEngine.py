@@ -65,4 +65,7 @@ class InferenceEngine:
         print(story_line[:-2])
 
 if __name__ == "__main__":
-    print(5)
+    def main():
+        print(5)
+    main()
+

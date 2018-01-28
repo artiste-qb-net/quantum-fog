@@ -106,4 +106,6 @@ class MB_inter_IAMB_Lner(MB_BasedLner):
                         changing = True
 
 if __name__ == "__main__":
-    MB_BasedLner.MB_lner_test(MB_inter_IAMB_Lner, verbose=True)
+    def main():
+        MB_BasedLner.MB_lner_test(MB_inter_IAMB_Lner, verbose=True)
+    main()

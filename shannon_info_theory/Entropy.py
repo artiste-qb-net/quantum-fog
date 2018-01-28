@@ -42,7 +42,7 @@ class Entropy:
         # by 1 (because eps*ln(eps) = 0 = 1*ln(1) for 0< eps <<1)
         sub_pot.pot_arr[sub_pot.pot_arr < 1e-6] = 1.
         slicex = tuple([slice(None)]*sub_pot.num_nodes)
-        ent = -(sub_pot[slicex]*np.log(sub_pot[slicex])).sum()
+        ent = np.sum(-sub_pot[slicex]*np.log(sub_pot[slicex]))
         if verbose:
             print('\nentropy for', [z.name for z in x_nds])
             print(ent)
@@ -261,36 +261,43 @@ class Entropy:
         return Entropy.cond_mut_info_c(pot, x_nds, y_nds, z_nds, verbose)
 
 if __name__ == "__main__":
-    # define some nodes
-    a_nd = BayesNode(0, name="A", size=2)
-    b_nd = BayesNode(1, name="B", size=3)
-    c_nd = BayesNode(2, name="C", size=2)
-    d_nd = BayesNode(3, name="D", size=3)
+    def main():
+        # define some nodes
+        a_nd = BayesNode(0, name="A", size=2)
+        b_nd = BayesNode(1, name="B", size=3)
+        c_nd = BayesNode(2, name="C", size=2)
+        d_nd = BayesNode(3, name="D", size=3)
 
-    print('----------------------classical case')
-    pot = Potential(False, [a_nd, b_nd, c_nd, d_nd])
-    pot.set_to_random()
-    pot /= pot.get_new_marginal([])  # this normalizes so all entries sum to 1
-    assert pot.is_joint_prob_dist()
-    Entropy.ent_c(pot, [a_nd], verbose=True)
-    Entropy.ent_c(pot, [a_nd, c_nd], verbose=True)
-    Entropy.ent_c(pot, [c_nd, a_nd], verbose=True)
-    Entropy.cond_info_c(pot, [a_nd, b_nd], [c_nd], verbose=True)
-    Entropy.mut_info_c(pot, [a_nd, b_nd], [c_nd], verbose=True)
-    Entropy.cond_mut_info_c(pot, [a_nd], [b_nd, d_nd], [c_nd], verbose=True)
+        print('----------------------classical case')
+        pot = Potential(False, [a_nd, b_nd, c_nd, d_nd])
+        pot.set_to_random()
+        # this normalizes so all entries sum to 1
+        pot /= pot.get_new_marginal([])
+        assert pot.is_joint_prob_dist()
+        Entropy.ent_c(pot, [a_nd], verbose=True)
+        Entropy.ent_c(pot, [a_nd, c_nd], verbose=True)
+        Entropy.ent_c(pot, [c_nd, a_nd], verbose=True)
+        Entropy.cond_info_c(pot, [a_nd, b_nd], [c_nd], verbose=True)
+        Entropy.mut_info_c(pot, [a_nd, b_nd], [c_nd], verbose=True)
+        Entropy.cond_mut_info_c(pot,
+                                [a_nd], [b_nd, d_nd], [c_nd],
+                                verbose=True)
 
-    print('----------------------quantum case')
-    dmat = DensityMatrix([a_nd, b_nd, c_nd, d_nd])
-    # dmat = DensityMatrix([a_nd, b_nd])
-    dmat.set_to_random(normalize=True)
-    # print(dmat)
-    assert dmat.is_legal_dmat()
-    Entropy.ent_q(dmat, [a_nd], verbose=True)
-    Entropy.ent_q(dmat, [a_nd, c_nd], verbose=True)
-    Entropy.ent_q(dmat, [c_nd, a_nd], verbose=True)
-    Entropy.cond_info_q(dmat, [a_nd, b_nd], [c_nd], verbose=True)
-    Entropy.mut_info_q(dmat, [a_nd, b_nd], [c_nd], verbose=True)
-    Entropy.cond_mut_info_q(dmat, [a_nd], [b_nd, d_nd], [c_nd], verbose=True)
+        print('----------------------quantum case')
+        dmat = DensityMatrix([a_nd, b_nd, c_nd, d_nd])
+        # dmat = DensityMatrix([a_nd, b_nd])
+        dmat.set_to_random(normalize=True)
+        # print(dmat)
+        assert dmat.is_legal_dmat()
+        Entropy.ent_q(dmat, [a_nd], verbose=True)
+        Entropy.ent_q(dmat, [a_nd, c_nd], verbose=True)
+        Entropy.ent_q(dmat, [c_nd, a_nd], verbose=True)
+        Entropy.cond_info_q(dmat, [a_nd, b_nd], [c_nd], verbose=True)
+        Entropy.mut_info_q(dmat, [a_nd, b_nd], [c_nd], verbose=True)
+        Entropy.cond_mut_info_q(dmat,
+                                [a_nd], [b_nd, d_nd], [c_nd],
+                                verbose=True)
+    main()
 
 
 

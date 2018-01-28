@@ -211,4 +211,7 @@ class MB_MMPC_Lner(MB_BasedLner):
                         self.vtx_to_MB[tar].append(x)
 
 if __name__ == "__main__":
-    MB_BasedLner.MB_lner_test(MB_MMPC_Lner, verbose=True)
+    def main():
+        MB_BasedLner.MB_lner_test(MB_MMPC_Lner, verbose=True)
+    main()
+

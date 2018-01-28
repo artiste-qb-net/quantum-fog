@@ -77,4 +77,7 @@ class UnNormalizablePot(Exception):
         return self.pa_indices
 
 if __name__ == "__main__":
-    print(5)
+    def main():
+        print(5)
+    main()
+

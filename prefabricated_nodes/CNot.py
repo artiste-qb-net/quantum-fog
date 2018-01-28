@@ -132,17 +132,19 @@ class CNot(BayesNode):
 
 
 if __name__ == "__main__":
-    pa1 = BayesNode(0, "parent1", size=2)
-    pa2 = BayesNode(1, "parent2", size=2)
+    def main():
+        pa1 = BayesNode(0, "parent1", size=2)
+        pa2 = BayesNode(1, "parent2", size=2)
 
-    pa1.state_names = ['0', '1']
-    pa2.state_names = ['0', '1']
+        pa1.state_names = ['0', '1']
+        pa2.state_names = ['0', '1']
 
-    cn = CNot(2, "a_cnot",
-        False, pa1, pa2, True, True)
+        cn = CNot(2, "a_cnot",
+            False, pa1, pa2, True, True)
 
-    print("pa1 state names: ", pa1.state_names)
-    print("pa2 state names: ", pa2.state_names)
-    print("cnot state names: ", cn.state_names)
-    print(cn.potential)
-    print(cn.potential.get_total_probs())
+        print("pa1 state names: ", pa1.state_names)
+        print("pa2 state names: ", pa2.state_names)
+        print("cnot state names: ", cn.state_names)
+        print(cn.potential)
+        print(cn.potential.get_total_probs())
+    main()

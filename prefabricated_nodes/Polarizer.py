@@ -23,9 +23,9 @@ class Polarizer(BayesNode):
 
     Quantum Fog gives names of the form (Nx, Ny)Nloss to the states of the
     Polarizer. Nx, Ny and Nloss are non-negative integers. Nx refers to the
-    number of outgoing photons polarized in the X direction, Ny to the number of
-    outgoing photons polarized in the Y direction, and Nloss to the number of
-    photons absorbed by the polarizer.
+    number of outgoing photons polarized in the X direction, Ny to the
+    number of outgoing photons polarized in the Y direction, and Nloss to
+    the number of photons absorbed by the polarizer.
 
     See BeamSplitter class for explanation of parameter 'max_n_sum'
 
@@ -203,22 +203,24 @@ class Polarizer(BayesNode):
                   (math.factorial(nx)*math.factorial(ny)))
 
 if __name__ == "__main__":
+    def main():
 
-    theta_degs = 35
-    max_n_sum = 3
+        theta_degs = 35
+        max_n_sum = 3
 
-    in_nd = BayesNode(0, "parent1", size=6)
+        in_nd = BayesNode(0, "parent1", size=6)
 
-    in_nd.set_state_names_to_product(
-        [range(2), range(3)], trim=False)
+        in_nd.set_state_names_to_product(
+            [range(2), range(3)], trim=False)
 
-    pol = Polarizer(1, "pol_rot", in_nd, theta_degs, max_n_sum)
+        pol = Polarizer(1, "pol_rot", in_nd, theta_degs, max_n_sum)
 
-    print("in_nd state names: ", in_nd.state_names)
-    print("pol state names: ", pol.state_names)
-    print(pol.potential)
-    print("full dict of total probs: ",
-          pol.potential.get_total_probs())
-    print("brief dict of total probs: ",
-          pol.potential.get_total_probs(brief=True))
+        print("in_nd state names: ", in_nd.state_names)
+        print("pol state names: ", pol.state_names)
+        print(pol.potential)
+        print("full dict of total probs: ",
+              pol.potential.get_total_probs())
+        print("brief dict of total probs: ",
+              pol.potential.get_total_probs(brief=True))
+    main()
 

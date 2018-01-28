@@ -204,54 +204,54 @@ class BayesNode(DirectedNode):
 # These imports are here after the class definition
 # to avoid import loops.
 # The idea is to define the class before these imports occur.
-from potentials.Potential import *
+# from potentials.Potential import *
 # from potentials.DiscreteCondPot import *
 if __name__ == "__main__":
+    def main():
 
-    a = BayesNode(0, "alice")
+        a = BayesNode(0, "alice")
 
-    def status(k):
-        print('position ' + str(k) + ":", a.state_names, "\n")
+        def status(k):
+            print('position ' + str(k) + ":", a.state_names, "\n")
 
-    status(1)
+        status(1)
 
-    a.resize(4)
-    status(2)
+        a.resize(4)
+        status(2)
 
-    a.resize(3)
-    status(3)
+        a.resize(3)
+        status(3)
 
-    a.set_state_name(2, "horse")
-    status(4)
+        a.set_state_name(2, "horse")
+        status(4)
 
-    a.set_state_names_to_product([range(3)])
-    status(5)
+        a.set_state_names_to_product([range(3)])
+        status(5)
 
-    a.set_state_names_to_product([range(3)], trim=True)
-    status(5.1)
+        a.set_state_names_to_product([range(3)], trim=True)
+        status(5.1)
 
-    a.set_state_names_to_product([range(3)], repeat=3)
-    status(6)
+        a.set_state_names_to_product([range(3)], repeat=3)
+        status(6)
 
-    a.set_state_names_to_product([range(3), range(2)]),
-    status(7)
+        a.set_state_names_to_product([range(3), range(2)]),
+        status(7)
 
-    a.set_state_names_to_product(['abc'])
-    status(8)
+        a.set_state_names_to_product(['abc'])
+        status(8)
 
-    a.set_state_names_to_product(['abc'], trim=True)
-    status(8.1)
+        a.set_state_names_to_product(['abc'], trim=True)
+        status(8.1)
 
-    a.set_state_names_to_product(['abc'], repeat=3)
-    status(9)
+        a.set_state_names_to_product(['abc'], repeat=3)
+        status(9)
 
-    a.set_state_names_to_product(['abc', 'xyz'])
-    status(10)
+        a.set_state_names_to_product(['abc', 'xyz'])
+        status(10)
 
-    a.set_state_names_to_product(['abc', 'xyz'], trim=True)
-    status(10.1)
+        a.set_state_names_to_product(['abc', 'xyz'], trim=True)
+        status(10.1)
 
-    a.set_state_names_to_product(['01'], repeat=3, trim=True)
-    status(11)
-
-
+        a.set_state_names_to_product(['01'], repeat=3, trim=True)
+        status(11)
+    main()

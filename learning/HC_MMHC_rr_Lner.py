@@ -102,4 +102,7 @@ class HC_MMHC_rr_Lner(HC_RandRestartLner):
         return m_approved
 
 if __name__ == "__main__":
-    HillClimbingLner.HC_lner_test(HC_MMHC_rr_Lner)
+    def main():
+        HillClimbingLner.HC_lner_test(HC_MMHC_rr_Lner)
+    main()
+

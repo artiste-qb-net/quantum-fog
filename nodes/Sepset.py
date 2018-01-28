@@ -158,4 +158,6 @@ class Sepset(Node):
             assert False, "clique does not belong to sepset"
 
 if __name__ == "__main__":
-    print(5)
+    def main():
+        print(5)
+    main()

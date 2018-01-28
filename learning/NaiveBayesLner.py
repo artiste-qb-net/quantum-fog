@@ -59,8 +59,10 @@ class NaiveBayesLner(NetStrucLner):
         tar_nd.add_children([nd for nd in self.ord_nodes if nd != tar_nd])
 
 if __name__ == "__main__":
+    def main():
+        csv_path = 'training_data_c/SimpleTree7nd.csv'
+        states_df = pd.read_csv(csv_path)
+        lnr = NaiveBayesLner(states_df, 'a0')
+        lnr.bnet.draw(algo_num=2)
+    main()
 
-    csv_path = 'training_data_c/SimpleTree7nd.csv'
-    states_df = pd.read_csv(csv_path)
-    lnr = NaiveBayesLner(states_df, 'a0')
-    lnr.bnet.draw(algo_num=2)

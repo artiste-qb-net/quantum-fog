@@ -843,101 +843,104 @@ class DensityMatrix:
             + "\n" + str(self.get_sq_dataframe())
         
 if __name__ == "__main__":
-    # define some nodes
-    a_node = BayesNode(0, name="A", size=2)
-    b_node = BayesNode(1, name="B", size=3)
-    c_node = BayesNode(2, name="C", size=2)
-    d_node = BayesNode(3, name="D", size=3)
-    e_node = BayesNode(4, name="E", size=2)
+    def main():
+        # define some nodes
+        a_node = BayesNode(0, name="A", size=2)
+        b_node = BayesNode(1, name="B", size=3)
+        c_node = BayesNode(2, name="C", size=2)
+        d_node = BayesNode(3, name="D", size=3)
+        e_node = BayesNode(4, name="E", size=2)
 
-    print("\n-----------------define some density matrices")
-    rho_ab = DensityMatrix([a_node, b_node])
-    print("rho_ab:", rho_ab)
+        print("\n-----------------define some density matrices")
+        rho_ab = DensityMatrix([a_node, b_node])
+        print("rho_ab:", rho_ab)
 
-    rho_ab.set_to_random(max_int=10)
-    print("rho_ab:", rho_ab)
-    
-    rho_ab2 = DensityMatrix([a_node, b_node])
-    rho_bc = DensityMatrix([b_node, c_node])
+        rho_ab.set_to_random(max_int=10)
+        print("rho_ab:", rho_ab)
 
-    rho_abc = DensityMatrix([a_node, b_node, c_node])
-    print("rho_abc:", rho_abc)
+        rho_ab2 = DensityMatrix([a_node, b_node])
+        rho_bc = DensityMatrix([b_node, c_node])
 
-    rho_abc.set_all_entries_to(2 + 5j)
-    print("rho_abc:", rho_abc)
+        rho_abc = DensityMatrix([a_node, b_node, c_node])
+        print("rho_abc:", rho_abc)
 
-    rho_abc.set_to_random()
+        rho_abc.set_all_entries_to(2 + 5j)
+        print("rho_abc:", rho_abc)
 
-    rho_dbc = DensityMatrix([d_node, b_node, c_node])
-    rho_dbc.set_to_random()
+        rho_abc.set_to_random()
 
-    print("\n-----------------try transpose, distance and ==")
+        rho_dbc = DensityMatrix([d_node, b_node, c_node])
+        rho_dbc.set_to_random()
 
-    new_abc = cp.deepcopy(rho_abc)
-    new_abc.set_to_transpose([b_node, a_node, c_node])
-    assert rho_abc == new_abc
-    assert rho_abc != (new_abc + 5)
+        print("\n-----------------try transpose, distance and ==")
 
-    print("distance(rho_abc, new_abc)=",
-                    DensityMatrix.distance(new_abc, rho_abc))
-    print("rho_abc == new_abc?", rho_abc == new_abc)
+        new_abc = cp.deepcopy(rho_abc)
+        new_abc.set_to_transpose([b_node, a_node, c_node])
+        assert rho_abc == new_abc
+        assert rho_abc != (new_abc + 5)
 
-    print("distance(rho_abc, rho_bc)=",
-        DensityMatrix.distance(rho_abc, rho_bc))
-    print("rho_abc == rho_bc?", rho_abc == rho_bc)
+        print("distance(rho_abc, new_abc)=",
+                        DensityMatrix.distance(new_abc, rho_abc))
+        print("rho_abc == new_abc?", rho_abc == new_abc)
 
-    print("\n-----------------try add, sub, mult")
+        print("distance(rho_abc, rho_bc)=",
+            DensityMatrix.distance(rho_abc, rho_bc))
+        print("rho_abc == rho_bc?", rho_abc == rho_bc)
 
-    print("rho_ab:", rho_ab)
-    print("rho_ab2:", rho_ab2)
-    print("rho_ab + 5:", rho_ab + 5)
-    print("rho_ab - 5:", rho_ab - 5)
-    print("rho_ab * 5:", rho_ab * 5)
-    print("rho_ab + rho_ab2:", rho_ab + rho_ab2)
-    print("rho_ab - rho_ab2:", rho_ab - rho_ab2)
-    print("rho_ab * rho_ab2:", rho_ab * rho_ab2)
-    print("rho_ab + rho_bc:", rho_ab + rho_bc)
-    print("rho_ab - rho_bc:", rho_ab - rho_bc)
-    print("rho_ab * rho_bc:", rho_ab * rho_bc)
+        print("\n-----------------try add, sub, mult")
 
-    print("\n-----------------try iadd, isub")
+        print("rho_ab:", rho_ab)
+        print("rho_ab2:", rho_ab2)
+        print("rho_ab + 5:", rho_ab + 5)
+        print("rho_ab - 5:", rho_ab - 5)
+        print("rho_ab * 5:", rho_ab * 5)
+        print("rho_ab + rho_ab2:", rho_ab + rho_ab2)
+        print("rho_ab - rho_ab2:", rho_ab - rho_ab2)
+        print("rho_ab * rho_ab2:", rho_ab * rho_ab2)
+        print("rho_ab + rho_bc:", rho_ab + rho_bc)
+        print("rho_ab - rho_bc:", rho_ab - rho_bc)
+        print("rho_ab * rho_bc:", rho_ab * rho_bc)
 
-    new_abc = cp.deepcopy(rho_abc)
-    new_abc.set_to_transpose([b_node, a_node, c_node])
-    new_abc += 5
-    assert new_abc == rho_abc + 5
+        print("\n-----------------try iadd, isub")
 
-    new_abc = cp.deepcopy(rho_abc)
-    new_abc.set_to_transpose([b_node, a_node, c_node])
-    new_abc += rho_bc
-    assert new_abc == rho_abc + rho_bc
+        new_abc = cp.deepcopy(rho_abc)
+        new_abc.set_to_transpose([b_node, a_node, c_node])
+        new_abc += 5
+        assert new_abc == rho_abc + 5
 
-    new_abc = cp.deepcopy(rho_abc)
-    new_abc.set_to_transpose([b_node, a_node, c_node])
-    new_abc -= rho_bc
-    assert new_abc == rho_abc - rho_bc
+        new_abc = cp.deepcopy(rho_abc)
+        new_abc.set_to_transpose([b_node, a_node, c_node])
+        new_abc += rho_bc
+        assert new_abc == rho_abc + rho_bc
 
-    print("\n-----------------try tracing ops and normalize")
+        new_abc = cp.deepcopy(rho_abc)
+        new_abc.set_to_transpose([b_node, a_node, c_node])
+        new_abc -= rho_bc
+        assert new_abc == rho_abc - rho_bc
 
-    new_abc = cp.deepcopy(rho_abc)
-    new_abc.tr_normalize_self()
-    # print('new_abc', new_abc)
-    print('tr new_abc', new_abc.trace())
+        print("\n-----------------try tracing ops and normalize")
 
-    fin_nd_list = [b_node, a_node]
-    new_ba = DensityMatrix.new_from_tr_of_mixed_st(new_abc, fin_nd_list)
-    print("new_ba", new_ba)
+        new_abc = cp.deepcopy(rho_abc)
+        new_abc.tr_normalize_self()
+        # print('new_abc', new_abc)
+        print('tr new_abc', new_abc.trace())
 
-    new_a = DensityMatrix.new_from_tr_of_mixed_st(new_ba, [a_node])
-    print('new_a', new_a)
+        fin_nd_list = [b_node, a_node]
+        new_ba = DensityMatrix.new_from_tr_of_mixed_st(new_abc, fin_nd_list)
+        print("new_ba", new_ba)
 
-    print("\n**************************")
-    pot = Potential(True, [a_node, b_node, c_node])
-    pot.set_to_random()
-    new_bc = DensityMatrix.new_from_tr_of_pure_st(pot, [b_node, c_node])
-    new_bc.tr_normalize_self()
-    print("from this pot", pot)
-    print("_________")
-    print("new_bc", new_bc)
-    new_c = DensityMatrix.new_from_tr_of_mixed_st(new_bc, [c_node])
-    print('new_c', new_c)
+        new_a = DensityMatrix.new_from_tr_of_mixed_st(new_ba, [a_node])
+        print('new_a', new_a)
+
+        print("\n**************************")
+        pot = Potential(True, [a_node, b_node, c_node])
+        pot.set_to_random()
+        new_bc = DensityMatrix.new_from_tr_of_pure_st(pot, [b_node, c_node])
+        new_bc.tr_normalize_self()
+        print("from this pot", pot)
+        print("_________")
+        print("new_bc", new_bc)
+        new_c = DensityMatrix.new_from_tr_of_mixed_st(new_bc, [c_node])
+        print('new_c', new_c)
+    main()
+

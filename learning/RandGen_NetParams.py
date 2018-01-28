@@ -148,31 +148,33 @@ class RandGen_NetParams:
 
 
 if __name__ == "__main__":
-
     from examples_cbnets.WetGrass import *
     from examples_qbnets.QuWetGrass import *
 
-    is_quantum = False
-    num_samples = 2000
-    use_int_sts = True
-    bnet = WetGrass.build_bnet()
-    gen = RandGen_NetParams(is_quantum, bnet, num_samples, use_int_sts)
-    gen.write_csv('training_data_c/WetGrass.csv')
+    def main():
+        is_quantum = False
+        num_samples = 2000
+        use_int_sts = True
+        bnet = WetGrass.build_bnet()
+        gen = RandGen_NetParams(is_quantum, bnet, num_samples, use_int_sts)
+        gen.write_csv('training_data_c/WetGrass.csv')
 
-    is_quantum = True
-    num_samples = 2000
-    use_int_sts = True
-    bnet = QuWetGrass.build_bnet()
-    gen = RandGen_NetParams(is_quantum, bnet, num_samples, use_int_sts)
-    gen.write_csv('training_data_q/WetGrass_sts.csv',
-                  'training_data_q/WetGrass_degs.csv')
+        is_quantum = True
+        num_samples = 2000
+        use_int_sts = True
+        bnet = QuWetGrass.build_bnet()
+        gen = RandGen_NetParams(is_quantum, bnet, num_samples, use_int_sts)
+        gen.write_csv('training_data_q/WetGrass_sts.csv',
+                      'training_data_q/WetGrass_degs.csv')
 
-    is_quantum = False
-    num_samples = 5000
-    use_int_sts = True
-    b_net = BayesNet.read_bif(
-        '../examples_cbnets/earthquake.bif', is_quantum)
-    gen = RandGen_NetParams(is_quantum, b_net, num_samples, use_int_sts)
-    csv_path = 'training_data_c/earthquake.csv'
-    gen.write_csv(csv_path)
+        is_quantum = False
+        num_samples = 5000
+        use_int_sts = True
+        b_net = BayesNet.read_bif(
+            '../examples_cbnets/earthquake.bif', is_quantum)
+        gen = RandGen_NetParams(is_quantum, b_net, num_samples, use_int_sts)
+        csv_path = 'training_data_c/earthquake.csv'
+        gen.write_csv(csv_path)
+    main()
+
 

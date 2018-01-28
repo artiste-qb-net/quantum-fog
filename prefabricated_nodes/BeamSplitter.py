@@ -359,55 +359,56 @@ class BeamSplitter(BayesNode):
             m1x, m2x, m1y, m2y, dry_run=True)
 
 if __name__ == "__main__":
+    def main():
+        num_of_comps = 1
 
-    num_of_comps = 1
+        tau_mag = .5
+        tau_degs = 35
+        rho_degs = 45
 
-    tau_mag = .5
-    tau_degs = 35
-    rho_degs = 45
+        if num_of_comps == 1:
+            size1 = 3
+            size2 = 4
+            max_n_sum = 5
+            pa1 = BayesNode(0, "parent1", size=size1)
+            pa2 = BayesNode(1, "parent2", size=size2)
 
-    if num_of_comps == 1:
-        size1 = 3
-        size2 = 4
-        max_n_sum = 5
-        pa1 = BayesNode(0, "parent1", size=size1)
-        pa2 = BayesNode(1, "parent2", size=size2)
+            pa1.state_names = [str(k) for k in range(size1)]
+            pa2.state_names = [str(k) for k in range(size2)]
 
-        pa1.state_names = [str(k) for k in range(size1)]
-        pa2.state_names = [str(k) for k in range(size2)]
+            bs = BeamSplitter(2, "a_bs", pa1, pa2,
+                    tau_mag, tau_degs, rho_degs, num_of_comps, max_n_sum)
 
-        bs = BeamSplitter(2, "a_bs", pa1, pa2,
-                tau_mag, tau_degs, rho_degs, num_of_comps, max_n_sum)
+            print("pa1 state names: ", pa1.state_names)
+            print("pa2 state names: ", pa2.state_names)
+            print("bs state names: ", bs.state_names)
+            print(bs.potential)
+            print("full dict of total probs: ",
+                  bs.potential.get_total_probs())
+            print("brief dict of total probs: ",
+                  bs.potential.get_total_probs(brief=True))
+        elif num_of_comps == 2:
+            size1 = 6
+            size2 = 8
+            max_n_sum = 7
+            pa1 = BayesNode(0, "parent1", size=size1)
+            pa2 = BayesNode(1, "parent2", size=size2)
 
-        print("pa1 state names: ", pa1.state_names)
-        print("pa2 state names: ", pa2.state_names)
-        print("bs state names: ", bs.state_names)
-        print(bs.potential)
-        print("full dict of total probs: ",
-              bs.potential.get_total_probs())
-        print("brief dict of total probs: ",
-              bs.potential.get_total_probs(brief=True))
-    elif num_of_comps == 2:
-        size1 = 6
-        size2 = 8
-        max_n_sum = 7
-        pa1 = BayesNode(0, "parent1", size=size1)
-        pa2 = BayesNode(1, "parent2", size=size2)
+            pa1.set_state_names_to_product(
+                [range(2), range(3)], trim=False)
+            pa2.set_state_names_to_product(
+                [range(2), range(4)], trim=False)
 
-        pa1.set_state_names_to_product(
-            [range(2), range(3)], trim=False)
-        pa2.set_state_names_to_product(
-            [range(2), range(4)], trim=False)
+            bs = BeamSplitter(2, "a_bs", pa1, pa2,
+                    tau_mag, tau_degs, rho_degs, num_of_comps, max_n_sum)
 
-        bs = BeamSplitter(2, "a_bs", pa1, pa2,
-                tau_mag, tau_degs, rho_degs, num_of_comps, max_n_sum)
-
-        print("pa1 state names: ", pa1.state_names)
-        print("pa2 state names: ", pa2.state_names)
-        print("bs state names: ", bs.state_names)
-        print(bs.potential)
-        print("full dict of total probs: ",
-              bs.potential.get_total_probs())
-        print("brief dict of total probs: ",
-              bs.potential.get_total_probs(brief=True))
+            print("pa1 state names: ", pa1.state_names)
+            print("pa2 state names: ", pa2.state_names)
+            print("bs state names: ", bs.state_names)
+            print(bs.potential)
+            print("full dict of total probs: ",
+                  bs.potential.get_total_probs())
+            print("brief dict of total probs: ",
+                  bs.potential.get_total_probs(brief=True))
+    main()
 

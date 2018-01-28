@@ -254,9 +254,12 @@ class JoinTree(Graph):
 
 if __name__ == "__main__":
     from examples_cbnets.HuaDar import *
-    bnet = HuaDar.build_bnet()
-    moral_graph = MoralGraph(bnet)
-    tri_graph = TriangulatedGraph(moral_graph)
-    jtree = JoinTree(tri_graph, bnet)
-    jtree.describe_yourself()
+
+    def main():
+        bnet = HuaDar.build_bnet()
+        moral_graph = MoralGraph(bnet)
+        tri_graph = TriangulatedGraph(moral_graph)
+        jtree = JoinTree(tri_graph, bnet)
+        jtree.describe_yourself()
+    main()
 

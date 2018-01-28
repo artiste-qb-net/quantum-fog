@@ -292,28 +292,31 @@ class Graph:
                   sorted([x.name for x in node.neighbors]))
             print("\n")
 
-from nodes.Node import *
 if __name__ == "__main__":
-    p1 = Node(0, "p1")
-    p2 = Node(1, "p2")
-    center = Node(2, "center")
-    c1 = Node(3, "c1")
-    c2 = Node(4, "c2")
+    from nodes.Node import *
 
-    g = Graph({p1})
-    g.add_nodes({p2, center, c1, c2})
-    assert g.has_node(p1)
-    assert g.contains({p1, center, c2})
+    def main():
+        p1 = Node(0, "p1")
+        p2 = Node(1, "p2")
+        center = Node(2, "center")
+        c1 = Node(3, "c1")
+        c2 = Node(4, "c2")
 
-    center.add_neighbor(p1)
-    center.add_neighbor(p2)
-    center.add_neighbor(c1)
-    center.add_neighbor(c2)
+        g = Graph({p1})
+        g.add_nodes({p2, center, c1, c2})
+        assert g.has_node(p1)
+        assert g.contains({p1, center, c2})
 
-    g.draw(algo_num=1)
+        center.add_neighbor(p1)
+        center.add_neighbor(p2)
+        center.add_neighbor(c1)
+        center.add_neighbor(c2)
 
-    path1 = '../examples_cbnets/graph1.dot'
-    path2 = '../examples_cbnets/graph2.dot'
-    g.write_dot(path1)
-    new_g = Graph.read_dot(path1)
-    new_g.write_dot(path2)
+        g.draw(algo_num=1)
+
+        path1 = '../examples_cbnets/graph1.dot'
+        path2 = '../examples_cbnets/graph2.dot'
+        g.write_dot(path1)
+        new_g = Graph.read_dot(path1)
+        new_g.write_dot(path2)
+    main()

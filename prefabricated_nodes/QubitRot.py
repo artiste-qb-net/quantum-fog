@@ -125,13 +125,16 @@ class QubitRot(BayesNode):
 
 
 if __name__ == "__main__":
-    pa_nd = BayesNode(0, "pa_nd", size=2)
-    pa_nd.state_names = ['0', '1']
+    def main():
+        pa_nd = BayesNode(0, "pa_nd", size=2)
+        pa_nd.state_names = ['0', '1']
 
-    thetas_degs = [20, 30, 40, 60]
-    qr = QubitRot(1, "rot", pa_nd, thetas_degs)
+        thetas_degs = [20, 30, 40, 60]
+        qr = QubitRot(1, "rot", pa_nd, thetas_degs)
 
-    print("pa_nd state names: ", pa_nd.state_names)
-    print("qubit rot state names: ", qr.state_names)
-    print(qr.potential)
-    print(qr.potential.get_total_probs())
+        print("pa_nd state names: ", pa_nd.state_names)
+        print("qubit rot state names: ", qr.state_names)
+        print(qr.potential)
+        print(qr.potential.get_total_probs())
+    main()
+

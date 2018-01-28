@@ -177,4 +177,6 @@ class HC_RandRestartLner(HillClimbingLner):
         self.score_ch_cache.clear()
 
 if __name__ == "__main__":
-    HillClimbingLner.HC_lner_test(HC_RandRestartLner, verbose=True)
+    def main():
+        HillClimbingLner.HC_lner_test(HC_RandRestartLner, verbose=False)
+    main()

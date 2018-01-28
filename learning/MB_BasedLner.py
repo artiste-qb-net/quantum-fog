@@ -392,6 +392,7 @@ class MB_BasedLner(NetStrucLner):
         LnerClass : MB_BasedLner or subclass
             This is either MB_BasedLner without quotes or the name of a
             subclass of that class.
+        verbose : bool
 
 
         Returns
@@ -433,4 +434,7 @@ class MB_BasedLner(NetStrucLner):
             # plt.show()
 
 if __name__ == "__main__":
-    print(5)
+    def main():
+        print(5)
+    main()
+

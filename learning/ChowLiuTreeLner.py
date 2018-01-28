@@ -161,12 +161,16 @@ if __name__ == "__main__":
     from learning.NetParamsLner import *
     from examples_cbnets.SimpleTree7nd import *
 
-    is_quantum = False
-    csv_path = 'training_data_c/SimpleTree7nd.csv'
-    num_samples = 500
-    bnet = SimpleTree7nd.build_bnet()
-    gen = RandGen_NetParams(is_quantum, bnet, num_samples)
-    gen.write_csv(csv_path)
-    states_df = pd.read_csv(csv_path)
-    lnr = ChowLiuTreeLner(states_df)
-    lnr.bnet.draw(algo_num=2)
+    def main():
+
+        is_quantum = False
+        csv_path = 'training_data_c/SimpleTree7nd.csv'
+        num_samples = 500
+        bnet = SimpleTree7nd.build_bnet()
+        gen = RandGen_NetParams(is_quantum, bnet, num_samples,
+                                use_int_sts=True)
+        gen.write_csv(csv_path)
+        states_df = pd.read_csv(csv_path)
+        lnr = ChowLiuTreeLner(states_df)
+        lnr.bnet.draw(algo_num=2)
+    main()

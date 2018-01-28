@@ -197,26 +197,29 @@ class DirectedNode(Node):
         return mb
 
 if __name__ == "__main__":
-    p1 = DirectedNode(0, "p1")
-    p2 = DirectedNode(1, "p2")
-    center = DirectedNode(2, "center")
-    c1 = DirectedNode(3, "c1")
-    c2 = DirectedNode(4, "c2")
+    def main():
+        p1 = DirectedNode(0, "p1")
+        p2 = DirectedNode(1, "p2")
+        center = DirectedNode(2, "center")
+        c1 = DirectedNode(3, "c1")
+        c2 = DirectedNode(4, "c2")
 
-    center.add_parent(p1)
-    center.add_parent(p2)
-    center.add_child(c1)
-    center.add_child(c2)
+        center.add_parent(p1)
+        center.add_parent(p2)
+        center.add_child(c1)
+        center.add_child(c2)
 
-    assert center.has_child(c1)
-    assert center.has_child(c2)
-    assert center.has_parent(p1)
-    assert center.has_parent(p2)
-    assert c1.has_parent(center)
-    center.remove_parent(p1)
-    assert not center.has_parent(p1)
+        assert center.has_child(c1)
+        assert center.has_child(c2)
+        assert center.has_parent(p1)
+        assert center.has_parent(p2)
+        assert c1.has_parent(center)
+        center.remove_parent(p1)
+        assert not center.has_parent(p1)
 
-    print(center.name)
+        print(center.name)
+    main()
+
 
 
 

@@ -70,16 +70,18 @@ class TreeAugNaiveBayesLner(NetStrucLner):
 
         lnr = ChowLiuTreeLner(df)
         self.bnet = lnr.bnet
-        tar_nd = DirectedNode(num_nds+1, self.tar_vtx)
+        tar_nd = BayesNode(num_nds+1, self.tar_vtx)
         self.bnet.add_nodes({tar_nd})
         self.ord_nodes = [self.bnet.get_node_named(name) for name in nd_names]
         tar_nd.add_children([nd for nd in self.ord_nodes if nd != tar_nd])
 
 if __name__ == "__main__":
+    def main():
+        csv_path = 'training_data_c/SimpleTree7nd.csv'
+        states_df = pd.read_csv(csv_path)
+        tar_vtx = 'b0'
+        lnr = TreeAugNaiveBayesLner(states_df, tar_vtx)
+        lnr.bnet.draw(algo_num=2)
+    main()
 
-    csv_path = 'training_data_c/SimpleTree7nd.csv'
-    states_df = pd.read_csv(csv_path)
-    tar_vtx = 'b0'
-    lnr = TreeAugNaiveBayesLner(states_df, tar_vtx)
-    lnr.bnet.draw(algo_num=2)
 

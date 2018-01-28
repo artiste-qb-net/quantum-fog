@@ -146,4 +146,6 @@ class MB_fast_IAMB_Lner(MB_BasedLner):
                     print('end shrinking phase')
 
 if __name__ == "__main__":
-    MB_BasedLner.MB_lner_test(MB_fast_IAMB_Lner, verbose=True)
+    def main():
+        MB_BasedLner.MB_lner_test(MB_fast_IAMB_Lner, verbose=True)
+    main()

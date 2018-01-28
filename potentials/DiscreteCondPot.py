@@ -175,6 +175,9 @@ class DiscreteCondPot(Potential):
 
 
 if __name__ == "__main__":
-    x = [0, 1, 2, 3, 4]
-    print(x[:-1])
+    def main():
+        x = [0, 1, 2, 3, 4]
+        print(x[:-1])
+    main()
+
 

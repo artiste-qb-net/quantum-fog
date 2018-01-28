@@ -138,8 +138,11 @@ class TriangulatedGraph(Graph):
 
 if __name__ == "__main__":
     from examples_cbnets.HuaDar import *
-    bnet = HuaDar.build_bnet()
-    mo = MoralGraph(bnet)
-    tri_graph = TriangulatedGraph(mo, verbose=True)
-    print("---------------------neighbors")
-    tri_graph.print_neighbors()
+
+    def main():
+        bnet = HuaDar.build_bnet()
+        mo = MoralGraph(bnet)
+        tri_graph = TriangulatedGraph(mo, verbose=True)
+        print("---------------------neighbors")
+        tri_graph.print_neighbors()
+    main()

@@ -221,7 +221,7 @@ class HillClimbingLner(NetStrucLner):
             if not reversal:
                 nx_graph.remove_edge(beg_vtx, end_vtx)
             else:
-               nx_graph.add_edge(beg_vtx, end_vtx)
+                nx_graph.add_edge(beg_vtx, end_vtx)
         elif action == 'rev':
             if not reversal:
                 nx_graph.remove_edge(beg_vtx, end_vtx)
@@ -471,5 +471,7 @@ class HillClimbingLner(NetStrucLner):
                 # plt.show()
 
 if __name__ == "__main__":
-    HillClimbingLner.HC_lner_test(HillClimbingLner, verbose=True)
+    def main():
+        HillClimbingLner.HC_lner_test(HillClimbingLner, verbose=False)
+    main()
 

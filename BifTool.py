@@ -328,23 +328,27 @@ class BifTool:
         nx.nx_pydot.write_dot(nx_graph, out_path)
 
 if __name__ == "__main__":
-    in_path = "examples_cbnets/asia.bif"
-    out_path = "examples_cbnets/asia_copy.bif"
-    tool = BifTool()
-    tool.read_bif(in_path)
-    tool.write_bif(out_path)
-
     from graphs.BayesNet import *
-    in_path = "examples_cbnets/WetGrass.bif"
-    out_path = "examples_cbnets/WetGrass_test1.dot"
-    bnet = BayesNet.read_bif(in_path, False)
-    bnet.write_dot(out_path)
 
-    # the function bif2dot() avoids calls to any QFog files except this one
-    tool = BifTool()
-    in_path = "examples_cbnets/WetGrass.bif"
-    out_path = "examples_cbnets/WetGrass_test2.dot"
-    tool.bif2dot(in_path, out_path)
+    def main():
+        in_path = "examples_cbnets/asia.bif"
+        out_path = "examples_cbnets/asia_copy.bif"
+        tool = BifTool()
+        tool.read_bif(in_path)
+        tool.write_bif(out_path)
+
+        in_path = "examples_cbnets/WetGrass.bif"
+        out_path = "examples_cbnets/WetGrass_test1.dot"
+        bnet = BayesNet.read_bif(in_path, False)
+        bnet.write_dot(out_path)
+
+        # the function bif2dot() avoids calls to any QFog files except this one
+        tool = BifTool()
+        in_path = "examples_cbnets/WetGrass.bif"
+        out_path = "examples_cbnets/WetGrass_test2.dot"
+        tool.bif2dot(in_path, out_path)
+    main()
+
 
 
 

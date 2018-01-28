@@ -184,4 +184,6 @@ class MB_hitonPC_Lner(MB_BasedLner):
 
 
 if __name__ == "__main__":
-    MB_BasedLner.MB_lner_test(MB_hitonPC_Lner, verbose=True)
+    def main():
+        MB_BasedLner.MB_lner_test(MB_hitonPC_Lner, verbose=True)
+    main()

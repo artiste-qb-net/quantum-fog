@@ -96,4 +96,7 @@ class Clique(Node):
         return self.subnodes >= nd_set
 
 if __name__ == "__main__":
-    print(5)
+    def main():
+        print(5)
+    main()
+

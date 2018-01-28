@@ -92,4 +92,7 @@ class NetStrucLner:
             nd.add_parents(nd_parents)
 
 if __name__ == "__main__":
-    print(5)
+    def main():
+        print(5)
+    main()
+

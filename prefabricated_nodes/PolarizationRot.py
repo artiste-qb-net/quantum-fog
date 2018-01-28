@@ -154,21 +154,24 @@ class PolarizationRot(BayesNode):
             mx, my, dry_run=True)
 
 if __name__ == "__main__":
+    def main():
 
-    theta_degs = 35
-    max_n_sum = 3
+        theta_degs = 35
+        max_n_sum = 3
 
-    in_nd = BayesNode(0, "parent1", size=6)
+        in_nd = BayesNode(0, "parent1", size=6)
 
-    in_nd.set_state_names_to_product(
-        [range(2), range(3)], trim=False)
+        in_nd.set_state_names_to_product(
+            [range(2), range(3)], trim=False)
 
-    pr = PolarizationRot(1, "pol_rot", in_nd, theta_degs, max_n_sum)
+        pr = PolarizationRot(1, "pol_rot", in_nd, theta_degs, max_n_sum)
 
-    print("in_nd state names: ", in_nd.state_names)
-    print("pol rot state names: ", pr.state_names)
-    print(pr.potential)
-    print("full dict of total probs: ",
-          pr.potential.get_total_probs())
-    print("brief dict of total probs: ",
-          pr.potential.get_total_probs(brief=True))
+        print("in_nd state names: ", in_nd.state_names)
+        print("pol rot state names: ", pr.state_names)
+        print(pr.potential)
+        print("full dict of total probs: ",
+              pr.potential.get_total_probs())
+        print("brief dict of total probs: ",
+              pr.potential.get_total_probs(brief=True))
+    main()
+

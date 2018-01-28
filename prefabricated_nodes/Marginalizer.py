@@ -97,18 +97,20 @@ class Marginalizer(BayesNode):
                     self.potential[r, k] = 1
 
 if __name__ == "__main__":
-    pa_nd = BayesNode(0, "pa_nd", size=24)
-    # has_commas = True
-    has_commas = False
-    pa_nd.set_state_names_to_product(
-        [range(2), range(3), range(4)], trim=not has_commas)
-    marg = Marginalizer(1, "marg",
-        False, pa_nd, projected_axis=1, has_commas=has_commas)
+    def main():
+        pa_nd = BayesNode(0, "pa_nd", size=24)
+        # has_commas = True
+        has_commas = False
+        pa_nd.set_state_names_to_product(
+            [range(2), range(3), range(4)], trim=not has_commas)
+        marg = Marginalizer(1, "marg",
+            False, pa_nd, projected_axis=1, has_commas=has_commas)
 
-    print("pa state names: ", pa_nd.state_names)
-    print("marg state names: ", marg.state_names)
-    print(marg.potential)
-    print(marg.potential.get_total_probs())
+        print("pa state names: ", pa_nd.state_names)
+        print("marg state names: ", marg.state_names)
+        print(marg.potential)
+        print(marg.potential.get_total_probs())
+    main()
 
 
 
