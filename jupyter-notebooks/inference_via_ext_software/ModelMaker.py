@@ -6,11 +6,11 @@ import pprint as pp
 
 class ModelMaker:
     """
-    This class has no constructor. All its methods are static. Each method
-    takes a BayesNet bnet as input and outputs a .py file containing a
-    'model' of bnet for software X. X is an external software package for
-    doing "Deep Probabilistic Programming", such as PyMC (a.k.a. PyMC2),
-    PyMC3 and TensorFlow/Edward. All the methods have the following
+    This class has no constructor. All its methods are static. Each model
+    writing method takes a BayesNet bnet as input and outputs a .py file
+    containing a 'model' of bnet for software X. X is an external software
+    package for doing "Deep Probabilistic Programming", such as PyMC (a.k.a.
+    PyMC2), PyMC3 and TensorFlow/Edward. All the methods have the following
     parameters in common
 
 
@@ -27,12 +27,6 @@ class ModelMaker:
         whereas nodes not in this dict are "latent variables". Frequentists
         like to call probabilistic latent variables "latent variables" and
         deterministic latent variables "parameters".
-    unfilled : bool
-        If True, the model has undefined (unfilled) variables for the
-        observations data. These undefined variables must be defined prior
-        to calling this function. If False, the observations data variables
-        are defined at the beginning of the model .py file based on the info
-        in the vtx_to_data input.
 
     """
     @staticmethod
@@ -65,8 +59,8 @@ class ModelMaker:
         return nd_names_lex_ord, nd_names_topo_ord
 
     @staticmethod
-    def write_pymc2_model(file_prefix, bnet,
-                          vtx_to_data=None, unfilled=True):
+    def write_pymc2_model(file_prefix, bnet, vtx_to_data=None,
+                          unfilled=True):
         """
         Writes a .py file containing a 'model' of bnet for software X= PyMC
         (a.k.a PyMC2, the precursor of PyMC3).
@@ -77,6 +71,7 @@ class ModelMaker:
         bnet : BayesNet
         vtx_to_data : dict[str, list[int]]
         unfilled : bool
+            means same as for write_pymc3_model()
 
         Returns
         -------
@@ -146,24 +141,29 @@ class ModelMaker:
                         ")\n\n\n")
 
     @staticmethod
-    def write_pymc3_model(model_name, file_prefix, bnet,
-                          vtx_to_data=None, unfilled=True):
+    def write_pymc3_model(file_prefix, bnet, vtx_to_data=None,
+                          unfilled=True):
         """
         Writes a .py file containing a 'model' of bnet for software X= PyMC3.
 
         Parameters
         ----------
-        model_name : str
         file_prefix : str
         bnet : BayesNet
         vtx_to_data : dict[str, list[int]]
         unfilled : bool
+            If True, the model has undefined (unfilled) variables for the
+            observations data. These undefined variables must be defined
+            prior to calling this function. If False, the observations data
+            variables are defined at the beginning of the model .py file
+            based on the info in the vtx_to_data input.
 
         Returns
         -------
         None
 
         """
+        model_name = 'mod'
         w4 = '    '  # 4 white spaces
         w8 = w4 + w4
         if not vtx_to_data:
@@ -194,7 +194,6 @@ class ModelMaker:
             for vtx in nd_names_topo_ord:
                 nd = bnet.get_node_named(vtx)
                 obs_str = 'observed=' + "data_" + vtx
-                p_str = "p_" + vtx
                 if not nd.parents:
                     f.write(w4 + 'p_' + vtx + ' = np.')
                     pp.pprint(nd.potential.pot_arr, f)
@@ -207,30 +206,131 @@ class ModelMaker:
                     f.write(w4 + 'arr_' + vtx + ' = np.')
                     pp.pprint(nd.potential.pot_arr, f)
                     f.write(w4 + "p_" + vtx +
-                            " = tt.squeeze(\n" + w8 +
-                            "theano.shared(" +
-                            "arr_" + vtx + ")[" +
-                            pa_str + ', :])\n')
+                            " = theano.shared(arr_" +
+                            vtx + ")[\n" + w8 +
+                            pa_str + ', :]\n')
                 f.write(w4 + vtx +
                         " = pm3.Categorical(\n" + w8 +
-                        "'" + vtx + "', p=" +
-                        p_str + ', ' +
+                        "'" + vtx + "', p=p_" +
+                        vtx + ', ' +
                         obs_str + ")\n\n")
+
+    @staticmethod
+    def write_edward_model(file_prefix, bnet, vtx_to_data=None,
+                           no_placeholders=True):
+        """
+        Writes a .py file containing a 'model' of bnet for software X= edward.
+
+        A node (node name is called vertex, vtx) is observed iff
+        vtx_to_data.get(vtx) is nonempty. A node that is not observed is
+        called a latent variable.
+
+        This function doesn't use the value of each key-value pair in
+        vtx_to_data except to ascertain whether the value is empty or not.
+
+        This function defines a query random variable for all nodes although
+        such variables should only be used for unobserved nodes.
+
+        A placeholder is used for vtx iff vtx is a root node (it has no
+        parents), and vtx is observed, and no_placeholders = False.
+
+        Parameters
+        ----------
+        file_prefix : str
+        bnet : BayesNet
+        vtx_to_data : dict[str, list[int]]
+        no_placeholders : bool
+            If True, doesn't use Placeholder() for any node. If False,
+            uses them for a node iff the node has no parents (is a root
+            node) and is observed (so vtx_to_data for key=name of node,
+            is not empty).
+
+        Returns
+        -------
+        None
+
+        """
+        w4 = '    '  # 4 white spaces
+        w8 = w4 + w4
+        if not vtx_to_data:
+            vtx_to_data = {}
+        with open(file_prefix + "_edward.py", 'w') as f:
+            f.write("import numpy as np\n")
+            f.write("import tensorflow as tf\n")
+            f.write("import edward as ed\n")
+            f.write("import edward.models as edm\n")
+            f.write('\n\n')
+
+            nd_names_lex_ord, nd_names_topo_ord =\
+                ModelMaker.write_nd_names(bnet, f)
+
+            f.write("with tf.name_scope('model'):\n")
+            for vtx in nd_names_topo_ord:
+                nd = bnet.get_node_named(vtx)
+                is_observed = bool(vtx_to_data.get(vtx))
+                is_root_nd = not bool(nd.parents)
+                # print('vtx:', vtx)
+                # print('data, is_obs', vtx_to_data.get(vtx), is_observed)
+                # print('pa, is_root', nd.parents, is_root_nd)
+                if is_root_nd and is_observed and not no_placeholders:
+                    f.write(w4 + vtx +
+                            ' = tf.placeholder(tf.float32, [None, ' +
+                            str(nd.size) + '],\n' +
+                            w8 + 'name="' + vtx + '")\n\n')
+                else:
+                    if not nd.parents:
+                        f.write(w4 + 'arr_' + vtx + ' = np.')
+                        pp.pprint(nd.potential.pot_arr, f)
+                        f.write(w4 + "p_" + vtx +
+                                " = tf.convert_to_tensor(arr_" +
+                                vtx + ", dtype=tf.float32)\n")
+                    else:
+                        pa_str = ''
+                        for index, pa_nd in enumerate(nd.potential.ord_nodes[:-1]):
+                            pa_str += pa_nd.name + ", "
+                        pa_str = pa_str[:-2]
+
+                        f.write(w4 + 'arr_' + vtx + ' = np.')
+                        pp.pprint(nd.potential.pot_arr, f)
+                        f.write(w4 + "p_" + vtx +
+                                " = tf.convert_to_tensor(arr_" +
+                                vtx + ", dtype=tf.float32)[\n" + w8 +
+                                pa_str + ', :]\n')
+                    f.write(w4 + vtx +
+                            " = edm.Categorical(\n" + w8 +
+                            "probs=p_" + vtx +
+                            ", name='" + vtx + "')\n\n")
+            f.write("with tf.name_scope('posterior'):\n")
+            for vtx in nd_names_lex_ord:
+                nd = bnet.get_node_named(vtx)
+                f.write(w4 + vtx + "_q" +
+                        " = edm.Categorical(\n" + w8 +
+                        "probs=tf.nn.softmax(tf.get_variable('" +
+                        vtx + "_q/probs', shape=[" +
+                        str(nd.size) + "])),\n" +
+                        w8 + "name='" + vtx + "_q')\n\n")
 
 if __name__ == "__main__":
     def main():
         in_path = "../examples_cbnets/WetGrass.bif"
         bnet = BayesNet.read_bif(in_path, False)
+        vtx_to_data = {'Cloudy': [1], "WetGrass": [0, 1]}
         for unfilled in [False, True]:
             if unfilled:
                 file_prefix = "../examples_cbnets/WetGrass_unfilled"
-                vtx_to_data = None
             else:
                 file_prefix = "../examples_cbnets/WetGrass"
-                vtx_to_data = {'Cloudy': [1], "WetGrass": [0, 1]}
             ModelMaker.write_pymc2_model(file_prefix, bnet,
                                          vtx_to_data, unfilled)
-            ModelMaker.write_pymc3_model('mod', file_prefix, bnet,
+            ModelMaker.write_pymc3_model(file_prefix, bnet,
                                          vtx_to_data, unfilled)
+        for no_phs in [False, True]:
+            if no_phs:
+                file_prefix = "../examples_cbnets/WetGrass_no_phs"
+            else:
+                file_prefix = "../examples_cbnets/WetGrass"
+            # print(file_prefix, ':')
+            ModelMaker.write_edward_model(file_prefix, bnet,
+                                         vtx_to_data, no_phs)
     main()
 

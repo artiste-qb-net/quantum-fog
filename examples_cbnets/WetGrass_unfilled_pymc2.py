@@ -6,7 +6,7 @@ import pymc as pm2
 nd_names_lex_ord = ['Cloudy', 'Rain', 'Sprinkler', 'WetGrass']
 
 # node names in topological (chronological) order
-nd_names_topo_ord = ['Cloudy', 'Sprinkler', 'Rain', 'WetGrass']
+nd_names_topo_ord = ['Cloudy', 'Rain', 'Sprinkler', 'WetGrass']
 
 # did_obs_Cloudy = False
 # data_Cloudy = None
@@ -28,19 +28,6 @@ Cloudy = pm2.Categorical(
 
 
 @pm2.deterministic
-def p_Sprinkler(Cloudy1=Cloudy):
-    Cloudy1 = Cloudy
-    k0 = int(Cloudy1.value), 
-
-    arr = np.array([[ 0.2,  0.8],
-       [ 0.7,  0.3]])
-    return arr[k0, :]
-Sprinkler = pm2.Categorical(
-    'Sprinkler', p=p_Sprinkler,
-    value=data_Sprinkler, observed=did_obs_Sprinkler)
-
-
-@pm2.deterministic
 def p_Rain(Cloudy1=Cloudy):
     Cloudy1 = Cloudy
     k0 = int(Cloudy1.value), 
@@ -51,6 +38,19 @@ def p_Rain(Cloudy1=Cloudy):
 Rain = pm2.Categorical(
     'Rain', p=p_Rain,
     value=data_Rain, observed=did_obs_Rain)
+
+
+@pm2.deterministic
+def p_Sprinkler(Cloudy1=Cloudy):
+    Cloudy1 = Cloudy
+    k0 = int(Cloudy1.value), 
+
+    arr = np.array([[ 0.2,  0.8],
+       [ 0.7,  0.3]])
+    return arr[k0, :]
+Sprinkler = pm2.Categorical(
+    'Sprinkler', p=p_Sprinkler,
+    value=data_Sprinkler, observed=did_obs_Sprinkler)
 
 
 @pm2.deterministic
