@@ -12,21 +12,22 @@ nd_names_topo_ord = ['Cloudy', 'Rain', 'Sprinkler', 'WetGrass']
 
 with tf.name_scope('model'):
     arr_Cloudy = np.array([ 0.5,  0.5])
-    p_Cloudy = tf.convert_to_tensor(arr_Cloudy, dtype=tf.float32)
+    ten_Cloudy = tf.convert_to_tensor(arr_Cloudy, dtype=tf.float32)
+    p_Cloudy = ten_Cloudy[:]
     Cloudy = edm.Categorical(
         probs=p_Cloudy, name='Cloudy')
 
     arr_Rain = np.array([[ 0.4,  0.6],
        [ 0.5,  0.5]])
-    p_Rain = tf.convert_to_tensor(arr_Rain, dtype=tf.float32)[
-        Cloudy, :]
+    ten_Rain = tf.convert_to_tensor(arr_Rain, dtype=tf.float32)
+    p_Rain = ten_Rain[Cloudy, :]
     Rain = edm.Categorical(
         probs=p_Rain, name='Rain')
 
     arr_Sprinkler = np.array([[ 0.2,  0.8],
        [ 0.7,  0.3]])
-    p_Sprinkler = tf.convert_to_tensor(arr_Sprinkler, dtype=tf.float32)[
-        Cloudy, :]
+    ten_Sprinkler = tf.convert_to_tensor(arr_Sprinkler, dtype=tf.float32)
+    p_Sprinkler = ten_Sprinkler[Cloudy, :]
     Sprinkler = edm.Categorical(
         probs=p_Sprinkler, name='Sprinkler')
 
@@ -35,8 +36,8 @@ with tf.name_scope('model'):
 
        [[ 0.01,  0.99],
         [ 0.01,  0.99]]])
-    p_WetGrass = tf.convert_to_tensor(arr_WetGrass, dtype=tf.float32)[
-        Sprinkler, Rain, :]
+    ten_WetGrass = tf.convert_to_tensor(arr_WetGrass, dtype=tf.float32)
+    p_WetGrass = ten_WetGrass[Sprinkler, Rain, :]
     WetGrass = edm.Categorical(
         probs=p_WetGrass, name='WetGrass')
 

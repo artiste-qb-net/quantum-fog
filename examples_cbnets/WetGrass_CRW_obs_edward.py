@@ -26,7 +26,9 @@ with tf.name_scope('model'):
     arr_Rain = np.array([[ 0.4,  0.6],
        [ 0.5,  0.5]])
     ten_Rain = tf.convert_to_tensor(arr_Rain, dtype=tf.float32)
-    p_Rain = ten_Rain[domi(Cloudy), :]
+    p_Rain = tf.stack([
+        ten_Rain[Cloudy[j], :]
+        for j in range(100)])
     Rain = edm.Categorical(
         probs=p_Rain, name='Rain')
 
@@ -44,7 +46,7 @@ with tf.name_scope('model'):
         [ 0.01,  0.99]]])
     ten_WetGrass = tf.convert_to_tensor(arr_WetGrass, dtype=tf.float32)
     p_WetGrass = tf.stack([
-        ten_WetGrass[Sprinkler, Rain, :]
+        ten_WetGrass[Sprinkler, Rain[j], :]
         for j in range(100)])
     WetGrass = edm.Categorical(
         probs=p_WetGrass, name='WetGrass')
@@ -53,9 +55,8 @@ with tf.name_scope('posterior'):
     Cloudy_ph = tf.placeholder(tf.int32, shape=[100],
         name="Cloudy_ph")
 
-    Rain_q = edm.Categorical(
-        probs=tf.nn.softmax(tf.get_variable('Rain_q/probs', shape=[2])),
-        name='Rain_q')
+    Rain_ph = tf.placeholder(tf.int32, shape=[100],
+        name="Rain_ph")
 
     Sprinkler_q = edm.Categorical(
         probs=tf.nn.softmax(tf.get_variable('Sprinkler_q/probs', shape=[2])),
