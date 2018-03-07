@@ -10,32 +10,24 @@ nd_names_lex_ord = ['Cloudy', 'Rain', 'Sprinkler', 'WetGrass']
 # node names in topological (chronological) order
 nd_names_topo_ord = ['Cloudy', 'Rain', 'Sprinkler', 'WetGrass']
 
-# dominant, most common state
-def domi(rv):
-    return tf.argmax(tf.bincount(rv))
-
 with tf.name_scope('model'):
     arr_Cloudy = np.array([ 0.5,  0.5])
     ten_Cloudy = tf.convert_to_tensor(arr_Cloudy, dtype=tf.float32)
-    p_Cloudy = tf.stack([
-        ten_Cloudy[:]
-        for j in range(100)])
+    p_Cloudy = ten_Cloudy[:]
     Cloudy = edm.Categorical(
         probs=p_Cloudy, name='Cloudy')
 
     arr_Rain = np.array([[ 0.4,  0.6],
        [ 0.5,  0.5]])
     ten_Rain = tf.convert_to_tensor(arr_Rain, dtype=tf.float32)
-    p_Rain = tf.stack([
-        ten_Rain[Cloudy[j], :]
-        for j in range(100)])
+    p_Rain = ten_Rain[Cloudy, :]
     Rain = edm.Categorical(
         probs=p_Rain, name='Rain')
 
     arr_Sprinkler = np.array([[ 0.2,  0.8],
        [ 0.7,  0.3]])
     ten_Sprinkler = tf.convert_to_tensor(arr_Sprinkler, dtype=tf.float32)
-    p_Sprinkler = ten_Sprinkler[domi(Cloudy), :]
+    p_Sprinkler = ten_Sprinkler[Cloudy, :]
     Sprinkler = edm.Categorical(
         probs=p_Sprinkler, name='Sprinkler')
 
@@ -45,23 +37,24 @@ with tf.name_scope('model'):
        [[ 0.01,  0.99],
         [ 0.01,  0.99]]])
     ten_WetGrass = tf.convert_to_tensor(arr_WetGrass, dtype=tf.float32)
-    p_WetGrass = tf.stack([
-        ten_WetGrass[Sprinkler, Rain[j], :]
-        for j in range(100)])
+    p_WetGrass = ten_WetGrass[Sprinkler, Rain, :]
     WetGrass = edm.Categorical(
         probs=p_WetGrass, name='WetGrass')
 
 with tf.name_scope('posterior'):
-    Cloudy_ph = tf.placeholder(tf.int32, shape=[100],
-        name="Cloudy_ph")
+    Cloudy_q = edm.Categorical(
+        probs=tf.nn.softmax(tf.get_variable('p_Cloudy_q', shape=[2])),
+        name='Cloudy_q')
 
-    Rain_ph = tf.placeholder(tf.int32, shape=[100],
-        name="Rain_ph")
+    Rain_q = edm.Categorical(
+        probs=tf.nn.softmax(tf.get_variable('p_Rain_q', shape=[2])),
+        name='Rain_q')
 
     Sprinkler_q = edm.Categorical(
-        probs=tf.nn.softmax(tf.get_variable('Sprinkler_q/probs', shape=[2])),
+        probs=tf.nn.softmax(tf.get_variable('p_Sprinkler_q', shape=[2])),
         name='Sprinkler_q')
 
-    WetGrass_ph = tf.placeholder(tf.int32, shape=[100],
-        name="WetGrass_ph")
+    WetGrass_q = edm.Categorical(
+        probs=tf.nn.softmax(tf.get_variable('p_WetGrass_q', shape=[2])),
+        name='WetGrass_q')
 
