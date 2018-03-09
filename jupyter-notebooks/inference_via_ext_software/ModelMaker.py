@@ -264,7 +264,7 @@ class ModelMaker:
         random variable called vtx + '_q'. The shape of this query random
         variable is [node_size] (node_size= the node's number of states)
         because we want to use it to approximate the node's prob dist for
-        fixed conditions.
+        fixed evidentiary conditions.
 
         Parameters
         ----------
@@ -316,44 +316,42 @@ class ModelMaker:
                 nd = bnet.get_node_named(vtx)
                 shape_str = '[' + str(nd.size) + ']'
                 f.write(w4 + vtx + "_q" +
-                        " = edm.Categorical(\n" + w8 +
-                        "probs=tf.nn.softmax(tf.get_variable('p_" +
+                        " = edm.Categorical(probs=tf.nn.softmax(\n" + w8 +
+                        "tf.get_variable('p_" +
                         vtx + "_q', shape=" +
                         shape_str + ")),\n" +
                         w8 + "name='" + vtx + "_q')\n\n")
 
     @staticmethod
     def write_edward_model_for_param_learning(file_prefix, bnet,
-                                              obs_vertices):
+            obs_vertices, inf_method='Var', propo_scale=.1):
         """
         Writes a .py file containing an edward (external software) 'model'
         for parameter learning based on bnet. By parameter learning, we mean
-        learning the transition prob matrix of latent (i.e., unobserved)
-        nodes based on data, i.e., multiple samples of observed nodes.
+        learning the transition prob matrix of latent (i.e., hidden,
+        unobserved) nodes based on data, i.e., multiple samples of observed
+        nodes.
 
         The variable 'sam_size' (sample size of observed nodes) is used
         without value in the .py file and must be set to an int before
         running the .py file.
 
         A node is a kind of random variable. We call the name (a str) of a
-        node its vertex, vtx. A node is observed iff it's in the list
+        node its vertex, vtx. A node is observed iff its vtx is in the list
         obs_vertices. Observed nodes are observed sam_size times. A node
         that is not observed is called a latent node. Latent nodes that are
         also root nodes (have no parents) are often called "parameters".
 
-        Iff vtx is not observed, this function defines a query random
-        variable called 'probs_' + vtx + '_q'. The shape of this query
-        variable is the shape of the node's pot_arr because we want to use
-        it to approximate the node's transition prob matrix.
+        Iff vtx is not observed, and inf_method='Var', this function defines
+        a query random variable called 'probs_' + vtx + '_q'. The shape of
+        this query variable is the shape of the node's pot_arr because we
+        want to use it to approximate the node's transition prob matrix.
+        When inf_method='MC' instead of 'Var', the query random variable is
+        called 'emp_probs_' + vtx + '_q' and it has shape [sam_size, pot_arr
+        shape without parentheses].
 
         Iff vtx is observed, this function defines a placeholder random
         variable called vtx of shape=(sam_size, ).
-
-        When an observed node is a parent of an unobserved one, all the
-        values (sam_size of them) of the observed node are reduced to a
-        single value before they enter the unobserved node. This reduction
-        is done via a function called domi() defined at the beginning of the
-        model file.
 
         Parameters
         ----------
@@ -363,6 +361,12 @@ class ModelMaker:
             BayesNet object that is translated to model
         obs_vertices : list[str]
             List of vertices that are observed sam_size times
+        inf_method : str
+            Inference method,
+            'Var' for variational method,
+            'MC' for Monte Carlo
+        propo_scale : float
+            For inf_method='MC', proposal scale for all proposal functions.
 
         Returns
         -------
@@ -382,11 +386,22 @@ class ModelMaker:
             nd_names_lex_ord, nd_names_topo_ord =\
                 ModelMaker.write_nd_names(bnet, f)
 
-            f.write("# dominant, most common state\n")
-            f.write("def domi(rv):\n")
-            f.write(w4 + "return tf.argmax(tf.bincount(rv))\n\n")
-
             f.write("with tf.name_scope('model'):\n")
+
+            # list of vertices that use stack()
+            # contains any vtx that is observed
+            # or that has a parent that is observed
+            use_stack = []
+            for vtx in nd_names_topo_ord:
+                nd = bnet.get_node_named(vtx)
+                if vtx in obs_vertices:
+                    use_stack.append(vtx)
+                    continue
+                else:
+                    for pa_nd in nd.potential.ord_nodes[:-1]:
+                        if pa_nd.name in obs_vertices:
+                            use_stack.append(vtx)
+                            continue
 
             for vtx in nd_names_topo_ord:
                 nd = bnet.get_node_named(vtx)
@@ -398,16 +413,10 @@ class ModelMaker:
                             w8 + 'name="' + vtx + '")\n\n')
                     continue
                 for index, pa_nd in enumerate(nd.potential.ord_nodes[:-1]):
-                    if vtx in obs_vertices:
-                        if pa_nd.name in obs_vertices:
-                            pa_str += pa_nd.name + "[j], "
-                        else:
-                            pa_str += pa_nd.name + ", "
+                    if pa_nd.name in use_stack:
+                        pa_str += pa_nd.name + "[j], "
                     else:
-                        if pa_nd.name in obs_vertices:
-                            pa_str += "domi(" + pa_nd.name + "), "
-                        else:
-                            pa_str += pa_nd.name + ", "
+                        pa_str += pa_nd.name + ", "
 
                 if vtx in obs_vertices:
                     array = nd.potential.pot_arr
@@ -416,12 +425,7 @@ class ModelMaker:
                     f.write(w4 + 'ten_' + vtx +
                             ' = tf.convert_to_tensor(arr_' +
                             vtx + ", dtype=tf.float32)\n")
-                    f.write(w4 + "p_" + vtx +
-                            " = tf.stack([\n" + w8 +
-                            "ten_" + vtx +
-                            "[" + pa_str + ':]\n' + w8 +
-                            'for j in range(' +
-                            'sam_size)])\n')
+                    ten_or_probs = "ten_"
                 else:
                     array = np.ones_like(nd.potential.pot_arr)
                     f.write(w4 + 'alpha_' + vtx + ' = np.')
@@ -430,10 +434,18 @@ class ModelMaker:
                             ' = edm.Dirichlet(\n' + w8 +
                             "alpha_" + vtx + ".astype(np.float32)" +
                             ", name='probs_" + vtx + "')\n")
+                    ten_or_probs = 'probs_'
+                if vtx in use_stack:
                     f.write(w4 + "p_" + vtx +
-                            " = probs_" +
-                            vtx + "[" +
-                            pa_str + ':]\n')
+                            " = tf.stack([\n" + w8 +
+                            ten_or_probs + vtx +
+                            "[" + pa_str + ':]\n' + w8 +
+                            'for j in range(' +
+                            'sam_size)])\n')
+                else:
+                    f.write(w4 + "p_" + vtx +
+                            " = " + ten_or_probs + vtx +
+                            "[" + pa_str + ':]\n')
                 f.write(w4 + vtx +
                         " = edm.Categorical(\n" + w8 +
                         "probs=p_" + vtx +
@@ -451,12 +463,29 @@ class ModelMaker:
                                 w8 + 'name="' + vtx + '_ph")\n\n')
                 else:
                     shape_str = str(array.shape[:-1])
-                    f.write(w4 + 'probs_' + vtx + "_q" +
-                            " = edm.Dirichlet(\n" + w8 +
-                            "tf.nn.softplus(tf.get_variable('pos_" +
-                            vtx + "_q', shape=" +
-                            shape_str + ")),\n" +
-                            w8 + "name='probs_" + vtx + "_q')\n\n")
+                    sam_shape_str = '(sam_size, ' + shape_str[1:]
+                    if inf_method == 'Var':
+                        f.write(w4 + 'probs_' + vtx + "_q" +
+                                " = edm.Dirichlet(tf.nn.softplus(\n" + w8 +
+                                "tf.get_variable('pos_" +
+                                vtx + "_q', shape=" +
+                                shape_str + ")),\n" +
+                                w8 + "name='probs_" + vtx + "_q')\n\n")
+                    elif inf_method == 'MC':
+                        f.write(w4 + 'emp_probs_' + vtx + "_q" +
+                                " = edm.Empirical(\n" + w8 +
+                                "tf.get_variable('emp_" +
+                                vtx + "_q', shape=" +
+                                sam_shape_str + ",\n" +
+                                w8 + 'initializer=' +
+                                'tf.constant_initializer(0.5)),\n' +
+                                w8 + "name='probs_" + vtx + "_q')\n")
+                        f.write(w4 + 'propo_' + vtx + "_q" +
+                                " = edm.Normal(" +
+                                'loc=emp_probs_' + vtx +
+                                "_q, scale=" + str(propo_scale) + ")\n\n")
+                    else:
+                        assert False, "Unexpected inference method."
 
 if __name__ == "__main__":
     def main():
@@ -481,6 +510,11 @@ if __name__ == "__main__":
         obs_vertices = ['Cloudy', "WetGrass"]
         ModelMaker.write_edward_model_for_param_learning(file_prefix, bnet,
                 obs_vertices)
+
+        file_prefix = "../examples_cbnets/WetGrass_obs_CW_MC"
+        obs_vertices = ['Cloudy', "WetGrass"]
+        ModelMaker.write_edward_model_for_param_learning(file_prefix, bnet,
+                obs_vertices, inf_method='MC')
 
         file_prefix = "../examples_cbnets/WetGrass_obs_CRW"
         obs_vertices = ['Cloudy', "Rain",  "WetGrass"]

@@ -42,19 +42,19 @@ with tf.name_scope('model'):
         probs=p_WetGrass, name='WetGrass')
 
 with tf.name_scope('posterior'):
-    Cloudy_q = edm.Categorical(
-        probs=tf.nn.softmax(tf.get_variable('p_Cloudy_q', shape=[2])),
+    Cloudy_q = edm.Categorical(probs=tf.nn.softmax(
+        tf.get_variable('p_Cloudy_q', shape=[2])),
         name='Cloudy_q')
 
-    Rain_q = edm.Categorical(
-        probs=tf.nn.softmax(tf.get_variable('p_Rain_q', shape=[2])),
+    Rain_q = edm.Categorical(probs=tf.nn.softmax(
+        tf.get_variable('p_Rain_q', shape=[2])),
         name='Rain_q')
 
-    Sprinkler_q = edm.Categorical(
-        probs=tf.nn.softmax(tf.get_variable('p_Sprinkler_q', shape=[2])),
+    Sprinkler_q = edm.Categorical(probs=tf.nn.softmax(
+        tf.get_variable('p_Sprinkler_q', shape=[2])),
         name='Sprinkler_q')
 
-    WetGrass_q = edm.Categorical(
-        probs=tf.nn.softmax(tf.get_variable('p_WetGrass_q', shape=[2])),
+    WetGrass_q = edm.Categorical(probs=tf.nn.softmax(
+        tf.get_variable('p_WetGrass_q', shape=[2])),
         name='WetGrass_q')
 

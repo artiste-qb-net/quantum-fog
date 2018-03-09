@@ -14,11 +14,12 @@ with tf.name_scope('model'):
     Cloudy = tf.placeholder(tf.int32, shape=[sam_size],
         name="Cloudy")
 
-    arr_Rain = np.array([[ 0.4,  0.6],
-       [ 0.5,  0.5]])
-    ten_Rain = tf.convert_to_tensor(arr_Rain, dtype=tf.float32)
+    alpha_Rain = np.array([[ 1.,  1.],
+       [ 1.,  1.]])
+    probs_Rain = edm.Dirichlet(
+        alpha_Rain.astype(np.float32), name='probs_Rain')
     p_Rain = tf.stack([
-        ten_Rain[Cloudy[j], :]
+        probs_Rain[Cloudy[j], :]
         for j in range(sam_size)])
     Rain = edm.Categorical(
         probs=p_Rain, name='Rain')
@@ -48,12 +49,17 @@ with tf.name_scope('model'):
 with tf.name_scope('posterior'):
     # Cloudy = placeholder
 
-    Rain_ph = tf.placeholder(tf.int32, shape=[sam_size],
-        name="Rain_ph")
+    emp_probs_Rain_q = edm.Empirical(
+        tf.get_variable('emp_Rain_q', shape=(sam_size, 2, 2),
+        initializer=tf.constant_initializer(0.5)),
+        name='probs_Rain_q')
+    propo_Rain_q = edm.Normal(loc=emp_probs_Rain_q, scale=0.1)
 
-    probs_Sprinkler_q = edm.Dirichlet(tf.nn.softplus(
-        tf.get_variable('pos_Sprinkler_q', shape=(2, 2))),
+    emp_probs_Sprinkler_q = edm.Empirical(
+        tf.get_variable('emp_Sprinkler_q', shape=(sam_size, 2, 2),
+        initializer=tf.constant_initializer(0.5)),
         name='probs_Sprinkler_q')
+    propo_Sprinkler_q = edm.Normal(loc=emp_probs_Sprinkler_q, scale=0.1)
 
     WetGrass_ph = tf.placeholder(tf.int32, shape=[sam_size],
         name="WetGrass_ph")
