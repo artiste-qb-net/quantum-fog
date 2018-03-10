@@ -324,7 +324,7 @@ class ModelMaker:
 
     @staticmethod
     def write_edward_model_for_param_learning(file_prefix, bnet,
-            obs_vertices, inf_method='Var', propo_scale=.1):
+            obs_vertices, inf_method='Var', propo_scale=.05):
         """
         Writes a .py file containing an edward (external software) 'model'
         for parameter learning based on bnet. By parameter learning, we mean
@@ -467,22 +467,22 @@ class ModelMaker:
                     if inf_method == 'Var':
                         f.write(w4 + 'probs_' + vtx + "_q" +
                                 " = edm.Dirichlet(tf.nn.softplus(\n" + w8 +
-                                "tf.get_variable('pos_" +
+                                "tf.get_variable('var_" +
                                 vtx + "_q', shape=" +
                                 shape_str + ")),\n" +
                                 w8 + "name='probs_" + vtx + "_q')\n\n")
                     elif inf_method == 'MC':
-                        f.write(w4 + 'emp_probs_' + vtx + "_q" +
-                                " = edm.Empirical(\n" + w8 +
-                                "tf.get_variable('emp_" +
+                        f.write(w4 + 'emp_' + vtx + "_q" +
+                                " = edm.Empirical(tf.nn.softmax(\n" + w8 +
+                                "tf.get_variable('var_" +
                                 vtx + "_q', shape=" +
                                 sam_shape_str + ",\n" +
                                 w8 + 'initializer=' +
-                                'tf.constant_initializer(0.5)),\n' +
-                                w8 + "name='probs_" + vtx + "_q')\n")
+                                'tf.constant_initializer(0.5))),\n' +
+                                w8 + "name='emp_" + vtx + "_q')\n")
                         f.write(w4 + 'propo_' + vtx + "_q" +
                                 " = edm.Normal(" +
-                                'loc=emp_probs_' + vtx +
+                                'loc=emp_' + vtx +
                                 "_q, scale=" + str(propo_scale) + ")\n\n")
                     else:
                         assert False, "Unexpected inference method."

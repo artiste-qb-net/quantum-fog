@@ -52,7 +52,7 @@ with tf.name_scope('posterior'):
         name="Rain_ph")
 
     probs_Sprinkler_q = edm.Dirichlet(tf.nn.softplus(
-        tf.get_variable('pos_Sprinkler_q', shape=(2, 2))),
+        tf.get_variable('var_Sprinkler_q', shape=(2, 2))),
         name='probs_Sprinkler_q')
 
     WetGrass_ph = tf.placeholder(tf.int32, shape=[sam_size],

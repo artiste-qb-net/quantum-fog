@@ -49,17 +49,17 @@ with tf.name_scope('model'):
 with tf.name_scope('posterior'):
     # Cloudy = placeholder
 
-    emp_probs_Rain_q = edm.Empirical(
-        tf.get_variable('emp_Rain_q', shape=(sam_size, 2, 2),
-        initializer=tf.constant_initializer(0.5)),
-        name='probs_Rain_q')
-    propo_Rain_q = edm.Normal(loc=emp_probs_Rain_q, scale=0.1)
+    emp_Rain_q = edm.Empirical(tf.nn.softmax(
+        tf.get_variable('var_Rain_q', shape=(sam_size, 2, 2),
+        initializer=tf.constant_initializer(0.5))),
+        name='emp_Rain_q')
+    propo_Rain_q = edm.Normal(loc=emp_Rain_q, scale=0.05)
 
-    emp_probs_Sprinkler_q = edm.Empirical(
-        tf.get_variable('emp_Sprinkler_q', shape=(sam_size, 2, 2),
-        initializer=tf.constant_initializer(0.5)),
-        name='probs_Sprinkler_q')
-    propo_Sprinkler_q = edm.Normal(loc=emp_probs_Sprinkler_q, scale=0.1)
+    emp_Sprinkler_q = edm.Empirical(tf.nn.softmax(
+        tf.get_variable('var_Sprinkler_q', shape=(sam_size, 2, 2),
+        initializer=tf.constant_initializer(0.5))),
+        name='emp_Sprinkler_q')
+    propo_Sprinkler_q = edm.Normal(loc=emp_Sprinkler_q, scale=0.05)
 
     WetGrass_ph = tf.placeholder(tf.int32, shape=[sam_size],
         name="WetGrass_ph")
