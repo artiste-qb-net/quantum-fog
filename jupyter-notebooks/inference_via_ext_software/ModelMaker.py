@@ -57,7 +57,8 @@ class ModelMaker:
         ----------
         bnet : BayesNet
         f : file stream
-            file stream for writing that is returned by open()
+            file stream (for writing) that is returned by open()
+
         Returns
         -------
         list[str], list[str]

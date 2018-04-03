@@ -40,7 +40,7 @@ class ModelMaker_Edward:
         Returns
         -------
         mod_file : str
-            path to generated py file
+            path to model .py file
 
         """
         w4 = '    '  # 4 white spaces
@@ -138,7 +138,7 @@ class ModelMaker_Edward:
         Returns
         -------
         mod_file : str
-            path to generated py file
+            path to model .py file
 
         """
         w4 = '    '  # 4 white spaces

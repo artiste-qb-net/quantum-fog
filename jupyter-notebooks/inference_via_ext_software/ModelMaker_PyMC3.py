@@ -12,21 +12,21 @@ class ModelMaker_PyMC3:
     This class has no constructor. All its methods are static. Each model
     writing method takes a BayesNet bnet as input and outputs a .py file
     containing a 'model' of bnet for PyMC3. PyMC3 is an external software
-    package for doing "Deep Probabilistic Programming". The following parmaters
-    often arise:
+    package for doing "Deep Probabilistic Programming". The following
+    parameters often arise in the functions of this class:
 
     file_prefix : str
         file prefix for .py file that will contain the model.
     bnet : BayesNet
         BayesNet object that is translated to model
     obs_vertices : 'all' | 'none' | None | list[str]
-         list of node names (aka vertices). Can also be 'all' if all
-         nodes are observed and 'none' or None if none are. If vtx is in
-         this list, the categorical dist of the vtx has 'observed=data_'
-         + vtx as one of its arguments. The user must define 'data_' =
-         vtx before using this script. Nodes that are not observed are
-         said to be 'latent'. Latent nodes that are also root nodes are
-         often called "parameters".
+         list of node names (aka vertices). Can also be 'all' if all nodes
+         are observed and 'none' or None if none are. If vtx is in this
+         list, the categorical dist of the vtx has 'observed=data_' + vtx as
+         one of its arguments. The user must define 'data_' + vtx before
+         using this script. Nodes that are not observed are said to be
+         'latent'. Latent nodes that are also root nodes are often called
+         "parameters".
 
     """
 
@@ -46,7 +46,7 @@ class ModelMaker_PyMC3:
         Returns
         -------
         mod_file : str
-            path to generated py file
+            path to model .py file
 
         """
         model_name = 'mod'
@@ -137,7 +137,7 @@ class ModelMaker_PyMC3:
         Returns
         -------
         mod_file : str
-            path to generated py file
+            path to model .py file
 
         """
 
