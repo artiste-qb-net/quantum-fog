@@ -152,6 +152,8 @@ if __name__ == "__main__":
     from examples_qbnets.QuWetGrass import *
 
     def main():
+        np.random.seed(1234)
+
         is_quantum = False
         num_samples = 2000
         use_int_sts = True
