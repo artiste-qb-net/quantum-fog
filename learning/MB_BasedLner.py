@@ -97,7 +97,7 @@ class MB_BasedLner(NetStrucLner):
 
         Returns
         -------
-        None
+
 
 
         """

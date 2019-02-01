@@ -49,7 +49,7 @@ class ChowLiuTreeLner(NetStrucLner):
 
         Returns
         -------
-        None
+
 
         """
         NetStrucLner.__init__(self, False,

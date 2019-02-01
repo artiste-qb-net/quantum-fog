@@ -16,8 +16,8 @@ class BifTool:
     fill their own native attributes.
 
     This class can handle both real and complex valued CPT = Conditional
-    Probability Distribution. real positive CPT for CBnets (
-    is_quantum==False) and complex CPT for QBnets (is_quantum==True)
+    Probability Table. real positive CPT for CBnets (is_quantum==False) and
+    complex CPT for QBnets (is_quantum==True)
 
     As an example, here is the famous Asia network in bif format:
 

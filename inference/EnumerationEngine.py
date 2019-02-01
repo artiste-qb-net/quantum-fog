@@ -40,7 +40,7 @@ class EnumerationEngine(InferenceEngine):
 
         Returns
         -------
-        None
+
 
         """
         InferenceEngine.__init__(self, bnet, verbose, is_quantum)

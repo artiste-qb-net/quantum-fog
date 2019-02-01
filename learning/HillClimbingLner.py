@@ -65,7 +65,7 @@ class HillClimbingLner(NetStrucLner):
 
         Returns
         -------
-        None
+
 
         """
 

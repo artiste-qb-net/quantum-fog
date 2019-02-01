@@ -39,7 +39,7 @@ class MB_GrowShrinkLner(MB_BasedLner):
 
         Returns
         -------
-        None
+
 
 
         """

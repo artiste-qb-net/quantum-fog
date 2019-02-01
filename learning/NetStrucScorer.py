@@ -86,7 +86,7 @@ class NetStrucScorer:
 
         Returns
         -------
-        None
+
 
         """
         self.states_df = states_df

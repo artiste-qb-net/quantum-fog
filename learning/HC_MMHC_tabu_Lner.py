@@ -62,7 +62,7 @@ class HC_MMHC_tabu_Lner(HC_TabuLner):
 
         Returns
         -------
-        None
+
 
         """
         # this is a good default value

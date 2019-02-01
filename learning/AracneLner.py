@@ -55,7 +55,7 @@ class AracneLner(ChowLiuTreeLner):
 
         Returns
         -------
-        None
+
 
         """
         ChowLiuTreeLner.__init__(self, states_df, vtx_to_states)

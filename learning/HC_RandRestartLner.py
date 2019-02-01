@@ -68,7 +68,7 @@ class HC_RandRestartLner(HillClimbingLner):
 
         Returns
         -------
-        None
+
 
         """
         self.num_starts = num_starts

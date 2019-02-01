@@ -53,7 +53,7 @@ class MB_lambda_IAMB_Lner(MB_BasedLner):
 
         Returns
         -------
-        None
+
 
         """
         self.lam = lam

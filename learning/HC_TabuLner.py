@@ -61,7 +61,7 @@ class HC_TabuLner(HillClimbingLner):
 
         Returns
         -------
-        None
+
 
         """
 

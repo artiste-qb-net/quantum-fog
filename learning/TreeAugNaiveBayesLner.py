@@ -43,7 +43,7 @@ class TreeAugNaiveBayesLner(NetStrucLner):
 
         Returns
         -------
-        None
+
 
         """
 

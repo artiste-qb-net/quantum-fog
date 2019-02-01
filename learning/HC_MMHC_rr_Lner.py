@@ -61,7 +61,7 @@ class HC_MMHC_rr_Lner(HC_RandRestartLner):
 
         Returns
         -------
-        None
+
 
         """
         # this is a good default value

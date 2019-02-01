@@ -52,7 +52,7 @@ class MB_MMPC_Lner(MB_BasedLner):
 
         Returns
         -------
-        None
+
 
         """
         MB_BasedLner.__init__(self, states_df, alpha, verbose,

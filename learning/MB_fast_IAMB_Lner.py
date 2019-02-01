@@ -46,7 +46,7 @@ class MB_fast_IAMB_Lner(MB_BasedLner):
 
         Returns
         -------
-        None
+
 
         """
         self.min_sam_per_cell = min_sam_per_cell

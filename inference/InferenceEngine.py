@@ -31,7 +31,7 @@ class InferenceEngine:
 
         Returns
         -------
-        None
+
 
         """
         self.bnet = bnet
