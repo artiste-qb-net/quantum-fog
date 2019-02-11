@@ -98,9 +98,21 @@ def run_gui(bnet):
             ax.set_xticks([0, .25, .5, .75, 1])
             ax.set_xlim(0, 1)
 
+            for row in range(len(y_pos)):
+                val = pd_df.values[row]
+                if isinstance(val, np.ndarray):
+                    val = val[0]
+                ax.text(val, y_pos[row], '{:.3f}'.format(val))
+
             ax.grid(True)
             ax.set_title(node_name)
-            ax.barh(y_pos, pd_df.values, align='center')
+            # new version of python/matplotlib has bug here.
+            # The following used to work but no longer does.
+            # ax.barh(y_pos, pd_df.values, align='center')
+            # work around
+            for b in range(len(y_pos)):
+                ax.barh(y_pos[b], pd_df.values[b],
+                        align='center', color='blue')
 
     def run_wdg_do(b):
         # clear_output()
