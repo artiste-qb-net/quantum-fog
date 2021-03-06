@@ -2,7 +2,7 @@ from potentials.DiscreteCondPot import *
 from nodes.BayesNode import *
 import math
 import cmath
-import Utilities as ut
+import misc.Utilities as ut
 
 
 class BeamSplitter(BayesNode):

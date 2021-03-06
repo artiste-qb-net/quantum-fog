@@ -6,8 +6,8 @@
 
 from potentials.Potential import *
 # from DiscreteUniPot import *
-import Utilities as ut
-from MyExceptions import UnNormalizablePot
+import misc.Utilities as ut
+from misc.MyExceptions import UnNormalizablePot
 
 
 class DiscreteCondPot(Potential):

@@ -3,7 +3,7 @@ from potentials.DiscreteCondPot import *
 from prefabricated_nodes.BeamSplitter import *
 import math
 import cmath
-import Utilities as ut
+import misc.Utilities as ut
 
 
 class Polarizer(BayesNode):

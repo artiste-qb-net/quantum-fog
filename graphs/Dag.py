@@ -6,7 +6,7 @@ import networkx as nx
 
 
 from graphs.Graph import *
-from MyExceptions import BadGraphStructure
+from misc.MyExceptions import BadGraphStructure
 
 
 class Dag(Graph):

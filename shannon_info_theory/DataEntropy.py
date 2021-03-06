@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-import Utilities as ut
+import misc.Utilities as ut
 
 
 class DataEntropy:

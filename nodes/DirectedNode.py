@@ -3,7 +3,7 @@
 
 
 from nodes.Node import *
-# from MyExceptions import *
+# from misc.MyExceptions import *
 
 
 class DirectedNode(Node):

@@ -7,7 +7,7 @@ import pandas as pd
 
 from graphs.Dag import *
 from nodes.BayesNode import *
-from BifTool import *
+from misc.BifTool import *
 from potentials.DiscreteUniPot import *
 
 

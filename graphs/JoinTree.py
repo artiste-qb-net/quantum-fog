@@ -6,7 +6,7 @@
 # from nodes.Sepset import *
 from graphs.BayesNet import *
 from graphs.TriangulatedGraph import *
-# from MyExceptions import *
+# from misc.MyExceptions import *
 
 
 class JoinTree(Graph):

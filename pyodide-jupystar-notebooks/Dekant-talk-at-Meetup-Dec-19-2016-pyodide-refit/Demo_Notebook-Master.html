@@ -1,0 +1,402 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Starboard Notebook</title>
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <link href="http://localhost:8000/dist/starboard-notebook.css" rel="stylesheet">
+    </head>
+    <body>
+        <script>
+            // The content of the notebook as a string, remember to escape the string properly.
+            window.initialNotebookContent = `
+# %% [markdown]
+# Jupystar Notebook refitting - Demo_Notebook-Master
+
+# %% [markdown]
+### Pyodide notes and limitations
+* Multi-processing and networking are not supported by the barebone OS
+* Package needs to be served and imported by micropip
+* To import Quantum-fog, several changes needed to be made. Nothing major but a large part of it is to package top level module (i.e. utilities) into a subfolders for reference.
+* Libraries that requires language other than python (i.e. C/C++) will probably need to compile with pyodide before it will function. Micropip only able to import pure python whl.
+* Currently the starboard page is served thru a web server. I would imagine we still need to serve the page but all code is ran in browser.
+* All support files (img, whl) still need to sever thru the webserver to avoid CORS
+
+### Starboard notes and limitations
+* Chose Starboard as Iodide is sunsetting
+* Starboard is a young project. Although it works quite well but support is limited.
+* A very small development community
+* Documentation is limited.
+* Powerful and solid notebook feature. So far no major bugs have been uncovered.
+* GO is needed to run the notebook management service (i.e. edit, save etc.). For now will only host static ones with html file.
+
+
+# %% [markdown]
+> ezvis3d is not working on Jypystar. Need to find a 3d lib. No need to run the following block.
+
+# %% [plaintext]
+import warnings
+warnings.filterwarnings("ignore", module="matplotlib")
+
+from __future__ import division
+
+import os, sys
+import numpy as np
+import pandas as pd
+import datetime as dt
+import random as rd
+
+from IPython.display import display
+from math import sin, cos, pi, sqrt
+
+import ezvis3d as v3d
+
+def z(x, y):
+    return 50+ sin(x/50) * cos(y/50) * 50
+
+x_min = 0
+x_max = 314
+x_num = 50
+
+x_rng = np.linspace(x_min, x_max, x_num)
+y_rng = x_rng
+li_data = [{'x': x, 'y': y, 'z': z(x, y)}
+            for y in y_rng
+            for x in x_rng]
+df_data = pd.DataFrame(li_data)
+
+g = v3d.Vis3d()
+g.width = '600px'
+g.height = '600px'
+g.style = 'surface'
+g.showPerspective = True
+g.showGrid = True
+g.showShadow = False
+g.keepAspectRatio = True
+g.verticalRatio = 0.7
+g.cameraPosition = {'horizontal' : 0.9,
+                    'vertical': 0.4,
+                    'distance': 1.5
+                   }
+
+g.plot(df_data, save=True)
+
+# %% [markdown]
+> Start running from here -->
+
+
+# %% [markdown]
+### Pyodide specific setup
+# %% [python]
+import micropip, sys, os
+# %% [python]
+micropip.install('http://localhost:8000/dist/quantum_fog-0.0.1-py3-none-any.whl')
+micropip.install('http://localhost:8000/dist/pydot-1.4.2-py2.py3-none-any.whl')
+micropip.install('http://localhost:8000/dist/pydotplus-2.0.2-py3-none-any.whl')
+micropip.install('http://localhost:8000/dist/graphviz-0.16-py2.py3-none-any.whl')
+
+# %% [markdown]
+### Lib imports
+# %% [python]
+import matplotlib.pyplot as plt
+import networkx as nx, pandas as pd, pydotplus as pdp, pydot
+from graphviz import Digraph, Source
+
+# %% [markdown]
+### On to Bayesian Networks!
+Now let's get into Bayesian Networks!
+One of the simplest networks can be used to illustrate a puzzle that is almost as ubiquous in pop culture as Schrödinger's cat.
+The Monty Hall problem illustrates perfectly how difficult it is for humans to properly reason under uncertainty.
+
+# %% [html]
+<img src="http://localhost:8000/dist/X-Mess_Monty_Hall.png" alt="Hall"> 
+
+# %% [python]
+from graphs.BayesNet import *
+bif_data = pyodide.open_url('http://localhost:8000/dist/Monty_Hall.bif')
+f = open('Monty_Hall.bif', 'w')
+f.write(bif_data.getvalue())
+f.close()
+
+dot_data = pyodide.open_url('http://localhost:8000/dist/Monty_Hall.dot')
+f = open('Monty_Hall.dot', 'w')
+f.write(dot_data.getvalue())
+f.close()
+
+path_bif = 'Monty_Hall.bif'
+bnet = BayesNet.read_bif(path_bif, False) # The flag value False indicates that this is a classical B-net
+path_dot = 'Monty_Hall.dot'
+bnet.write_dot(path_dot)
+file = open(path_dot, 'r')#READING DOT FILE
+MHdot=file.read()
+Source(MHdot)
+
+# %% [python]
+import types
+for node in bnet.nodes:
+    print("name: ", node.name)
+    print("parents: ", [x.name for x in node.parents])
+    print("children: ", [x.name for x in node.children])
+    print("pot_arr: \\n", node.potential.pot_arr)
+   
+    if isinstance(node.potential.pot_arr[0], float):
+        print("pot_arr: \\n", ["{:.1%}".format(p) for p in node.potential.pot_arr])
+    else:
+        print("pot_arr: \\n")
+        [print([["{:.0%}".format(p) for p in b] for b in a]) for a in node.potential.pot_arr]
+    print("\\n")
+
+# %% [markdown]
+To perform some inference on this B-Net we will need the list of the network's nodes:
+
+# %% [python]
+id_nums = sorted([node.id_num for node in bnet.nodes])
+node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
+print(node_list)
+
+# %% [markdown]
+Now we can instantiate an Inference Engine. For small networks we can always brute force it. For larger ones Quantum Fog provides an MCMC (Markov Chain Monte Carlo) inference engine.
+# %% [python]
+from inference.EnumerationEngine import *
+brute_eng = EnumerationEngine(bnet)
+
+# %% [markdown]
+Now we can enumerate the probabilities for all random variable combinations i.e. a full joint probability table.
+# %% [python]
+brute_pot_list = brute_eng.get_unipot_list(node_list,
+            print_stories=True, print_format='text', events='nonull', pot_val_format='Fraction')
+Source(MHdot)
+
+# %% [markdown]
+We can introduce evidence by hard-wiring the states of nodes. Since this reinitialized the graph we need to enumerate over the nodes again to get the current node list, used for marginalizing the probability distribution.
+# %% [python]
+bnet.get_node_named("1st_Choice").active_states = [1]
+bnet.get_node_named("Monty_Opens").active_states = [0]
+bnet.get_node_named("Prize").active_states = [0,1,2]
+brute_eng = EnumerationEngine(bnet)
+id_nums = sorted([node.id_num for node in bnet.nodes])
+node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
+pot_list = brute_eng.get_unipot_list(node_list, normalize=True, 
+            print_stories=True, print_format='text', events='nonull', pot_val_format='Fraction')
+
+# %% [python]
+def single_pd(ax, node_name, pd_df):
+    y_pos = np.arange(len(pd_df.index)) + .5
+    plt.sca(ax)
+    plt.yticks(y_pos, pd_df.index)
+    ax.invert_yaxis()
+
+    ax.set_xticks([0, .25, .5, .75, 1])
+    ax.set_xlim(0, 1)
+
+    ax.grid(True)
+    ax.set_title(node_name)
+    ax.barh(y_pos, pd_df.values.flatten(), align='center')
+df=[p.pot_arr.tolist() for p in pot_list if p.focus_node.name == 'Prize']
+pd_df=pd.DataFrame(np.array(df[0]), index = [0,1,2])
+plt.figure(figsize=(5,2))
+ax_list = plt.gca()
+single_pd(ax_list, 'Chance of Winning After Selecting Door 1 ', pd_df)
+plt.show()
+
+# %% [python]
+bif_data = pyodide.open_url('http://localhost:8000/dist/student.bif')
+f = open('student.bif', 'w')
+f.write(bif_data.getvalue())
+f.close()
+dot_data = pyodide.open_url('http://localhost:8000/dist/student.dot')
+f = open('student.dot', 'w')
+f.write(dot_data.getvalue())
+f.close()
+path_bif = 'student.bif'
+bnet = BayesNet.read_bif(path_bif, False)
+path_dot = 'student.dot'
+file = open(path_dot, 'r')#READING DOT FILE
+text=file.read()
+Source(text)
+
+# %% [python]
+id_nums = sorted([node.id_num for node in bnet.nodes])
+node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
+print(node_list)
+
+# %% [python]
+brute_eng = EnumerationEngine(bnet)
+id_nums = sorted([node.id_num for node in bnet.nodes])
+node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
+pot_list = brute_eng.get_unipot_list(node_list, 
+        print_stories=True, print_format='text', pot_val_format='Percentage') # {:.2%}')
+Source(text)
+
+# %% [python]
+bnet.get_node_named("Letter").active_states = [1]
+brute_eng = EnumerationEngine(bnet)
+id_nums = sorted([node.id_num for node in bnet.nodes])
+node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
+pot_list = brute_eng.get_unipot_list(node_list, normalize=True,
+        print_stories=True, print_format='text', pot_val_format='Percentage')
+Source(text)
+
+# %% [python]
+bnet.get_node_named("Grade").active_states = [2]
+brute_eng = EnumerationEngine(bnet)
+id_nums = sorted([node.id_num for node in bnet.nodes])
+node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
+pot_list = brute_eng.get_unipot_list(node_list, normalize=True,
+        print_stories=True, print_format='text', pot_val_format='Percentage')
+Source(text)
+
+# %% [python]
+bnet.get_node_named("Intelligence").active_states = [1]
+bnet.get_node_named("Grade").active_states = [0]
+bnet.get_node_named("Grade").active_states = [0]
+brute_eng = EnumerationEngine(bnet)
+id_nums = sorted([node.id_num for node in bnet.nodes])
+node_list = [bnet.get_node_with_id_num(k) for k in id_nums]
+pot_list = brute_eng.get_unipot_list(node_list, normalize=True,
+        print_stories=True, print_format='text', pot_val_format='Percentage')
+Source(text)
+
+# %% [markdown]
+The following shows the classic "Asian" Bayesian Network example (Lauritzen&Spiegelhalter88) slightly updated to bring it into the 21st century, where you would have to visit TB High Risk Areas (HRA) in Asia in order to get a meaningfull conditional probability.
+# %% [python]
+from graphs.BayesNet import *
+bif_data = pyodide.open_url('http://localhost:8000/dist/asia.bif')
+f = open('asia.bif', 'w')
+f.write(bif_data.getvalue())
+f.close()
+dot_data = pyodide.open_url('http://localhost:8000/dist/asia.dot')
+f = open('asia.dot', 'w')
+f.write(dot_data.getvalue())
+f.close()
+path_bif = 'asia.bif'
+bnet = BayesNet.read_bif(path_bif, False)
+path_dot = 'asia.dot'
+file = open(path_dot, 'r')#READING DOT FILE
+text=file.read()
+Source(text)
+
+# %% [python]
+from graphs.BayesNet import *
+bif_data = pyodide.open_url('http://localhost:8000/dist/earthquake.bif')
+f = open('earthquake.bif', 'w')
+f.write(bif_data.getvalue())
+f.close()
+dot_data = pyodide.open_url('http://localhost:8000/dist/earthquake.dot')
+f = open('earthquake.dot', 'w')
+f.write(dot_data.getvalue())
+f.close()
+path_bif = 'earthquake.bif'
+bnet = BayesNet.read_bif(path_bif, False)
+path_dot = 'earthquake.dot'
+file = open(path_dot, 'r')#READING DOT FILE
+text=file.read()
+Source(text)
+
+# %% [markdown]
+# Hamilton Principle And Feynman Path Integrals
+
+# %% [html]
+<img src="http://localhost:8000/dist/Least_action_principle.svg" alt="LAP"> 
+
+# %% [markdown]
+Action functional over generalized coordinates: ....
+
+# %% [html]
+<img src="http://localhost:8000/dist/Two-Slit_Experiment_Approximation.svg" alt="TwoSlit"> 
+
+# %% [html]
+<img src="http://localhost:8000/dist/still_interference_dots_smear_boxes.jpg" alt="smearboxes"> 
+
+# %% [markdown]
+Light has properties associated with a wave (e.g. interference and diffraction) and properties associated with particles (local interactions, quantised properties). For many of us, 'photon' connotes particles. So, thinking about a particular photon that gave rise to one of the clicks we heard, we may ask: which slit did it go through? And, if it went through a slit, why is there interference? How did it 'know' about the other slit?
+
+The difference between single and double slit patterns is readily explained using the wave model for light
+
+At a point of destructive interference (e.g. yellow rectangle at left), the electric field components from the two slits are 180° out of phase, so they cancel out, which gives zero intensity. And zero intensity means zero photons.
+
+# %% [python]
+from graphs.BayesNet import *
+bif_data = pyodide.open_url('http://localhost:8000/dist/YoungDoubleSlit.bif')
+f = open('YoungDoubleSlit.bif', 'w')
+f.write(bif_data.getvalue())
+f.close()
+dot_data = pyodide.open_url('http://localhost:8000/dist/YoungDoubleSlit.dot')
+f = open('YoungDoubleSlit.dot', 'w')
+f.write(dot_data.getvalue())
+f.close()
+path_bif = 'YoungDoubleSlit.bif'
+qbnet = BayesNet.read_bif(path_bif, True)
+path_dot = 'YoungDoubleSlit.dot'
+file = open(path_dot, 'r')#READING DOT FILE
+text=file.read()
+Source(text)
+
+# %% [markdown]
+This simple QB-Network can capture the seaming paradox of Young's double slit experiment. When we don't measure what path a photon takes than we don't condition on the nodes NL or NR (couter N for Left or Right slit).
+# %% [python]
+pd_df_list=[None] * 2
+id_nums = sorted([node.id_num for node in qbnet.nodes])
+node_list = [qbnet.get_node_with_id_num(k) for k in id_nums]
+
+# this is simpler but erratic
+# node_list = list(bnet.nodes)
+
+brute_eng = EnumerationEngine(qbnet, is_quantum=True)
+brute_pot_list = brute_eng.get_unipot_list(node_list,
+        print_stories=True, print_format='text')
+df=[p.pot_arr.tolist() for p in brute_pot_list if p.focus_node.name == 'Screen']
+pd_df_list[0]=pd.DataFrame(np.array(df[0]), index = ['Spot','Other'])
+[print(p) for p in brute_pot_list]
+
+# %% [markdown]
+We chose a Spot in the area of destructive interference (e.g. yellow rectangle at left in above photo). When no measurement i.e. conditioning on any of the slits is performed this means we have zero probability to find a photon in this area of the screen.
+
+Note we are now dealing with complex probability potentials, in the unconditioned case this means the total complex amplitude has to square to 1. Diviations form one give us an indication of the numerical stability of the QB-net inference.
+
+# %% [python]
+0.710672061737**2+0.703526440298**2
+
+# %% [markdown]
+Now we restrict the possible Feynman paths by measuring if a photon goes through the left slit, i.e. setting the active state space of the NL node to 1 only.
+
+# %% [python]
+qbnet.get_node_named("NL").active_states = [1]
+id_nums = sorted([node.id_num for node in qbnet.nodes])
+node_list = [qbnet.get_node_with_id_num(k) for k in id_nums]
+
+# this is simpler but erratic
+# node_list = list(bnet.nodes)
+
+brute_eng = EnumerationEngine(qbnet, is_quantum=True)
+brute_pot_list = brute_eng.get_unipot_list(node_list, print_stories=True, print_format='text')
+df=[p.pot_arr.tolist() for p in brute_pot_list if p.focus_node.name == 'Screen']
+pd_df_list[1]=pd.DataFrame(np.array(df[0]), index = ['Spot','Other'])
+[print(p) for p in brute_pot_list]
+print(pd_df_list[1])
+
+# %% [python]
+scenarios = ['No Measurement', 'Measurement on Left Screen']
+fig, ax_list = plt.subplots(nrows=2, ncols=1)
+for k, vtx in enumerate(scenarios):
+    single_pd(ax_list[k], vtx, pd_df_list[k])
+plt.tight_layout()
+plt.show()
+
+# %% [html]
+<img src="http://localhost:8000/dist/Richard-Feynman.jpg" alt="Feyman"> 
+
+# %% [markdown]
+To finish with an obligatory Feynman quote:
+
+    “In two slit interference, quantum mechanics cannot determine which slit the electron went through.”
+
+    This statement reflects not the poverty of quantum mechanics, but its richness. In classical mechanics, an electron must have a position — it must pass through one slit or the other. In quantum mechanics an electron might have a position, but there is an infinitely rich variety of other possibilities as well.
+    It is no failure of our instruments that they cannot measure what does not exist.
+
+
+`;
+        </script>
+        <script src="http://localhost:8000/dist/starboard-notebook.js"></script>
+    </body>
+</html>

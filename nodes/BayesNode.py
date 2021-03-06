@@ -4,7 +4,7 @@
 import itertools as it
 
 from nodes.DirectedNode import *
-import Utilities as ut
+import misc.Utilities as ut
 
 
 class BayesNode(DirectedNode):

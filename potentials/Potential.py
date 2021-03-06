@@ -4,7 +4,7 @@
 import numpy as np
 import copy as cp
 
-import Utilities as ut
+import misc.Utilities as ut
 from nodes.BayesNode import *
 
 

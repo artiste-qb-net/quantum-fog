@@ -1,17 +1,17 @@
 # Most of the code in this file comes from PBNT by Elliot Cohen. See
 # separate file in this project with PBNT license.
 
+import sys
 import itertools as it
 from inference.InferenceEngine import *
 from potentials.DiscreteUniPot import *
 # noinspection PyUnresolvedReferences
 import xml.etree.ElementTree as xet
-from IPython.display import display, HTML
 from collections import OrderedDict
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-import Utilities as ut
+import misc.Utilities as ut
 
 
 class EnumerationEngine(InferenceEngine):
@@ -186,7 +186,9 @@ class EnumerationEngine(InferenceEngine):
                     total_cell2.text = total_pot_val_str
                 table_str = xet.tostring(table).decode('UTF-8')
                 # print(xet.tostring(table).decode('UTF-8'))
-                display(HTML(table_str))
+                if not 'display' in sys.modules:
+                    from IPython.display import display, HTML
+                    display(HTML(table_str))
 
         pot_list1 = []
         for pot in pot_list:

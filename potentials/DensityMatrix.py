@@ -2,7 +2,7 @@ from potentials.Potential import *
 import numpy as np
 import pandas as pd
 import copy as cp
-import Utilities as ut
+import misc.Utilities as ut
 
 
 class DensityMatrix:
