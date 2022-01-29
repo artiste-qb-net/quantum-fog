@@ -5,7 +5,7 @@
 class Node:
     """
     In its most basic form, a Graph is just a set of Node's. A BayesNode is
-    a DirectNode is a Node. Similarly, a BayesNet is a Dag is a Graph.
+    a DirectedNode is a Node. Similarly, a BayesNet is a Dag is a Graph.
 
 
     Attributes
