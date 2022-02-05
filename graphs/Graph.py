@@ -38,7 +38,8 @@ class Graph:
         -------
 
         """
-        self.nodes = nodes
+        # make copy of 'nodes'
+        self.nodes = set(nodes)
         self.num_nodes = len(self.nodes)
 
     def add_nodes(self, nodes):
