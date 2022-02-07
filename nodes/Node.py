@@ -16,9 +16,8 @@ class Node:
         Optional, preferably different for each node.
     neighbors : set[Nodes]
     topo_index : int
-        Initially defined to be equal to id_num. After a topological sort,
-        indices are permuted amongst the nodes so as to be in topological
-        order, root nodes having lowest topo_index.
+        int between 0 and num of nodes-1. parents always have lower
+        topo_index than chidren.
     visited : bool
 
     """

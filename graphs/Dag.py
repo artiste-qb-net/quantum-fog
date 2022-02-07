@@ -53,11 +53,12 @@ class Dag(Graph):
 
     def topological_sort(self):
         """
-        Orders nodes (permutes their topo_index's) such that no node is
-        before any of its parents. Node with lowest topo_index number is a
-        root node. So this could also be called a chronological or birthday
-        sort, youngest nodes first. Exception is raised if graph has cycles
-        and cannot be ordered topologically.
+        Assigns topo_index to each node. This is an int between 0 and number
+        of nodes -1, such that parents have lower topo_index than their
+        children. The node with the lowest topo_index is always a root node.
+        So this could also be called a chronological or birthday sort,
+        oldest nodes first. Exception is raised if graph has cycles and
+        cannot be ordered topologically.
 
         Returns
         -------
