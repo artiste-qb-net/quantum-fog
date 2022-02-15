@@ -524,9 +524,11 @@ class Potential:
             new = Potential(self.is_quantum,
                 self_only_nlist + overlap_nlist + right_only_nlist)
 
-            self.set_to_transpose(
+            self_copy = cp.deepcopy(self)
+            right_copy = cp.deepcopy(right)
+            self_copy.set_to_transpose(
                 self_only_nlist + overlap_nlist)
-            right.set_to_transpose(
+            right_copy.set_to_transpose(
                 overlap_nlist + right_only_nlist)
 
             self_slicex = [slice(None)]*(la+lb)
@@ -539,7 +541,7 @@ class Potential:
 
             # numpy array magic
             new.pot_arr = arr_op(
-                self[self_slicex], right[right_slicex])
+                self_copy[self_slicex], right_copy[right_slicex])
         return new
 
     def pot_iop(self, right, arr_iop):
