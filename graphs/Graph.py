@@ -293,6 +293,25 @@ class Graph:
                   sorted([x.name for x in node.neighbors]))
             print("\n")
 
+    def __str__(self):
+        """
+        Specifies the string outputted by print(obj) where obj is an object
+        of Graph.
+
+        Returns
+        -------
+        str
+
+        """
+        st = ""
+        for nd in self.nodes:
+            st += nd.name \
+                  + ", neighbors=" \
+                  + str([x.name for x in nd.neighbors]) \
+                  + "\n\n"
+        return st
+
+
 if __name__ == "__main__":
     from nodes.Node import *
 

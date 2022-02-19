@@ -205,6 +205,29 @@ class BayesNet(Dag):
             bt.pot_arrays[node.name] = node.potential.pot_arr
         bt.write_bif(path)
 
+    def __str__(self):
+        """
+        Specifies the string outputted by print(obj) where obj is an object
+        of BayesNet.
+
+        Returns
+        -------
+        str
+
+        """
+        st = ""
+        for nd in self.nodes:
+            st += nd.name \
+                  + ", parents=" \
+                  + str([x.name for x in nd.parents]) \
+                  + ", children=" \
+                  + str([x.name for x in nd.children]) \
+                  + "\n" \
+                  + str(nd.potential) \
+                  + "\n\n"
+        return st
+
+
 if __name__ == "__main__":
     from examples_cbnets.HuaDar import *
     from examples_qbnets.QuWetGrass import *

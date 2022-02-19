@@ -155,6 +155,27 @@ class Dag(Graph):
                 nx_graph.add_edge(nd.name, ch.name)
         return nx_graph
 
+    def __str__(self):
+        """
+        Specifies the string outputted by print(obj) where obj is an object
+        of Dag.
+
+        Returns
+        -------
+        str
+
+        """
+        st = ""
+        for nd in self.nodes:
+            st += nd.name \
+                  + ", parents=" \
+                  + str([x.name for x in nd.parents]) \
+                  + ", children=" \
+                  + str([x.name for x in nd.children]) \
+                  + "\n\n"
+        return st
+
+
 if __name__ == "__main__":
     from nodes.DirectedNode import *
 
