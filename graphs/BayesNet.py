@@ -132,6 +132,21 @@ class BayesNet(Dag):
                 nd.add_child(new_g.get_node_named(ch_name))
         return new_g
 
+    def get_nx_graph(self):
+        """
+        This method returns an nx.DiGraph with the same structure as self.
+
+        Returns
+        -------
+        nx.DiGraph
+
+        """
+        nx_graph = nx.DiGraph()
+        for pa_nd in self.nodes:
+            for ch_nd in pa_nd.children:
+                nx_graph.add_edge(pa_nd.name, ch_nd.name)
+        return nx_graph
+
     @staticmethod
     def read_bif(path, is_quantum):
         """
