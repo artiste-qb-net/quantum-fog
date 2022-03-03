@@ -274,5 +274,9 @@ if __name__ == "__main__":
         path1 = '../examples_qbnets/QuWetGrass1.bif'
         new_bnet = BayesNet.read_bif(path, True)
         new_bnet.write_bif(path1, True)
+
+        nx_graph = new_bnet.get_nx_graph()
+        print(nx_graph)
+
     main()
 
