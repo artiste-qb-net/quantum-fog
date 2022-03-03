@@ -8,6 +8,7 @@ import pandas as pd
 from graphs.Dag import *
 from nodes.BayesNode import *
 from BifTool import *
+from DotTool import *
 from potentials.DiscreteUniPot import *
 
 
@@ -219,6 +220,26 @@ class BayesNet(Dag):
             bt.parents[node.name] = parent_names
             bt.pot_arrays[node.name] = node.potential.pot_arr
         bt.write_bif(path)
+
+    def gv_draw(self, jupyter=True):
+        """
+        This method uses graphviz to draw self. It creates a temporary file
+        called tempo.png with a png of self. If jupyter=True, it embeds the png
+        in a jupyter notebook. If jupyter=False, it opens a window showing the
+        png.
+
+        Parameters
+        ----------
+        jupyter : bool
+
+        Returns
+        -------
+        None
+
+        """
+        path = "tempo.dot"
+        DotTool.write_dot_file_from_nx_graph(self.get_nx_graph(), path)
+        DotTool.draw(path, jupyter=jupyter)
 
     def __str__(self):
         """
