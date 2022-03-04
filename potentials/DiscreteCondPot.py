@@ -47,6 +47,24 @@ class DiscreteCondPot(Potential):
         Potential.__init__(self, is_quantum, ord_nodes, pot_arr, bias)
         self.focus_node = self.ord_nodes[-1]
 
+    def __deepcopy__(self, memo):
+        """
+        We want deepcopy to produce a copy of pot_arr but not of the nodes
+        in self.nodes so need to override the usual deepcopy.
+
+        Parameters
+        ----------
+        memo :
+
+        Returns
+        -------
+        DiscreteCondPot
+
+        """
+        copy_pot_arr = cp.deepcopy(self.pot_arr)
+        return DiscreteCondPot(self.is_quantum,
+                               ord_nodes=self.ord_nodes, pot_arr=copy_pot_arr)
+
     def get_probs_from_amps(self):
         """
         First checks that is_quantum=True and if so returns a new
@@ -154,24 +172,6 @@ class DiscreteCondPot(Potential):
         if brief:
             d = dict((name, prob) for name, prob in d.items() if prob < 1-1e-6)
         return d
-
-    def __deepcopy__(self, memo):
-        """
-        We want deepcopy to produce a copy of pot_arr but not of the nodes
-        in self.nodes so need to override the usual deepcopy.
-
-        Parameters
-        ----------
-        memo :
-
-        Returns
-        -------
-        DiscreteCondPot
-
-        """
-        copy_pot_arr = cp.deepcopy(self.pot_arr)
-        return DiscreteCondPot(self.is_quantum,
-                    ord_nodes=self.ord_nodes, pot_arr=copy_pot_arr)
 
 
 if __name__ == "__main__":

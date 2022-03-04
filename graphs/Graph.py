@@ -42,6 +42,30 @@ class Graph:
         self.nodes = set(nodes)
         self.num_nodes = len(self.nodes)
 
+    def __deepcopy__(self, memo):
+        """
+        Creates deep copy of self.
+
+        Parameters
+        ----------
+        memo :
+
+        Returns
+        -------
+        Graph
+
+        """
+        nd_to_new_nd = {}
+        for nd in self.nodes:
+            nd_to_new_nd[nd] = Node(nd.id_num, nd.name)
+        for nd, new_nd in nd_to_new_nd.items():
+            new_nd.neighbors = set([nd_to_new_nd[nd1]
+                                    for nd1 in nd.neighbors])
+            new_nd.topo_index = nd.topo_index
+            new_nd.visited = nd.visited
+
+        return Graph(set(nd_to_new_nd.values()))
+
     def add_nodes(self, nodes):
         """
         Add a set 'nodes' to existing set 'self.nodes'.

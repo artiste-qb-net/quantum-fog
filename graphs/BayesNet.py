@@ -36,6 +36,44 @@ class BayesNet(Dag):
         """
         Dag.__init__(self, nodes)
 
+    def __deepcopy__(self, memo):
+        """
+        Creates deep copy of self.
+
+        Parameters
+        ----------
+        memo : dict
+
+        Returns
+        -------
+        BayesNet
+
+        """
+        nd_to_new_nd = {}
+        for nd in self.nodes:
+            nd_to_new_nd[nd] = BayesNode(nd.id_num, nd.name)
+        for nd, new_nd in nd_to_new_nd.items():
+            new_nd.neighbors = set([nd_to_new_nd[nd1]
+                                    for nd1 in nd.neighbors])
+            new_nd.topo_index = nd.topo_index
+            new_nd.visited = nd.visited
+            new_nd.children = set([nd_to_new_nd[nd1]
+                                   for nd1 in nd.children])
+            new_nd.parents = set([nd_to_new_nd[nd1]
+                                  for nd1 in nd.parents])
+            # not in Dag:
+            new_nd.active_states = [x for x in nd.active_states]
+            new_pot_arr = cp.deepcopy(nd.potential.pot_arr)
+            new_ord_nodes = [nd_to_new_nd[nd1]
+                             for nd1 in nd.potential.ord_nodes]
+            new_nd.potential = Potential(nd.potential.is_quantum,
+                                         ord_nodes=new_ord_nodes,
+                                         pot_arr=new_pot_arr)
+            new_nd.size = nd.size
+            new_nd.state_names = [x for x in nd.state_names]
+
+        return BayesNet(set(nd_to_new_nd.values()))
+
     def add_nodes(self, nodes):
         """
         Add a set of nodes.
@@ -266,7 +304,7 @@ class BayesNet(Dag):
 
 if __name__ == "__main__":
     from examples_cbnets.HuaDar import *
-    from examples_qbnets.QuWetGrass import *
+    # from examples_qbnets.QuWetGrass import *
 
     def main():
 
@@ -299,5 +337,8 @@ if __name__ == "__main__":
         nx_graph = new_bnet.get_nx_graph()
         print(nx_graph)
 
-    main()
+        copy_bnet = cp.deepcopy(new_bnet)
+        print("copy_bnet\n", copy_bnet)
+
+main()
 

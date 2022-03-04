@@ -82,6 +82,24 @@ class Potential:
         else:
             self.set_all_entries_to(bias)
 
+    def __deepcopy__(self, memo):
+        """
+        We want deepcopy to produce a copy of pot_arr but not of the nodes
+        in self.nodes so need to override the usual deepcopy.
+
+        Parameters
+        ----------
+        memo : dict
+
+        Returns
+        -------
+        Potential
+
+        """
+        copy_pot_arr = cp.deepcopy(self.pot_arr)
+        return Potential(self.is_quantum,
+                         ord_nodes=self.ord_nodes, pot_arr=copy_pot_arr)
+
     def is_joint_prob_dist(self):
         """
         Returns True if pot is a classical joint prob distribution of all
@@ -296,7 +314,7 @@ class Potential:
 
         """
         return Potential(self.is_quantum,
-            self.ord_nodes, np.conjugate(self.pot_arr))
+                         self.ord_nodes, np.conjugate(self.pot_arr))
 
     @staticmethod
     def cc_of(pot):
@@ -314,7 +332,7 @@ class Potential:
 
         """
         return Potential(pot.is_quantum,
-            pot.ord_nodes, np.conjugate(pot.pot_arr))
+                         pot.ord_nodes, np.conjugate(pot.pot_arr))
 
     @staticmethod
     def mag(pot):
@@ -457,9 +475,9 @@ class Potential:
     @staticmethod
     def __safe_itruediv(xx, yy):
         """
-        Used instead of __itruediv__ (in place true division) for pots. 
-        Needed when dividing entrywise two pot_arr's yields either -inf, 
-        inf or nan. 
+        Used instead of __itruediv__ (in place true division) for pots.
+        Needed when dividing entrywise two pot_arr's yields either -inf,
+        inf or nan.
 
         Parameters
         ----------
@@ -522,7 +540,7 @@ class Potential:
             lc = len(right_only_nlist)
 
             new = Potential(self.is_quantum,
-                self_only_nlist + overlap_nlist + right_only_nlist)
+                            self_only_nlist + overlap_nlist + right_only_nlist)
 
             self_copy = cp.deepcopy(self)
             right_copy = cp.deepcopy(right)
@@ -568,7 +586,7 @@ class Potential:
         if isinstance(right, (int, float, complex)):
             arr_iop(self.pot_arr, right)
         else:
-            assert self.nodes >= right.nodes,\
+            assert self.nodes >= right.nodes, \
                 "can't add or mult *in place* unless self node set " \
                 "contains right node set"
             # nlist = node list
@@ -727,24 +745,6 @@ class Potential:
 
         return self.pot_iop(right, Potential.__safe_itruediv)
 
-    def __deepcopy__(self, memo):
-        """
-        We want deepcopy to produce a copy of pot_arr but not of the nodes
-        in self.nodes so need to override the usual deepcopy.
-
-        Parameters
-        ----------
-        memo :
-
-        Returns
-        -------
-        Potential
-
-        """
-        copy_pot_arr = cp.deepcopy(self.pot_arr)
-        return Potential(self.is_quantum,
-                    ord_nodes=self.ord_nodes, pot_arr=copy_pot_arr)
-
     def __str__(self):
         """
         Specifies the string outputted by print(obj) where obj is an object
@@ -756,7 +756,8 @@ class Potential:
 
         """
         return str([node.name for node in self.ord_nodes]) \
-            + "\n" + str(self.pot_arr)
+               + "\n" + str(self.pot_arr)
+
 
 if __name__ == "__main__":
     def main():
@@ -808,9 +809,9 @@ if __name__ == "__main__":
         # no need to specify dtype here because using decimal points
         ar_ecg = np.array(
             [[[0., 0.60000002],
-            [0., 0.30000001]],
-            [[0., 0.40000001],
-            [0., 0.69999999]]])
+              [0., 0.30000001]],
+             [[0., 0.40000001],
+              [0., 0.69999999]]])
         pot_ecg = Potential(False, [e_node, c_node, g_node], ar_ecg)
         print("pot_ecg:", pot_ecg)
 
@@ -824,11 +825,11 @@ if __name__ == "__main__":
         assert pot_abc != (new_abc + 5)
 
         print("distance(pot_abc, new_abc)=",
-                        Potential.distance(new_abc, pot_abc))
+              Potential.distance(new_abc, pot_abc))
         print("pot_abc == new_abc?", pot_abc == new_abc)
 
         print("distance(pot_abc, pot_bc)=",
-            Potential.distance(pot_abc, pot_bc))
+              Potential.distance(pot_abc, pot_bc))
         print("pot_abc == pot_bc?", pot_abc == pot_bc)
 
         print("\n-----------------try add, sub, mult")

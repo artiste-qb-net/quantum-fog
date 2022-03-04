@@ -84,6 +84,24 @@ class DensityMatrix:
         else:
             self.set_to_diag_mat(diag_val)
 
+    def __deepcopy__(self, memo):
+        """
+        We want deepcopy to produce a copy of dmat_arr but not of the nodes
+        in self.nodes so need to override the usual deepcopy.
+
+        Parameters
+        ----------
+        memo :
+
+        Returns
+        -------
+        DensityMatrix
+
+        """
+        copy_dmat_arr = cp.deepcopy(self.dmat_arr)
+        return DensityMatrix(
+            ord_nodes=self.ord_nodes, dmat_arr=copy_dmat_arr)
+
     def is_legal_dmat(self):
         """
         Returns True iff self is a legal density matrix; i.e. if dmat_arr,
@@ -811,24 +829,6 @@ class DensityMatrix:
 
         assert False
         
-    def __deepcopy__(self, memo):
-        """
-        We want deepcopy to produce a copy of dmat_arr but not of the nodes
-        in self.nodes so need to override the usual deepcopy.
-
-        Parameters
-        ----------
-        memo :
-
-        Returns
-        -------
-        DensityMatrix
-
-        """
-        copy_dmat_arr = cp.deepcopy(self.dmat_arr)
-        return DensityMatrix(
-                    ord_nodes=self.ord_nodes, dmat_arr=copy_dmat_arr)
-
     def __str__(self):
         """
         What string is outputted by print(dmat) where dmat is an object of

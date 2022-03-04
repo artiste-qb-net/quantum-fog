@@ -36,6 +36,24 @@ class DiscreteUniPot(DiscreteCondPot):
         """
         DiscreteCondPot.__init__(self, is_quantum, [node], pot_arr, bias)
 
+    def __deepcopy__(self, memo):
+        """
+        We want deepcopy to produce a copy of pot_arr but not of the nodes
+        in self.nodes so need to override the usual deepcopy.
+
+        Parameters
+        ----------
+        memo
+
+        Returns
+        -------
+        DiscreteUniPot
+
+        """
+        copy_pot_arr = cp.deepcopy(self.pot_arr)
+        return DiscreteUniPot(self.is_quantum,
+                              self.focus_node, pot_arr=copy_pot_arr)
+
     def size(self):
         """
         This returns the size (number of states) of the focus node.
@@ -107,23 +125,6 @@ class DiscreteUniPot(DiscreteCondPot):
         arr2 = (arr*np.conjugate(arr)).real
         return DiscreteUniPot(False, self.focus_node, pot_arr=arr2)
 
-    def __deepcopy__(self, memo):
-        """
-        We want deepcopy to produce a copy of pot_arr but not of the nodes
-        in self.nodes so need to override the usual deepcopy.
-
-        Parameters
-        ----------
-        memo
-
-        Returns
-        -------
-        DiscreteUniPot
-
-        """
-        copy_pot_arr = cp.deepcopy(self.pot_arr)
-        return DiscreteUniPot(self.is_quantum,
-                                self.focus_node, pot_arr=copy_pot_arr)
 
 if __name__ == "__main__":
     def main():

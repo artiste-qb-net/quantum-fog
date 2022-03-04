@@ -36,6 +36,40 @@ class Dag(Graph):
         Graph.__init__(self, nodes)
         self.topological_sort()
 
+    def __deepcopy__(self, memo):
+        """
+        Creates deep copy of self.
+
+        Parameters
+        ----------
+        memo :
+
+        Returns
+        -------
+        Dag
+
+        """
+        nd_to_new_nd = {}
+        for nd in self.nodes:
+            nd_to_new_nd[nd] = DirectedNode(nd.id_num, nd.name)
+        for nd, new_nd in nd_to_new_nd.items():
+            new_nd.neighbors = set([nd_to_new_nd[nd1]
+                                    for nd1 in nd.neighbors])
+            new_nd.topo_index = nd.topo_index
+            new_nd.visited = nd.visited
+            # not in Graph:
+            new_nd.children = set([nd_to_new_nd[nd1]
+                                   for nd1 in nd.children])
+            new_nd.parents = set([nd_to_new_nd[nd1]
+                                  for nd1 in nd.parents])
+
+        return Dag(set(nd_to_new_nd.values()))
+
+
+
+
+
+
     def detect_two_node_cycle(self):
         """
         Detects a 2 node cycle. That is, when 2 nodes are both parents and
