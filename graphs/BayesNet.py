@@ -340,5 +340,5 @@ if __name__ == "__main__":
         copy_bnet = cp.deepcopy(new_bnet)
         print("copy_bnet\n", copy_bnet)
 
-main()
+    main()
 
