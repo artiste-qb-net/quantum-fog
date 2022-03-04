@@ -65,11 +65,6 @@ class Dag(Graph):
 
         return Dag(set(nd_to_new_nd.values()))
 
-
-
-
-
-
     def detect_two_node_cycle(self):
         """
         Detects a 2 node cycle. That is, when 2 nodes are both parents and

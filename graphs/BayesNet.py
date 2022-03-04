@@ -304,7 +304,7 @@ class BayesNet(Dag):
 
 if __name__ == "__main__":
     from examples_cbnets.HuaDar import *
-    # from examples_qbnets.QuWetGrass import *
+    from examples_qbnets.QuWetGrass import *
 
     def main():
 
