@@ -51,7 +51,11 @@ class BayesNet(Dag):
         """
         nd_to_new_nd = {}
         for nd in self.nodes:
-            nd_to_new_nd[nd] = BayesNode(nd.id_num, nd.name)
+            new_node = BayesNode(nd.id_num, nd.name)
+            # important to set new node sizes before
+            # constructing new node potentials
+            new_node.size = nd.size
+            nd_to_new_nd[nd] = new_node
         for nd, new_nd in nd_to_new_nd.items():
             new_nd.neighbors = set([nd_to_new_nd[nd1]
                                     for nd1 in nd.neighbors])
@@ -69,9 +73,9 @@ class BayesNet(Dag):
             new_nd.potential = Potential(nd.potential.is_quantum,
                                          ord_nodes=new_ord_nodes,
                                          pot_arr=new_pot_arr)
-            new_nd.size = nd.size
             new_nd.state_names = [x for x in nd.state_names]
-
+            # print("8899t", new_nd.name, new_nd.size,
+            #       new_nd.potential.pot_arr.shape)
         return BayesNet(set(nd_to_new_nd.values()))
 
     def add_nodes(self, nodes):
@@ -304,7 +308,7 @@ class BayesNet(Dag):
 
 if __name__ == "__main__":
     from examples_cbnets.HuaDar import *
-    from examples_qbnets.QuWetGrass import *
+    # from examples_qbnets.QuWetGrass import *
 
     def main():
 
@@ -329,10 +333,10 @@ if __name__ == "__main__":
         new_bnet = BayesNet.read_bif(path, False)
         new_bnet.write_bif(path1, False)
 
-        path = '../examples_qbnets/QuWetGrass.bif'
-        path1 = '../examples_qbnets/QuWetGrass1.bif'
-        new_bnet = BayesNet.read_bif(path, True)
-        new_bnet.write_bif(path1, True)
+        # path = '../examples_qbnets/QuWetGrass.bif'
+        # path1 = '../examples_qbnets/QuWetGrass1.bif'
+        # new_bnet = BayesNet.read_bif(path, True)
+        # new_bnet.write_bif(path1, True)
 
         nx_graph = new_bnet.get_nx_graph()
         print(nx_graph)
