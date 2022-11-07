@@ -47,45 +47,53 @@ class DotTool:
             open_image("tempo.png").show()
 
     @staticmethod
-    def fix_dot_file(dot_file_path):
+    def read_dot_file(dot_file_path):
         """
-        nx.nx_pydot.from_pydot(dot_file_path) does not understand if
-        dot_file_path has lines such as "X->A,B;" where X has multiple
-        children. This method writes a temporary dot file, and returns the
-        path to it. Each line of dot_file_path with multiple children is
-        replaced in the temporary dot file by multiple lines with only one
-        children. For example, a line "X->A,B;" is replaced by two lines
-        "X->A;" and "X->B;".
+        Unfortunately, the networkx function for reading a dot file is broken.
+
+        # does not understand dot statements like X->Y,Z;
+            nx_graph = nx.nx_pydot.read_dot(dot_file_path)
+
+        This function will reads a dot file of a very basic form only. An
+        example of the basic form is:
+
+        dot = "digraph G {\n" \
+                  "a->b;\n" \
+                  "a->s;\n" \
+                  "n->s,a,b;\n" \
+                  "b->s;\n"\
+                  "}"
 
         Parameters
         ----------
-        dot_file_path : str
-            path to input dot file
+        dot_file_path: str
 
         Returns
         -------
-        str
-            path to temporary, simplified dot file
+        list, list
 
         """
-        out_dot_file = "tempo.dot"
+        nodes = []
+        edges = []
         with open(dot_file_path) as f:
             in_lines = f.readlines()
-        with open(out_dot_file, 'w') as f:
             for line in in_lines:
-                if "->" not in line:
-                    f.write(line)
-                else:
+                if "->" in line:
                     split_list = line.split(sep="->")
                     # print("ffgg", split_list)
                     pa = split_list[0].strip()
+                    if pa not in nodes:
+                        nodes.append(pa)
                     ch_list = split_list[1].split(",")
                     ch_list = [x.strip().strip(";").strip() for x in ch_list]
                     # print("ffgg", pa)
                     # print("ffgg", ch_list)
                     for ch in ch_list:
-                        f.write(pa + "->" + ch + ";\n")
-        return out_dot_file
+                        edges.append((pa, ch))
+                        if ch not in nodes:
+                            nodes.append(ch)
+
+        return nodes, edges
 
     @staticmethod
     def nx_graph_from_dot_file(dot_file_path):
@@ -105,23 +113,14 @@ class DotTool:
             nx.draw(nx_graph, with_labels=True, node_color='white')
             plt.show()
         """
-        dot_file_path = DotTool.fix_dot_file(dot_file_path)
-
-        # st = str(gv.Source.from_file(dot_file_path))
-        # print('dot_file_string\n', st)
-
         # this does not understand dot statements like X->Y,Z;
-        nx_graph = nx.nx_pydot.read_dot(dot_file_path)
-        # print("aasdd", list(nx_graph.edges()))
-        # print("aasdd", list(nx_graph.nodes()))
+        # nx_graph = nx.nx_pydot.read_dot(dot_file_path)
 
-        # this does not understand dot statements like X->Y,Z; either
-        # pdp_graph = pdp.graph_from_dot_file(dot_file_path)
-        # print("cccfff\n", pdp_graph.to_string())
-        # print("xxxcv", [x.get_name() for x in pdp_graph.get_node_list()])
-        # nx_graph = nx.nx_pydot.from_pydot(pdp_graph)
+        nodes, edges = DotTool.read_dot_file(dot_file_path)
+        g = nx.DiGraph()
+        g.add_edges_from(edges)
 
-        return nx_graph
+        return g
 
     @staticmethod
     def write_dot_file_from_nx_graph(nx_graph, dot_file_path):
@@ -142,26 +141,19 @@ class DotTool:
         """
         nx.drawing.nx_pydot.write_dot(nx_graph, dot_file_path)
 
-    def get_nx_graph(self):
-        """
-        This method returns an nx.DiGraph with the same structure as self.
-
-        Returns
-        -------
-        nx.DiGraph
-
-        """
-        nx_graph = nx.DiGraph()
-        for pa_nd in self.nodes:
-            for ch_nd in pa_nd.children:
-                nx_graph.add_edge(pa_nd.name, ch_nd.name)
-        return nx_graph
-
 
 if __name__ == "__main__":
 
     def main():
-        path = 'dot_lib/good_bad_trols_G3.dot'
+        dot = "digraph G {\n" \
+              "a->b;\n" \
+              "a->s;\n" \
+              "n->s,a,b;\n" \
+              "b->s\n" \
+              "}"
+        with open("tempo13.txt", "w") as file:
+            file.write(dot)
+        path = 'tempo13.txt'
         DotTool.draw(path, jupyter=False)
         nx_graph = DotTool.nx_graph_from_dot_file(path)
         nx.draw(nx_graph, with_labels=True, node_color='white')
