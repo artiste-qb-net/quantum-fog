@@ -4,6 +4,7 @@ from PIL.Image import open as open_image
 import matplotlib.pyplot as plt
 import pydotplus as pdp
 import networkx as nx
+import os
 
 
 class DotTool:
@@ -40,11 +41,12 @@ class DotTool:
         # must generate temporary image file and use Image().
         # display(s)
 
-        x = s.render("tempo", format='png', view=False)
+        x = s.render("tempo123", format='png', view=False)
+        os.remove("tempo123")
         if jupyter:
             display(Image(x))
         else:
-            open_image("tempo.png").show()
+            open_image("tempo123.png").show()
 
     @staticmethod
     def read_dot_file(dot_file_path):
@@ -54,7 +56,7 @@ class DotTool:
         # does not understand dot statements like X->Y,Z;
             nx_graph = nx.nx_pydot.read_dot(dot_file_path)
 
-        This function will reads a dot file of a very basic form only. An
+        This function will read a dot file of a very basic form only. An
         example of the basic form is:
 
         dot = "digraph G {\n" \
