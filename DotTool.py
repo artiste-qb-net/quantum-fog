@@ -80,6 +80,8 @@ class DotTool:
         with open(dot_file_path) as f:
             in_lines = f.readlines()
             for line in in_lines:
+                # ignore arrow attributes
+                line = line.split(sep="[")[0]
                 if "->" in line:
                     split_list = line.split(sep="->")
                     # print("ffgg", split_list)
